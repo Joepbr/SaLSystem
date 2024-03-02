@@ -21,37 +21,70 @@ export default function PermanentDrawerLeft() {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${300} px)`, ml: `${300}px` }}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          width: `calc(100% - ${240} px)`,
+          height: 100, 
+          ml: `${240}px`,
+          backgroundColor: '#25254b',
+        }}
       >
         <Toolbar>
-          <Typography variant="h2" noWrap component="div">
-            Permanent drawer
+          <Typography 
+            variant="h2" 
+            noWrap 
+            component="div"
+          >
+            <img src={logo} alt="Logotipo SaL" style={{ width: '300px'}}/>
+            Stop and Learn
           </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
         sx={{
-          width: 300,
+          width: 240,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: 300,
+            width: 240,
             boxSizing: 'border-box',
           },
         }}
         variant="permanent"
         anchor="left"
       >
-        <img src={logo} alt="Logotipo SaL" style={{ width: '300px'}}/>
-        <Toolbar />
-        <Divider />
+        
+        <Toolbar 
+          sx={{
+            marginTop: '100px',
+          }}
+        />
         <List>
           {['Início'].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton
                 component={Link}
                 to="/"
+                sx={{
+                  backgroundColor: '#9d2f2e',
+                }}
               >
                 <ListItemText>Início</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {['Cursos'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton
+                component={Link}
+                to="/cursos"
+                sx={{
+                  backgroundColor: '#9d2f2e',
+                }}
+              >
+                <ListItemText>Cursos</ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
@@ -63,6 +96,9 @@ export default function PermanentDrawerLeft() {
               <ListItemButton
                 component={Link}
                 to="/profs"
+                sx={{
+                  backgroundColor: '#9d2f2e',
+                }}
               >
                 <ListItemText>Professores</ListItemText>
               </ListItemButton>
@@ -76,8 +112,27 @@ export default function PermanentDrawerLeft() {
               <ListItemButton
                 component={Link}
                 to="/alunos"
+                sx={{
+                  backgroundColor: '#9d2f2e',
+                }}
               >
                 <ListItemText>Alunos</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {['Aulas'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton
+                component={Link}
+                to="/aulas"
+                sx={{
+                  backgroundColor: '#9d2f2e',
+                }}
+              >
+                <ListItemText>Aulas</ListItemText>
               </ListItemButton>
             </ListItem>
           ))}

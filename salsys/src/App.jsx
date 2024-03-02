@@ -8,8 +8,10 @@ import { CssBaseline } from '@mui/material'
 import Drawer from './ui/Drawer'
 
 import Homepage from './pages/Homepage'
+import Cursos from './pages/CursoList'
 import ProfList from './pages/ProfList'
 import AlunosList from './pages/AlunoList'
+import Aulas from './pages/AulaList'
 
 function App() {
 
@@ -22,14 +24,21 @@ function App() {
           width: '100vw', //toda a alrgura da janela
           minHeight: '100vh', //no mínimo, toda a altura da janela
           //cinza escuro, no modo dark
-          backgroundColor: 'background.default'
+          backgroundColor: '#d9d9d9',
+          color: 'black',
         }}>
           <Drawer/>
-          <Box sx={{ m: '25px' /*Margem de 5px de todos os lados*/}}>
+          <Box 
+            sx={{ 
+              marginLeft: '285px',
+              marginTop: '125px',
+            }}>
             <Routes>
             <Route path="/" element={ <Homepage /> } />
-            <Route path="/cars" element={ <ProfList /> } />
-            <Route path="/customers" element={ <AlunosList /> } />
+            <Route path="/cursos" element={ <Cursos /> } />
+            <Route path="/profs" element={ <ProfList /> } />
+            <Route path="/alunos" element={ <AlunosList /> } />
+            <Route path="/aulas" element={ <Aulas /> } />
           </Routes>
           </Box>
         </Box>
