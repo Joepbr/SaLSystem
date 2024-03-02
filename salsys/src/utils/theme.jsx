@@ -1,14 +1,14 @@
 import { createTheme } from '@mui/material/styles'
-import { yellow, pink } from '@mui/material/colors'
+import { indigo, red } from '@mui/material/colors'
 
 const theme = createTheme({
     palette: {
         mode: 'dark', //o padrão é 'light'
         primary: {
-            main: yellow[600],
+            main: indigo[900],
         },
         secondary: {
-            main: pink[500]
+            main: red[900]
         }
     }
 })

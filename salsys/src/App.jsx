@@ -1,11 +1,11 @@
 import React from 'react'
 import './App.css'
-import HeaderBar from './ui/HeaderBar'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from './utils/theme'
 import Box from '@mui/material/Box'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { CssBaseline } from '@mui/material'
+import Drawer from './ui/Drawer'
 
 import Homepage from './pages/Homepage'
 import ProfList from './pages/ProfList'
@@ -24,7 +24,7 @@ function App() {
           //cinza escuro, no modo dark
           backgroundColor: 'background.default'
         }}>
-          <HeaderBar />
+          <Drawer/>
           <Box sx={{ m: '25px' /*Margem de 5px de todos os lados*/}}>
             <Routes>
             <Route path="/" element={ <Homepage /> } />
