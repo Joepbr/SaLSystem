@@ -25,28 +25,33 @@ export default function PermanentDrawerLeft() {
           zIndex: (theme) => theme.zIndex.drawer + 1,
           width: `calc(100% - ${240} px)`,
           height: 100, 
-          ml: `${240}px`,
+          ml: '240px',
           backgroundColor: '#25254b',
+          textShadow: '-4px 4px 0 #104978, 4px 4px 0 #104978, 4px -4px 0 #104978, -4px -4px 0 #104978',
         }}
       >
         <Toolbar>
+          <img src={logo} alt="Logotipo SaL" style={{ width: '300px'}}/>
           <Typography 
-            variant="h2" 
+            variant="h3" 
             noWrap 
             component="div"
+            sx={{
+              fontFamily: "Impact",
+              textAlign: 'center',
+              paddingLeft: '50px',
+            }}
           >
-            <img src={logo} alt="Logotipo SaL" style={{ width: '300px'}}/>
-            Stop and Learn
+            STOP and LEARN
           </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
         sx={{
-          width: 240,
-          flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: 240,
             boxSizing: 'border-box',
+            backgroundColor: '#25254b',
           },
         }}
         variant="permanent"
