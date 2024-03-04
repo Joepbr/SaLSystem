@@ -9,8 +9,8 @@ import Drawer from './ui/Drawer'
 
 import Homepage from './pages/Homepage'
 import Cursos from './pages/CursoList'
-import ProfList from './pages/ProfList'
-import AlunosList from './pages/AlunoList'
+import Profs from './pages/ProfList'
+import Alunos from './pages/AlunoList'
 import Aulas from './pages/AulaList'
 
 function App() {
@@ -36,8 +36,8 @@ function App() {
             <Routes>
             <Route path="/" element={ <Homepage /> } />
             <Route path="/cursos" element={ <Cursos /> } />
-            <Route path="/profs" element={ <ProfList /> } />
-            <Route path="/alunos" element={ <AlunosList /> } />
+            <Route path="/profs" element={ <Profs /> } />
+            <Route path="/alunos" element={ <Alunos /> } />
             <Route path="/aulas" element={ <Aulas /> } />
           </Routes>
           </Box>
