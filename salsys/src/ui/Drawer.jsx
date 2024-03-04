@@ -11,10 +11,29 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import logo from '../assets/Sallogo.png';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 
 export default function PermanentDrawerLeft() {
+
+  const location = useLocation()
+
+  const getPageTitle = () => {
+    switch (location.pathname) {
+      case '/':
+        return 'Página Inicial'
+      case '/cursos':
+        return 'Cursos Oferecidos'
+      case '/profs':
+        return 'Corpo Docente'
+      case '/alunos':
+        return 'Alunos Matriculados'
+      case '/aulas':
+        return 'Aulas Registradas'
+      default:
+        return 'STOP and LEARN'
+    }
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -24,32 +43,31 @@ export default function PermanentDrawerLeft() {
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           width: `calc(100% - ${240} px)`,
-          height: 100, 
+          height: 80, 
           ml: '240px',
           backgroundColor: '#25254b',
           textShadow: '-4px 4px 0 #104978, 4px 4px 0 #104978, 4px -4px 0 #104978, -4px -4px 0 #104978',
         }}
       >
         <Toolbar>
-          <img src={logo} alt="Logotipo SaL" style={{ width: '300px'}}/>
+          <img src={logo} alt="Logotipo SaL" style={{ width: '250px'}}/>
           <Typography 
-            variant="h3" 
+            variant="h4" 
             noWrap 
             component="div"
             sx={{
               fontFamily: "Impact",
-              textAlign: 'center',
-              paddingLeft: '50px',
+              paddingLeft: '100px',
             }}
           >
-            STOP and LEARN
+            {getPageTitle()}
           </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
         sx={{
           '& .MuiDrawer-paper': {
-            width: 240,
+            width: 200,
             boxSizing: 'border-box',
             backgroundColor: '#25254b',
           },
@@ -73,7 +91,17 @@ export default function PermanentDrawerLeft() {
                   backgroundColor: '#9d2f2e',
                 }}
               >
-                <ListItemText>Início</ListItemText>
+                <ListItemText>
+                  <Typography
+                    sx={{
+                      fontFamily: "Impact",
+                      textAlign: 'center',
+                      textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                    }}
+                  >
+                    Início
+                  </Typography>
+                </ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
@@ -89,7 +117,17 @@ export default function PermanentDrawerLeft() {
                   backgroundColor: '#9d2f2e',
                 }}
               >
-                <ListItemText>Cursos</ListItemText>
+                <ListItemText>
+                <Typography
+                    sx={{
+                      fontFamily: "Impact",
+                      textAlign: 'center',
+                      textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                    }}
+                  >
+                    Cursos
+                  </Typography>
+                </ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
@@ -105,7 +143,17 @@ export default function PermanentDrawerLeft() {
                   backgroundColor: '#9d2f2e',
                 }}
               >
-                <ListItemText>Professores</ListItemText>
+                <ListItemText>
+                <Typography
+                    sx={{
+                      fontFamily: "Impact",
+                      textAlign: 'center',
+                      textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                    }}
+                  >
+                    Professores
+                  </Typography>
+                </ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
@@ -121,7 +169,17 @@ export default function PermanentDrawerLeft() {
                   backgroundColor: '#9d2f2e',
                 }}
               >
-                <ListItemText>Alunos</ListItemText>
+                <ListItemText>
+                <Typography
+                    sx={{
+                      fontFamily: "Impact",
+                      textAlign: 'center',
+                      textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                    }}
+                  >
+                    Alunos
+                  </Typography>
+                </ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
@@ -137,7 +195,17 @@ export default function PermanentDrawerLeft() {
                   backgroundColor: '#9d2f2e',
                 }}
               >
-                <ListItemText>Aulas</ListItemText>
+                <ListItemText>
+                <Typography
+                    sx={{
+                      fontFamily: "Impact",
+                      textAlign: 'center',
+                      textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                    }}
+                  >
+                    Aulas
+                  </Typography>
+                </ListItemText>
               </ListItemButton>
             </ListItem>
           ))}

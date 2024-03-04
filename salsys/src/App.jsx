@@ -30,8 +30,8 @@ function App() {
           <Drawer/>
           <Box 
             sx={{ 
-              marginLeft: '285px',
-              marginTop: '125px',
+              marginLeft: '250px',
+              marginTop: '100px',
             }}>
             <Routes>
             <Route path="/" element={ <Homepage /> } />

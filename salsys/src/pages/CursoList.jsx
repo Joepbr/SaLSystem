@@ -3,9 +3,8 @@ import React from 'react'
 export default function Cursos(){
     return (
         <>
-            <h1>Bem-vindo(a) à escola Stop and Learn!</h1>
-            <p>Use o menu à esquerda para 
-                acessar as funcionalidades do sistema.</p>
+            <h1>Página de Registro de Cursos</h1>
+            <p>Futuramente esta página listará os cursos oferecidos pela escola</p>
         </>
     )
 }
