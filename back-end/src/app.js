@@ -15,4 +15,11 @@ app.use(cookieParser());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
+/*********************
+Rotas de API
+*********************/
+
+import cursoRouter from './routes/curso.js'
+app.use('/curso', cursoRouter)
+
 export default app;
