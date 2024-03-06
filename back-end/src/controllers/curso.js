@@ -4,7 +4,7 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        await prisma.car.create({ data: req.body })
+        await prisma.curso.create({ data: req.body })
 
         res.status(201).end()
     }
@@ -17,7 +17,7 @@ controller.create = async function (req, res) {
 
 controller.retrieveAll = async function (req, res) {
     try {
-        const result = await prisma.car.findMany()
+        const result = await prisma.curso.findMany()
 
         res.send(result)
     }
@@ -30,7 +30,7 @@ controller.retrieveAll = async function (req, res) {
 
 controller.retrieveOne = async function (req, res) {
     try {
-        const result = await prisma.car.findUnique({
+        const result = await prisma.curso.findUnique({
             where: { id: Number(req.params.id) }
         })
 
@@ -46,9 +46,25 @@ controller.retrieveOne = async function (req, res) {
 
 controller.update = async function (req, res) {
     try {
-        const result = await prisma.car.update({
+        const result = await prisma.curso.update({
             where: { id: Number(req.params.id) },
             data: req.body
+        })
+
+        if(result) res.status(204).end()
+        else res.status(404).end()
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
+controller.delete = async function (req, res) {
+    try {
+        const result = await prisma.curso.delete({
+            where: { id: Number(req.params.id) }
         })
 
         if(result) res.status(204).end()
