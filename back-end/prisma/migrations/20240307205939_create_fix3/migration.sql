@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "modulo" ALTER COLUMN "duracao" DROP NOT NULL,
+ALTER COLUMN "is_vip" SET DEFAULT false,
+ALTER COLUMN "preco" DROP NOT NULL;

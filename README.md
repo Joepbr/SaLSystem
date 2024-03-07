@@ -20,7 +20,7 @@ npm install prisma --save-dev
 npx prisma init --datasource-provider postgresql
 
 # Executar migração
-npx prisma migrate dev --name create-curso
+npx prisma migrate dev --name create-*nome*
 
 # Primeiros passos do back-end
 Criar a tabela de cursos e desenvolver as operações de CRUD

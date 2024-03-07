@@ -31,7 +31,7 @@ controller.retrieveAll = async function (req, res) {
 controller.retrieveOne = async function (req, res) {
     try {
         const result = await prisma.curso.findUnique({
-            where: { id: Number(req.params.id) }
+            where: { id: req.params.id }
         })
 
         if(result) res.send(result)

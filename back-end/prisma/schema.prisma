@@ -21,17 +21,19 @@ model curso {
 }
 
 model modulo {
-  id          Int           @default(autoincrement())
+  id          Int           @id@default(autoincrement())
   titulo      String
-  duracao     Int
+  dias_sem    String
   horario     String
+  inicio      DateTime
+  duracao     Int?
   formato     String
-  is_vip      Boolean
-  preco       Float
+  is_vip      Boolean       @default(false)
+  preco       Float?
   curso       curso         @relation(fields: [cursoId], references: [id])
   cursoId     String
-  
-  @@id([id, cursoId])
+
+  //@@id(name: "codigo", [cursoId, id])
 }
 
 model user {
@@ -45,6 +47,7 @@ model user {
   end_num     String
   end_compl   String?
   end_cid     String
+  end_estado  String
   professor   professor?
   aluno       aluno?
   responsavel responsavel?
