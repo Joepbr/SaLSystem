@@ -18,6 +18,21 @@ Rotas de API
 *********************/
 
 import cursoRoute from './routes/curso.js'
-app.use('/curso', cursoRoute)
+app.use('/cursos', cursoRoute)
+
+import userRoute from './routes/user.js'
+app.use('/users', userRoute)
+
+import moduloRoute from './routes/modulo.js'
+app.use('/modulos', moduloRoute)
+
+import professorRoute from './routes/professor.js'
+app.use('/professores', professorRoute)
+
+import alunoRoute from './routes/aluno.js'
+app.use('/alunos', alunoRoute)
+
+import responsavelRoute from './routes/responsavel.js'
+app.use('/responsaveis', responsavelRoute)
 
 export default app;

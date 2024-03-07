@@ -4,7 +4,7 @@ Sistema de Gerenciamento da escola Stop and Learn
 # Projeto de front-end criado via comando:
 npx create-react-app salsys
 
-# Estilos no fromt-end
+# Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma
 
 # Projeto de back-end criado via comando:
@@ -23,4 +23,6 @@ npx prisma init --datasource-provider postgresql
 npx prisma migrate dev --name create-curso
 
 # Primeiros passos do back-end
-Criar a tabela de cursos e desenvolver as operações do banco de dados
+Criar a tabela de cursos e desenvolver as operações de CRUD
+
+Criar as tabelas de modulos, users, professores, alunos e responsáveis e desenvolver seus respectivos CRUDS
