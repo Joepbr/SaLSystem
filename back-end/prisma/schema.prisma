@@ -27,7 +27,8 @@ model modulo {
   horario     String
   inicio      DateTime
   duracao     Int?
-  formato     String
+  presencial  Boolean
+  remoto      Boolean
   is_vip      Boolean       @default(false)
   preco       Float?
   curso       curso         @relation(fields: [cursoId], references: [id])
@@ -54,7 +55,7 @@ model user {
 }
 
 model professor{
-  cpf         Int           @id
+  cpf         String        @id
   formacao    String?
   salario     Float?
   user        user          @relation(fields:[userId], references: [id])
@@ -70,7 +71,7 @@ model aluno{
 }
 
 model responsavel{
-  cpf         Int           @id
+  cpf         String        @id
   user        user          @relation(fields:[userId], references:[id])
   userId      Int           @unique
   aluno       aluno         @relation(fields:[alunoMat], references:[matricula])
