@@ -14,7 +14,7 @@ datasource db {
 }
 
 model curso {
-  id          String       @id
+  id          String       @id@db.VarChar(2)
   lingua      String
   descricao   String?
   modulo      modulo[]
@@ -25,14 +25,17 @@ model modulo {
   titulo      String
   dias_sem    String
   horario     String
-  inicio      DateTime
-  duracao     Int?
+  dur_aula    Int
+  inicio      DateTime      @db.Date
+  dur_modulo  Int
   presencial  Boolean
   remoto      Boolean
-  is_vip      Boolean       @default(false)
+  vip         Boolean       @default(false)
   preco       Float?
   curso       curso         @relation(fields: [cursoId], references: [id])
-  cursoId     String
+  cursoId     String        @db.VarChar(2)
+  professor   professor     @relation(fields: [profId], references: [userId])
+  profId      Int
 
   //@@id(name: "codigo", [cursoId, id])
 }
@@ -55,25 +58,25 @@ model user {
 }
 
 model professor{
-  cpf         String        @id
+  cpf         String
   formacao    String?
   salario     Float?
   user        user          @relation(fields:[userId], references: [id])
-  userId      Int           @unique
+  userId      Int           @id
+  modulo      modulo[]
 }
 
 model aluno{
-  matricula   Int           @id@default(autoincrement())
-  data_nasc   DateTime
+  data_nasc   DateTime      @db.Date
   user        user          @relation(fields:[userId], references:[id])
-  userId      Int           @unique
+  userId      Int           @id
   responsavel responsavel?
 }
 
 model responsavel{
-  cpf         String        @id
+  cpf         String
   user        user          @relation(fields:[userId], references:[id])
-  userId      Int           @unique
-  aluno       aluno         @relation(fields:[alunoMat], references:[matricula])
-  alunoMat    Int           @unique
+  userId      Int           @id
+  aluno       aluno         @relation(fields:[matricula], references:[userId])
+  matricula   Int           @unique
 }
