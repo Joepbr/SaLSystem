@@ -34,7 +34,7 @@ model modulo {
   preco       Float?
   curso       curso         @relation(fields: [cursoId], references: [id])
   cursoId     String        @db.VarChar(2)
-  professor   professor     @relation(fields: [profId], references: [userId])
+  professor   professor     @relation(fields: [profId], references: [profId])
   profId      Int
 
   //@@id(name: "codigo", [cursoId, id])
@@ -48,7 +48,7 @@ model user {
   password    String
   is_admin    Boolean       @default(false)
   end_logr    String
-  end_num     String
+  end_num     Int
   end_compl   String?
   end_cid     String
   end_estado  String
@@ -58,25 +58,25 @@ model user {
 }
 
 model professor{
-  cpf         String
+  cpf         String        @db.VarChar(11)
   formacao    String?
   salario     Float?
-  user        user          @relation(fields:[userId], references: [id])
-  userId      Int           @id
+  user        user          @relation(fields:[profId], references: [id])
+  profId      Int           @id
   modulo      modulo[]
 }
 
 model aluno{
   data_nasc   DateTime      @db.Date
-  user        user          @relation(fields:[userId], references:[id])
-  userId      Int           @id
+  user        user          @relation(fields:[matricula], references:[id])
+  matricula   Int           @id
   responsavel responsavel?
 }
 
 model responsavel{
-  cpf         String
+  cpf         String        @db.VarChar(11)
   user        user          @relation(fields:[userId], references:[id])
   userId      Int           @id
-  aluno       aluno         @relation(fields:[matricula], references:[userId])
+  aluno       aluno         @relation(fields:[matricula], references:[matricula])
   matricula   Int           @unique
 }
