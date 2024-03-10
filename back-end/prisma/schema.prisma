@@ -14,69 +14,95 @@ datasource db {
 }
 
 model curso {
-  id          String       @id@db.VarChar(2)
-  lingua      String
-  descricao   String?
-  modulo      modulo[]
+  id              String            @id
+  lingua          String
+  descricao       String?
+  modulo          modulo[]
 }
 
 model modulo {
-  id          Int           @id@default(autoincrement())
-  titulo      String
-  dias_sem    String
-  horario     String
-  dur_aula    Int
-  inicio      DateTime      @db.Date
-  dur_modulo  Int
-  presencial  Boolean
-  remoto      Boolean
-  vip         Boolean       @default(false)
-  preco       Float?
-  curso       curso         @relation(fields: [cursoId], references: [id])
-  cursoId     String        @db.VarChar(2)
-  professor   professor     @relation(fields: [profId], references: [profId])
-  profId      Int
+  id              Int               @id@default(autoincrement())
+  titulo          String
+  dias_sem        String
+  horario         String
+  dur_aula        Int
+  inicio          DateTime          @db.Date
+  dur_modulo      Int
+  presencial      Boolean
+  remoto          Boolean
+  vip             Boolean           @default(false)
+  preco           Float?
+  curso           curso             @relation(fields: [cursoId], references: [id])
+  cursoId         String        
+  professor       professor         @relation(fields: [profId], references: [profId])
+  profId          Int
+  aula            aula[]
+  matricularAluno matricularAluno[]
 
   //@@id(name: "codigo", [cursoId, id])
 }
 
 model user {
-  id          Int           @id @default(autoincrement())
-  nome        String
-  email       String
-  telefone    String
-  password    String
-  is_admin    Boolean       @default(false)
-  end_logr    String
-  end_num     Int
-  end_compl   String?
-  end_cid     String
-  end_estado  String
-  professor   professor?
-  aluno       aluno?
-  responsavel responsavel?
+  id              Int               @id @default(autoincrement())
+  nome            String
+  email           String
+  telefone        String
+  password        String
+  is_admin        Boolean           @default(false)
+  end_logr        String
+  end_num         Int
+  end_compl       String?
+  end_cid         String
+  end_estado      String
+  professor       professor?
+  aluno           aluno?
+  responsavel     responsavel?
 }
 
-model professor{
-  cpf         String        @db.VarChar(11)
-  formacao    String?
-  salario     Float?
-  user        user          @relation(fields:[profId], references: [id])
-  profId      Int           @id
-  modulo      modulo[]
+model professor {
+  cpf             String            @db.VarChar(11)
+  formacao        String?
+  salario         Float?
+  user            user              @relation(fields:[profId], references: [id])
+  profId          Int               @id
+  modulo          modulo[]
+  aula            aula[]
 }
 
-model aluno{
-  data_nasc   DateTime      @db.Date
-  user        user          @relation(fields:[matricula], references:[id])
-  matricula   Int           @id
-  responsavel responsavel?
+model aluno {
+  data_nasc       DateTime          @db.Date
+  user            user              @relation(fields:[matricula], references:[id])
+  matricula       Int               @id
+  responsavel     responsavel?
+  matricularAluno matricularAluno[]
 }
 
-model responsavel{
-  cpf         String        @db.VarChar(11)
-  user        user          @relation(fields:[userId], references:[id])
-  userId      Int           @id
-  aluno       aluno         @relation(fields:[matricula], references:[matricula])
-  matricula   Int           @unique
+model responsavel {
+  cpf             String            @db.VarChar(11)
+  user            user              @relation(fields:[userId], references:[id])
+  userId          Int               @id
+  aluno           aluno             @relation(fields:[matricula], references:[matricula])
+  matricula       Int               @unique
+}
+
+model aula {
+  id              Int               @id@default(autoincrement())
+  modulo          modulo            @relation(fields:[moduloId], references:[id])
+  moduloId        Int
+  professor       professor         @relation(fields: [profId], references: [profId])
+  profId          Int
+  data            DateTime          @db.Date
+  conteudo        String?
+
+  //@@id(name: "aulaId", [moduloId, data])
+}
+
+model matricularAluno {
+  aluno            aluno            @relation(fields:[matricula], references:[matricula])
+  matricula        Int
+  modulo           modulo           @relation(fields:[moduloId], references:[id])
+  moduloId         Int
+  notaFinal        Float?
+
+  @@id(name: "Id", [matricula, moduloId])
 }

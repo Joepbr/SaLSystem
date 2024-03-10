@@ -4,7 +4,7 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        await prisma.curso.create({ data: req.body })
+        await prisma.aula.create({ data: req.body })
 
         res.status(201).end()
     }
@@ -17,7 +17,7 @@ controller.create = async function (req, res) {
 
 controller.retrieveAll = async function (req, res) {
     try {
-        const result = await prisma.curso.findMany()
+        const result = await prisma.aula.findMany()
 
         res.send(result)
     }
@@ -30,7 +30,7 @@ controller.retrieveAll = async function (req, res) {
 
 controller.retrieveOne = async function (req, res) {
     try {
-        const result = await prisma.curso.findUnique({
+        const result = await prisma.aula.findUnique({
             where: { id: req.params.id }
         })
 
@@ -46,7 +46,7 @@ controller.retrieveOne = async function (req, res) {
 
 controller.update = async function (req, res) {
     try {
-        const result = await prisma.curso.update({
+        const result = await prisma.aula.update({
             where: { id: req.params.id },
             data: req.body
         })
@@ -63,7 +63,7 @@ controller.update = async function (req, res) {
 
 controller.delete = async function (req, res) {
     try {
-        const result = await prisma.curso.delete({
+        const result = await prisma.aula.delete({
             where: { id: req.params.id }
         })
 

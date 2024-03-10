@@ -35,4 +35,7 @@ app.use('/alunos', alunoRoute)
 import responsavelRoute from './routes/responsavel.js'
 app.use('/responsaveis', responsavelRoute)
 
+import aulaRoute from './routes/aula.js'
+app.use('/aulas', aulaRoute)
+
 export default app;
