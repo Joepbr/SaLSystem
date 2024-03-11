@@ -38,4 +38,7 @@ app.use('/responsaveis', responsavelRoute)
 import aulaRoute from './routes/aula.js'
 app.use('/aulas', aulaRoute)
 
+import matricularRoute from './routes/matricular.js'
+app.use('/matriculas', matricularRoute)
+
 export default app;
