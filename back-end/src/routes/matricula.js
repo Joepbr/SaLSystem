@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import controller from '../controllers/matricular.js'
+import controller from '../controllers/matricula.js'
 
 const router = Router()
 

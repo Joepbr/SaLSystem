@@ -25,4 +25,5 @@ npx prisma migrate dev --name create-*nome*
 # Primeiros passos do back-end
 Criar a tabela de cursos e desenvolver as operações de CRUD
 
-Criar as tabelas de modulos, users, professores, alunos e responsáveis e desenvolver seus respectivos CRUDS
+Criar as tabelas de modulos, users, professores, alunos e responsáveis e desenvolver seus respectivos CRUDs
+Criar as tabelas de aulas, matrículas, presenças e avaliações e desenvolver os CRUDs

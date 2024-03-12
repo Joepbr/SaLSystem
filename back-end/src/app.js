@@ -38,7 +38,13 @@ app.use('/responsaveis', responsavelRoute)
 import aulaRoute from './routes/aula.js'
 app.use('/aulas', aulaRoute)
 
-import matricularRoute from './routes/matricular.js'
-app.use('/matriculas', matricularRoute)
+import matriculaRoute from './routes/matricula.js'
+app.use('/matriculas', matriculaRoute)
+
+import presencaRoute from './routes/presenca.js'
+app.use('/presencas', presencaRoute)
+
+import avaliacaoRoute from './routes/avaliacao.js'
+app.use('/avaliacoes', avaliacaoRoute)
 
 export default app;

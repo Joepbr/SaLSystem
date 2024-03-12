@@ -4,7 +4,7 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        await prisma.matricularAluno.create({ data: req.body })
+        await prisma.avaliacao.create({ data: req.body })
 
         res.status(201).end()
     }
@@ -17,7 +17,7 @@ controller.create = async function (req, res) {
 
 controller.retrieveAll = async function (req, res) {
     try {
-        const result = await prisma.matricularAluno.findMany()
+        const result = await prisma.avaliacao.findMany()
 
         res.send(result)
     }
@@ -30,8 +30,8 @@ controller.retrieveAll = async function (req, res) {
 
 controller.retrieveOne = async function (req, res) {
     try {
-        const result = await prisma.matricularAluno.findUnique({
-            where: { id: req.params.id }
+        const result = await prisma.avaliacao.findUnique({
+            where: { id: Number(req.params.id) }
         })
 
         if(result) res.send(result)
@@ -46,8 +46,8 @@ controller.retrieveOne = async function (req, res) {
 
 controller.update = async function (req, res) {
     try {
-        const result = await prisma.matricularAluno.update({
-            where: { id: req.params.id },
+        const result = await prisma.avaliacao.update({
+            where: { id: Number(req.params.id) },
             data: req.body
         })
 
@@ -63,8 +63,8 @@ controller.update = async function (req, res) {
 
 controller.delete = async function (req, res) {
     try {
-        const result = await prisma.matricularAluno.delete({
-            where: { id: req.params.id }
+        const result = await prisma.avaliacao.delete({
+            where: { id: Number(req.params.id) }
         })
 
         if(result) res.status(204).end()
