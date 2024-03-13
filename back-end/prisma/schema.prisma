@@ -46,6 +46,7 @@ model modulo {
 model user {
   id              Int               @id @default(autoincrement())
   nome            String
+  username        String            @unique
   email           String
   telefone        String
   password        String

@@ -27,3 +27,12 @@ Criar a tabela de cursos e desenvolver as operações de CRUD
 
 Criar as tabelas de modulos, users, professores, alunos e responsáveis e desenvolver seus respectivos CRUDs
 Criar as tabelas de aulas, matrículas, presenças e avaliações e desenvolver os CRUDs
+
+# Implementar autenticação do usuário
+Instalar os pacotes:
+
+npm install jsonwebtoken
+npm install dotenv
+
+Criar método controller.login
+Criar senha TOKEN_SECRET no arquivo .env e passar em controller.login

@@ -2,6 +2,9 @@ import express, { json, urlencoded } from "express";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
+import dotenv from 'dotenv'
+dotenv.config()
+
 import indexRouter from "./routes/index.js";
 
 const app = express();
