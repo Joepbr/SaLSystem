@@ -1,5 +1,7 @@
 import React from 'react'
 import './App.css'
+import { Outlet } from 'react-router-dom'
+
 import { ThemeProvider } from '@mui/material/styles'
 import theme from './utils/theme'
 import Box from '@mui/material/Box'
@@ -41,7 +43,7 @@ function App() {
   );
 }
 
-function ProtectedPage({ children, ...props }) {
+function ProtectedPage({ children }) {
   return (
     <Box 
       sx={{
@@ -50,7 +52,6 @@ function ProtectedPage({ children, ...props }) {
         backgroundColor: '#d9d9d9',
         color: 'black',
       }}
-      {...props}
     >
       <Drawer/>
         <Box 
@@ -59,7 +60,9 @@ function ProtectedPage({ children, ...props }) {
             marginTop: '100px',
           }}
         >
-          {children}
+          <Outlet>
+            { children }
+          </Outlet>
         </Box>
     </Box>
   );

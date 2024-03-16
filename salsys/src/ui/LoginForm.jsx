@@ -96,7 +96,7 @@ function LoginForm() {
               }}
               aria-label="Click to login"
             >
-              Login
+              Entrar
             </Button>
           </Box>
         </Box>
