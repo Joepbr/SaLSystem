@@ -1,14 +1,10 @@
 import React from 'react'
 import './App.css'
-import { Outlet } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 
-import { ThemeProvider } from '@mui/material/styles'
+import { ThemeProvider, CssBaseline, Box, Container } from '@mui/material'
 import theme from './utils/theme'
-import Box from '@mui/material/Box'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { CssBaseline } from '@mui/material'
 import Drawer from './ui/Drawer'
-import Container from '@mui/material/Container'
 
 import Homepage from './pages/Homepage'
 import Cursos from './pages/CursoList'
@@ -16,7 +12,7 @@ import Profs from './pages/ProfList'
 import Alunos from './pages/AlunoList'
 import Aulas from './pages/AulaList'
 
-import LoginForm from './ui/LoginForm'
+import LoginForm from './pages/LoginForm'
 
 function App() {
 

@@ -15,7 +15,7 @@ function LoginForm() {
     e.preventDefault();
     
     try {
-      const response = await myfetch.post('/login', { username, password });
+      const response = await myfetch.post('/users/login', { username, password });
       // If login successful, redirect or perform desired action
       console.log('Login successful:', response);
     } catch (error) {

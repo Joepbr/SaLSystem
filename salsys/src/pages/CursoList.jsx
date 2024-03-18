@@ -13,7 +13,7 @@ export default function Cursos(){
 
     async function fetchData() {
         try {
-            const result = await myfetch.get('cursos')
+            const result = await myfetch.get('/cursos')
             setCursos(result)
         }
         catch(error) {

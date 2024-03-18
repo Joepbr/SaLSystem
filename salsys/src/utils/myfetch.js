@@ -15,7 +15,7 @@ class HttpError extends Error {
     const options = {
       method,
       headers: {"Content-type": "application/json; charset=UTF-8"},
-      //credentials: 'include'
+      credentials: 'include'
     }
   
     if(body) options.body = JSON.stringify(body)
