@@ -1,6 +1,9 @@
 import React from 'react'
 import myfetch from '../utils/myfetch'
 
+import { Button, CssBaseline, Box, Typography, Container, ThemeProvider, Divider } from '@mui/material';
+import theme from '../utils/theme';
+
 
 export default function Cursos(){
     const [cursos, setCursos] = React.useState([])
@@ -24,9 +27,29 @@ export default function Cursos(){
     }
 
     return (
-        <>
-            <h1>Cursos oferecidos pela Escola:</h1>
-            <p>{JSON.stringify(cursos)}</p>
-        </>
+        <ThemeProvider theme={theme}>
+            <Container>
+                <CssBaseline>
+                    <Typography
+                        sx={{
+                            fontSize: 30,
+                            fontWeight: 'bold'
+                          }}
+                    >
+                        Cursos oferecidos pela Escola:
+                    </Typography>
+                    <Divider>
+                    <Box
+                    sx={{
+                        width: '100vw',
+                        backgroundColor:"#ffffff"
+                    }}
+                    >
+                    {JSON.stringify(cursos)}
+                    </Box>
+                    </Divider>
+                </CssBaseline>
+            </Container>
+        </ThemeProvider>
     )
 }

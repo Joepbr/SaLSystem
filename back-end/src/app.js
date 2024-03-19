@@ -7,7 +7,19 @@ dotenv.config()
 
 import indexRouter from "./routes/index.js";
 
+import cors from 'cors'
+
 const app = express();
+
+/******CORS******/
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }));
+
+
+  
+/******CORS******/
 
 app.use(logger("dev"));
 app.use(json());
