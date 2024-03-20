@@ -16,9 +16,6 @@ app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true,
   }));
-
-
-  
 /******CORS******/
 
 app.use(logger("dev"));
@@ -31,6 +28,10 @@ app.use("/", indexRouter);
 /*********************
 Rotas de API
 *********************/
+
+//Middleware que protege as rotas com autenticação
+//import auth from './middleware/auth.js'
+//app.use(auth)
 
 import cursoRoute from './routes/curso.js'
 app.use('/cursos', cursoRoute)

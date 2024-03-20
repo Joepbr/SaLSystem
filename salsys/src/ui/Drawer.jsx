@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Drawer, CssBaseline, AppBar, Toolbar, List, Typography, Divider, ListItem, ListItemButton, ListItemText} from '@mui/material';
+import { Box, Drawer, CssBaseline, AppBar, Toolbar, List, Typography, Divider, ListItem, ListItemButton, ListItemText, Button} from '@mui/material';
 import logo from '../assets/Sallogo.png';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -41,17 +41,34 @@ export default function PermanentDrawerLeft() {
       >
         <Toolbar>
           <img src={logo} alt="Logotipo SaL" style={{ width: '250px'}}/>
-          <Typography 
-            variant="h4" 
-            noWrap 
-            component="div"
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography 
+              variant="h4" 
+              noWrap 
+              component="div"
+              sx={{
+                fontFamily: "Impact",
+                paddingLeft: '100px',
+              }}
+            >
+              {getPageTitle()}
+            </Typography>
+          </Box>
+          <Button 
+            color="inherit"
+            textAlign='right'
             sx={{
-              fontFamily: "Impact",
-              paddingLeft: '100px',
+              backgroundColor: '#9d2f2e'
             }}
           >
-            {getPageTitle()}
-          </Typography>
+            <Typography
+              sx={{
+                fontFamily: "Impact",
+              }}
+            >
+              Login
+            </Typography>
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer

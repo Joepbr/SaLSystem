@@ -4,6 +4,12 @@ Sistema de Gerenciamento da escola Stop and Learn
 # Projeto de front-end criado via comando:
 npx create-react-app salsys
 
+# Instalação de bibliotecas adicionais no projeto de front-end
+npm install react-router-dom
+npm install @mui/material @emotion/react @emotion/styled
+npm install @fontsource/roboto
+npm install @mui/icons-material
+
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma
 
