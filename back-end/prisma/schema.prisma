@@ -14,9 +14,11 @@ datasource db {
 }
 
 model curso {
-  id              String            @id
-  lingua          String
+  id              Int              @id@default(autoincrement())
+  nome            String
   descricao       String?
+  detalhes        String?
+  imageUrl        String?
   modulo          modulo[]
 }
 
@@ -33,7 +35,7 @@ model modulo {
   vip             Boolean           @default(false)
   preco           Float?
   curso           curso             @relation(fields: [cursoId], references: [id])
-  cursoId         String        
+  cursoId         Int        
   professor       professor         @relation(fields: [profId], references: [profId])
   profId          Int
   aula            aula[]

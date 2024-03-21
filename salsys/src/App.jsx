@@ -8,6 +8,7 @@ import Drawer from './ui/Drawer'
 
 import Homepage from './pages/Homepage'
 import Cursos from './pages/CursoList'
+import Modulos from './pages/ModuloList'
 import Profs from './pages/ProfList'
 import Alunos from './pages/AlunoList'
 import Aulas from './pages/AulaList'
@@ -31,6 +32,8 @@ function App() {
               <Route path="/profs" element={ <Profs /> } />
               <Route path="/alunos" element={ <Alunos /> } />
               <Route path="/aulas" element={ <Aulas /> } />
+
+              <Route path="/curso/:id" element={ <Modulos/> } />
             </Route>
           </Routes>
       </ThemeProvider>

@@ -36,7 +36,6 @@ export default function PermanentDrawerLeft() {
           height: 80, 
           ml: '240px',
           backgroundColor: '#25254b',
-          textShadow: '-4px 4px 0 #104978, 4px 4px 0 #104978, 4px -4px 0 #104978, -4px -4px 0 #104978',
         }}
       >
         <Toolbar>
@@ -47,28 +46,39 @@ export default function PermanentDrawerLeft() {
               noWrap 
               component="div"
               sx={{
+                textAlign: 'center',
                 fontFamily: "Impact",
                 paddingLeft: '100px',
+                textShadow: '-4px 4px 0 #104978, 4px 4px 0 #104978, 4px -4px 0 #104978, -4px -4px 0 #104978',
               }}
             >
               {getPageTitle()}
             </Typography>
           </Box>
-          <Button 
-            color="inherit"
-            textAlign='right'
+          <Box
             sx={{
-              backgroundColor: '#9d2f2e'
+              width: '250px',
+              textAlign: 'center'
             }}
           >
-            <Typography
+            <Button
+              component={Link}
+              to="/login"
               sx={{
-                fontFamily: "Impact",
+                backgroundColor: '#9d2f2e',
               }}
             >
-              Login
-            </Typography>
-          </Button>
+              <Typography
+                sx={{
+                  fontFamily: "Impact",
+                  color: "white",
+                  textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                }}
+              >
+                Login
+              </Typography>
+            </Button>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer

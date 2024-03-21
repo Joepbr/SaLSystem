@@ -31,7 +31,7 @@ controller.retrieveAll = async function (req, res) {
 controller.retrieveOne = async function (req, res) {
     try {
         const result = await prisma.aula.findUnique({
-            where: { id: req.params.id }
+            where: { id: Number(req.params.id) }
         })
 
         if(result) res.send(result)
@@ -47,7 +47,7 @@ controller.retrieveOne = async function (req, res) {
 controller.update = async function (req, res) {
     try {
         const result = await prisma.aula.update({
-            where: { id: req.params.id },
+            where: { id: Number(req.params.id) },
             data: req.body
         })
 
@@ -64,7 +64,7 @@ controller.update = async function (req, res) {
 controller.delete = async function (req, res) {
     try {
         const result = await prisma.aula.delete({
-            where: { id: req.params.id }
+            where: { id: Number(req.params.id) }
         })
 
         if(result) res.status(204).end()
