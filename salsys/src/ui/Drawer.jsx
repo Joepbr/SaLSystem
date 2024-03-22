@@ -112,6 +112,7 @@ export default function PermanentDrawerLeft() {
                   <Typography
                     sx={{
                       fontFamily: "Impact",
+                      color: "white",
                       textAlign: 'center',
                       textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
                     }}
@@ -138,6 +139,7 @@ export default function PermanentDrawerLeft() {
                 <Typography
                     sx={{
                       fontFamily: "Impact",
+                      color: "white",
                       textAlign: 'center',
                       textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
                     }}
@@ -164,6 +166,7 @@ export default function PermanentDrawerLeft() {
                 <Typography
                     sx={{
                       fontFamily: "Impact",
+                      color: "white",
                       textAlign: 'center',
                       textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
                     }}
@@ -190,6 +193,7 @@ export default function PermanentDrawerLeft() {
                 <Typography
                     sx={{
                       fontFamily: "Impact",
+                      color: "white",
                       textAlign: 'center',
                       textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
                     }}
@@ -216,6 +220,7 @@ export default function PermanentDrawerLeft() {
                 <Typography
                     sx={{
                       fontFamily: "Impact",
+                      color: "white",
                       textAlign: 'center',
                       textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
                     }}

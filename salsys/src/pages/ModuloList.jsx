@@ -34,9 +34,10 @@ export default function Modulos(){
       <div>
         {curso && (
           <div>
-            <Typography variant="h4" gutterBottom>
+            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
               Curso: {curso.nome}
             </Typography>
+            <Divider />
             <Typography variant="h6" gutterBottom>
               {curso.descricao}
             </Typography>
