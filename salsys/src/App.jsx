@@ -9,6 +9,7 @@ import Drawer from './ui/Drawer'
 import Homepage from './pages/Homepage'
 import Cursos from './pages/CursoList'
 import NovoCursoForm from './pages/NovoCursoForm'
+import EditarCursoForm from './pages/EditarCursoForm'
 import Modulos from './pages/ModuloList'
 import Profs from './pages/ProfList'
 import Alunos from './pages/AlunoList'
@@ -36,6 +37,7 @@ function App() {
 
               <Route path="/curso/:id" element={ <Modulos/> } />
               <Route path="/cursos/new" element={ <NovoCursoForm/> } />
+              <Route path="/curso/:id/edit" element={ <EditarCursoForm/> } />
             </Route>
           </Routes>
       </ThemeProvider>

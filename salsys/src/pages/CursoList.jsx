@@ -105,7 +105,7 @@ export default function Cursos(){
                             <Button onClick={handleCloseDeleteDialog} sx={{backgroundColor: "#25254b"}}>
                                 Cancelar
                             </Button>
-                            <Button onClick={handleDelete} sx={{backgroundColor: "9d2f2e"}}>
+                            <Button onClick={handleDelete} sx={{backgroundColor: "#9d2f2e"}}>
                                 Deletar
                             </Button>
                         </DialogActions>

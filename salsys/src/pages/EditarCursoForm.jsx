@@ -4,7 +4,7 @@ import { Container, Typography, TextField, Button, Divider } from '@mui/material
 import { Link } from 'react-router-dom'
 import myfetch from '../utils/myfetch';
 
-export default function NovoCursoForm() {
+export default function EditarCursoForm() {
     const [cursoData, setCursoData] = useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
     const navigate = useNavigate();
 
@@ -16,9 +16,12 @@ export default function NovoCursoForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Make post request
-            await myfetch.post('/cursos', cursoData);
-            navigate('/cursos')
+            // Make put request
+            await myfetch.put('/cursos/:id', cursoData);
+
+            // For demo, log the course data and redirect to previous page
+            console.log('Course data:', cursoData);
+            navigate('/cursos');
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
@@ -27,7 +30,7 @@ export default function NovoCursoForm() {
 
     return (
         <Container>
-            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Criar Novo Curso</Typography>
+            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Editar Curso</Typography>
             <Divider/>
             <form onSubmit={handleSubmit}>
                 <Typography>Nome do curso</Typography>

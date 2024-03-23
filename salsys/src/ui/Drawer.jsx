@@ -14,6 +14,8 @@ export default function PermanentDrawerLeft() {
         return 'Página Inicial'
       case '/cursos':
         return 'Cursos Oferecidos'
+      case '/cursos/new':
+        return 'Criar Curso'
       case '/profs':
         return 'Corpo Docente'
       case '/alunos':

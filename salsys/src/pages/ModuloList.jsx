@@ -22,7 +22,7 @@ export default function Modulos(){
         setCurso(cursoResponse);
   
         // Fetch associated modules
-        const modulosResponse = await myfetch.get(`/cursos/${id}/modulos`);
+        const modulosResponse = await myfetch.get(`/modulos/${id}`);
         setModulos(modulosResponse);
       } catch (error) {
         console.error(error);
