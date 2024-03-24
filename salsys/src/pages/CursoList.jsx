@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import myfetch from '../utils/myfetch'
 
 import { Button, CssBaseline, Box, Typography, Container, ThemeProvider, Divider, Card, CardContent, CardActionArea, CardMedia, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
@@ -9,12 +9,10 @@ import theme from '../utils/theme';
 
 
 export default function Cursos(){
-    const [cursos, setCursos] = useState([])
-    const [openDeleteDialog, setOpenDeleteDialog] =useState(false)
-    const [cursoToDelete, setCursoToDelete] = useState(null)
+    const [cursos, setCursos] = React.useState([])
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
+    const [cursoToDelete, setCursoToDelete] = React.useState(null)
 
-    //useEffect com vetor de dependências vazio é executado apenas uma vez,
-    //na fase mount do ciclo de vida do componente
     React.useEffect(() => {
         fetchData()
     }, [])
@@ -22,16 +20,19 @@ export default function Cursos(){
     async function fetchData() {
         try {
             const result = await myfetch.get('/cursos')
+            result.sort((a, b) => a.id - b.id)
             setCursos(result)
         }
         catch(error) {
-            //deu errado
             console.error(error)
             alert('ERRO: ' + error.message)
         }
     }
 
-    const handleDeleteConfirmation = (cursos) => {
+    const handleDeleteConfirmation = (cursos, event) => {
+        if (event) {
+            event.preventDefault()
+        }
         setCursoToDelete(cursos)
         setOpenDeleteDialog(true)
     }
@@ -39,11 +40,7 @@ export default function Cursos(){
     const handleDelete = async () => {
         if (cursoToDelete) {
             try {
-                // Make delete request
-                // await myfetch.delete(`/cursos/${courseToDelete.id}`);
-
-                // For demo, removing the course directly from the state
-                setCursos(cursos.filter(course => course.id !== cursoToDelete.id))
+                await myfetch.delete(`/cursos/${cursoToDelete.id}`);
                 setOpenDeleteDialog(false)
             } catch (error) {
                 console.error(error)
@@ -66,27 +63,29 @@ export default function Cursos(){
                     <Divider />
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', }}>
                         {cursos.map((curso, index) => (
-                            <Card key={index} sx={{ minWidth: 275, margin: 2, backgroundColor: "white", color: "black" }}>
-                                <CardActionArea component={Link} to={`/curso/${curso.id}`} style={{textDecoration: 'none'}}>
-                                    <CardMedia
-                                        component="img"
-                                        height= "140"
-                                        image={curso.imageUrl}
-                                        alt={curso.title}
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div">
-                                            {curso.nome}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ mb:1.5 }} >
-                                            {curso.descricao}
-                                        </Typography>
-                                        <Box display="flex" justifyContent="space-between">
-                                            <Button component={Link} to={`/curso/${curso.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
-                                            <Button onClick={() => handleDeleteConfirmation(curso)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
-                                        </Box>
-                                    </CardContent>
-                                </CardActionArea>
+                            <Card key={index} sx={{ minWidth: 275, margin: 2, backgroundColor: "white" }}>
+                                <Link to={`/curso/${curso.id}`} style={{textDecoration: 'none'}}>
+                                    <CardActionArea>
+                                        <CardMedia
+                                            component="img"
+                                            height= "140"
+                                            image={curso.imageUrl}
+                                            alt={curso.nome}
+                                        />
+                                        <CardContent>
+                                            <Typography gutterBottom variant="h5" component="div" sx={{ color: "black" }} >
+                                                {curso.nome}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ mb:1.5, color: "black" }} >
+                                                {curso.descricao}
+                                            </Typography>
+                                            <Box display="flex" justifyContent="space-between">
+                                                <Button component={Link} to={`/curso/${curso.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
+                                                <Button onClick={(event) => handleDeleteConfirmation(curso, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                                            </Box>
+                                        </CardContent>
+                                    </CardActionArea>
+                                </Link>
                             </Card>
                         ))}
                     <Divider />
@@ -98,15 +97,15 @@ export default function Cursos(){
                         <DialogTitle>Deletar Curso</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Tem certeza que você deseja deletar o curso "{cursoToDelete ? cursoToDelete.title : ''}"?
+                                Tem certeza que você deseja deletar o curso "{cursoToDelete ? cursoToDelete.nome : ''}"?
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleCloseDeleteDialog} sx={{backgroundColor: "#25254b"}}>
-                                Cancelar
-                            </Button>
-                            <Button onClick={handleDelete} sx={{backgroundColor: "#9d2f2e"}}>
+                            <Button onClick={handleDelete} sx={{backgroundColor: "#9d2f2e", color: "white"}}>
                                 Deletar
+                            </Button>
+                            <Button onClick={handleCloseDeleteDialog} sx={{backgroundColor: "#25254b", color: "white"}}>
+                                Cancelar
                             </Button>
                         </DialogActions>
                     </Dialog>

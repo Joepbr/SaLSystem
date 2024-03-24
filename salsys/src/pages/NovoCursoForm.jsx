@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Divider } from '@mui/material';
-import { Link } from 'react-router-dom'
 import myfetch from '../utils/myfetch';
 
 export default function NovoCursoForm() {
@@ -84,8 +83,8 @@ export default function NovoCursoForm() {
                     value={cursoData.imageUrl}
                     onChange={handleChange}
                 />
-                <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>Create</Button>
-                <Button type="button" variant="outlined" component={Link} to="/cursos">Cancel</Button>
+                <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>Criar</Button>
+                <Button type="button" variant="outlined" onClick={() => navigate('/cursos')}>Cancelar</Button>
             </form>
         </Container>
     );

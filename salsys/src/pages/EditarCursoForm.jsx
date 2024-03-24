@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Divider } from '@mui/material';
-import { Link } from 'react-router-dom'
 import myfetch from '../utils/myfetch';
 
 export default function EditarCursoForm() {
     const [cursoData, setCursoData] = useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
     const navigate = useNavigate();
+    const { id } = useParams()
+
+    useEffect(() => {
+        fetchCursoData();
+    }, [id]);
+
+    const fetchCursoData = async () => {
+        try {
+            const result = await myfetch.get(`/cursos/${id}`);
+            setCursoData(result);
+        } catch (error) {
+            console.error(error);
+            alert('ERRO: ' + error.message);
+        }
+    };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -17,10 +32,7 @@ export default function EditarCursoForm() {
         e.preventDefault();
         try {
             // Make put request
-            await myfetch.put('/cursos/:id', cursoData);
-
-            // For demo, log the course data and redirect to previous page
-            console.log('Course data:', cursoData);
+            await myfetch.put(`/cursos/${id}`, cursoData);
             navigate('/cursos');
         } catch (error) {
             console.error(error);
@@ -87,8 +99,8 @@ export default function EditarCursoForm() {
                     value={cursoData.imageUrl}
                     onChange={handleChange}
                 />
-                <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>Create</Button>
-                <Button type="button" variant="outlined" component={Link} to="/cursos">Cancel</Button>
+                <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>Editar</Button>
+                <Button type="button" variant="outlined" onClick={() => navigate('/cursos')}>Cancelar</Button>
             </form>
         </Container>
     );
