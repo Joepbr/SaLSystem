@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Divider } from '@mui/material';
 import myfetch from '../utils/myfetch';
 
 export default function EditarCursoForm() {
-    const [cursoData, setCursoData] = useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
+    const [cursoData, setCursoData] = React.useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
     const navigate = useNavigate();
     const { id } = useParams()
 
-    useEffect(() => {
+    React.useEffect(() => {
         fetchCursoData();
     }, [id]);
 
@@ -99,7 +99,7 @@ export default function EditarCursoForm() {
                     value={cursoData.imageUrl}
                     onChange={handleChange}
                 />
-                <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>Editar</Button>
+                <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>Confirmar</Button>
                 <Button type="button" variant="outlined" onClick={() => navigate('/cursos')}>Cancelar</Button>
             </form>
         </Container>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import myfetch from '../utils/myfetch';
 import { Button, CssBaseline, TextField, Box, Typography, Container, ThemeProvider } from '@mui/material';
 import logo from '../assets/Sallogo.png';
@@ -10,6 +11,7 @@ function LoginForm() {
   const [usernameError, setUsernameError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
   const [loginError, setLoginError] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ function LoginForm() {
       if (response.data && response.data.token){
         const { token } = response.data; //Store token in localStorage
         localStorage.setItem('token', token); // Store token in localStorage
-        // Redirect or perform desired action
+        navigate('/');
       } else {
         console.error('Login failed: Invalid response format')
         setLoginError('Ocorreu um erro. Tente novamente mais tarde')
@@ -67,6 +69,7 @@ function LoginForm() {
               mt: 3,
               mb: 2,
               fontFamily: 'Impact',
+              color: "white",
               fontSize: 53,
               textShadow: '-4px 4px 0 #9d2f2e, 4px 4px 0 #9d2f2e, 4px -4px 0 #9d2f2e, -4px -4px 0 #9d2f2e',
               textAlign: 'center',
@@ -83,6 +86,8 @@ function LoginForm() {
               label="Usuário"
               name="username"
               autoComplete="usuário"
+              variant="filled"
+              sx={{ backgroundColor: "white" }}
               value={username}
               onChange={handleUsernameChange}
               error={!!usernameError}
@@ -92,11 +97,13 @@ function LoginForm() {
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Senha"
-              type="password"
               id="password"
+              label="Senha"
+              name="password"
               autoComplete="current-password"
+              variant="filled"
+              type="password"
+              sx={{ backgroundColor: "white" }}
               value={password}
               onChange={handlePasswordChange}
               error={!!passwordError}

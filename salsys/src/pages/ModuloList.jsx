@@ -1,66 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React from 'react';
 import myfetch from '../utils/myfetch';
-import { Button, Typography, Divider, Box, Card, CardContent, CardActions } from '@mui/material';
+import { Link, useParams } from 'react-router-dom';
+import { Container, Typography, Divider, Button, Accordion, AccordionSummary, AccordionDetails, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+export default function Modulos() {
+    const { id } = useParams()
+    const [curso, setCurso] = React.useState(null);
+    const [modulos, setModulos] = React.useState([]);
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+    const [moduloToDelete, setmoduloToDelete] = React.useState(null);
 
-export default function Modulos(){
-
-    const { id } = useParams(); // Get the course id from the URL params
-    const [curso, setCurso] = useState(null);
-    const [modulos, setModulos] = useState([]);
-  
-    useEffect(() => {
-      // Fetch curso details and associated modules when component mounts
-      fetchCursoAndModulos();
+    React.useEffect(() => {
+        fetchCurso();
+        fetchModulos();
     }, []);
-  
-    const fetchCursoAndModulos = async () => {
-      try {
-        // Fetch course details
-        const cursoResponse = await myfetch.get(`/cursos/${id}`);
-        setCurso(cursoResponse);
-  
-        // Fetch associated modules
-        const modulosResponse = await myfetch.get(`/modulos/${id}`);
-        setModulos(modulosResponse);
-      } catch (error) {
-        console.error(error);
-        // Handle error
-      }
+
+    const fetchCurso = async () => {
+        try {
+            const cursoId = id;
+            const result = await myfetch.get(`/cursos/${cursoId}`);
+            setCurso(result);
+        } catch (error) {
+            console.error(error);
+            alert('ERRO: ' + error.message);
+        }
     };
-  
+
+    const fetchModulos = async () => {
+        try {
+            const cursoId = id;
+            const result = await myfetch.get(`/modulos/curso/${cursoId}`);
+            setModulos(result);
+        } catch (error) {
+            console.error(error);
+            alert('ERRO: ' + error.message);
+        }
+    };
+
+    const handleDeleteConfirmation = (modulo) => {
+        setmoduloToDelete(modulo);
+        setOpenDeleteDialog(true);
+    };
+
+    const handleDelete = async () => {
+        if (moduloToDelete) {
+            try {
+                // Make delete request
+                // await myfetch.delete(`/modulos/${moduloToDelete.id}`);
+
+                // For demo, removing the modulo directly from the state
+                setModulos(modulos.filter(modulo => modulo.id !== moduloToDelete.id));
+                setOpenDeleteDialog(false);
+            } catch (error) {
+                console.error(error);
+                alert('ERRO: ' + error.message);
+            }
+        }
+    };
+
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false);
+    };
+
     return (
-      <div>
-        {curso && (
-          <div>
-            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
-              Curso: {curso.nome}
-            </Typography>
+        <Container>
+            <Avatar alt={curso ? curso.nome : 'Loading...'} src={curso? curso.imageUrl : 'X'}>X</Avatar>
+            <Typography variant="h4">{curso ? curso.nome : 'Loading...'}</Typography>
             <Divider />
-            <Typography variant="h6" gutterBottom>
-              {curso.descricao}
-            </Typography>
-            <Typography variant="p" gutterBottom>
-              {curso.detalhes}
-            </Typography>
+            <Typography variant="h6">{curso ? curso.descricao : 'Loading...'}</Typography>
+            <Typography variant="body1">{curso ? curso.detalhes : 'Loading...'}</Typography>
             <Divider />
-            <Box mt={2}>
-              {modulos.map((modulo) => (
-                <Card key={modulo.id} sx={{ mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="h6" component="div" gutterBottom>
-                      {modulo.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {modulo.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          </div>
-        )}
-      </div>
+            <Typography variant="h5">Módulos</Typography>
+            {modulos.map((modulo, index) => (
+                <Accordion key={index}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography>{modulo.title}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>{`Weekday: ${modulo.weekday}, Hour: ${modulo.hour}`}</Typography>
+                        <IconButton component={Link} to={`/modulo/${modulo.id}`} aria-label="View modulo">
+                            View
+                        </IconButton>
+                        <IconButton component={Link} to={`/modulo/${modulo.id}/edit`} aria-label="Edit modulo">
+                            Edit
+                        </IconButton>
+                        <IconButton onClick={() => handleDeleteConfirmation(modulo)} aria-label="Delete modulo">
+                            Delete
+                        </IconButton>
+                    </AccordionDetails>
+                </Accordion>
+            ))}
+            <Button component={Link} to={`/curso/${id}/modulos/new`} variant="contained" color="primary">Criar Novo Módulo</Button>
+            <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+                <DialogTitle>Delete modulo</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete the modulo "{moduloToDelete ? moduloToDelete.title : ''}"?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDelete} color="secondary" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Container>
     );
 }

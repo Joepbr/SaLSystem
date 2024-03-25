@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Divider } from '@mui/material';
 import myfetch from '../utils/myfetch';
 
 export default function NovoCursoForm() {
-    const [cursoData, setCursoData] = useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
+    const [cursoData, setCursoData] = React.useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
     const navigate = useNavigate();
 
     const handleChange = (e) => {
