@@ -17,7 +17,11 @@ controller.create = async function (req, res) {
 
 controller.retrieveAll = async function (req, res) {
     try {
-        const result = await prisma.professor.findMany()
+        const result = await prisma.professor.findMany({
+            include: {
+                user: true
+            }
+        })
 
         res.send(result)
     }
@@ -31,7 +35,10 @@ controller.retrieveAll = async function (req, res) {
 controller.retrieveOne = async function (req, res) {
     try {
         const result = await prisma.professor.findUnique({
-            where: { id: Number(req.params.id) }
+            where: { id: Number(req.params.id) },
+            include: {
+                user: true
+            }
         })
 
         if(result) res.send(result)

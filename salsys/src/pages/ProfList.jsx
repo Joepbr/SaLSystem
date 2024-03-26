@@ -1,18 +1,18 @@
 import React from 'react'
-/*
 import myfetch from '../utils/myfetch'
 
-import { Button, CssBaseline, Box, Typography, Container, ThemeProvider, Divider, Card, CardContent, CardActionArea, CardMedia, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Accordion, AccordionSummary, AccordionDetails, Avatar, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import { Link } from 'react-router-dom'
 import theme from '../utils/theme';
 
 
-export default function Cursos(){
-    const [cursos, setCursos] = React.useState([])
+export default function Profs(){
+    const [profs, setProfs] = React.useState([])
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
-    const [cursoToDelete, setCursoToDelete] = React.useState(null)
+    const [profToDelete, setProfToDelete] = React.useState(null)
 
     React.useEffect(() => {
         fetchData()
@@ -20,9 +20,9 @@ export default function Cursos(){
 
     async function fetchData() {
         try {
-            const result = await myfetch.get('/cursos')
-            result.sort((a, b) => a.id - b.id)
-            setCursos(result)
+            const result = await myfetch.get('/professores')
+            result.sort((a, b) => a.user.nome.localeCompare(b.user.nome))
+            setProfs(result)
         }
         catch(error) {
             console.error(error)
@@ -30,19 +30,20 @@ export default function Cursos(){
         }
     }
 
-    const handleDeleteConfirmation = (cursos, event) => {
+    const handleDeleteConfirmation = (profs, event) => {
         if (event) {
             event.preventDefault()
         }
-        setCursoToDelete(cursos)
+        setProfToDelete(profs)
         setOpenDeleteDialog(true)
     }
 
     const handleDelete = async () => {
-        if (cursoToDelete) {
+        if (profToDelete) {
             try {
-                await myfetch.delete(`/cursos/${cursoToDelete.id}`);
+                await myfetch.delete(`/professores/${profToDelete.id}`);
                 setOpenDeleteDialog(false)
+                fetchData()
             } catch (error) {
                 console.error(error)
                 alert('ERRO: '+ error.message)
@@ -59,46 +60,35 @@ export default function Cursos(){
             <Container>
                 <CssBaseline>
                     <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
-                        Cursos oferecidos pela Escola:
+                        Lista de Professores da Escola:
                     </Typography>
                     <Divider />
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', }}>
-                        {cursos.map((curso, index) => (
-                            <Card key={index} sx={{ minWidth: 275, margin: 2, backgroundColor: "white" }}>
-                                <Link to={`/curso/${curso.id}`} style={{textDecoration: 'none'}}>
-                                    <CardActionArea>
-                                        <CardMedia
-                                            component="img"
-                                            height= "140"
-                                            image={curso.imageUrl}
-                                            alt={curso.nome}
-                                        />
-                                        <CardContent>
-                                            <Typography gutterBottom variant="h5" component="div" sx={{ color: "black" }} >
-                                                {curso.nome}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ mb:1.5, color: "black" }} >
-                                                {curso.descricao}
-                                            </Typography>
-                                            <Box display="flex" justifyContent="space-between">
-                                                <Button component={Link} to={`/curso/${curso.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
-                                                <Button onClick={(event) => handleDeleteConfirmation(curso, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
-                                            </Box>
-                                        </CardContent>
-                                    </CardActionArea>
-                                </Link>
-                            </Card>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', marginTop: 2}}>
+                        {profs.map((prof, index) => (
+                            <Accordion key={index} sx={{ marginBottom: 2, width: '100%' }}>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
+                                    <Typography sx={{ ml: 2 }} variant="h5">{prof.user.nome}</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails sx={{ flexDirection: 'column' }}>
+                                    <Typography>{prof.especialidade}</Typography>
+                                    <Box display="flex" justifyContent="space-between">
+                                        <Button component={Link} to={`/profs/${prof.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
+                                        <Button onClick={(event) => handleDeleteConfirmation(prof, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion>
                         ))}
                     <Divider />
                     </Box>
                     <Box display="flex">
-                        <Button component={Link} to="/cursos/new" variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Criar Novo Curso </Button>
+                        <Button component={Link} to="/profs/new" variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Cadastrar Novo Professor </Button>
                     </Box>
                     <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-                        <DialogTitle>Deletar Curso</DialogTitle>
+                        <DialogTitle>Remover Professor</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Tem certeza que você deseja deletar o curso "{cursoToDelete ? cursoToDelete.nome : ''}"?
+                                Tem certeza que você deseja remover o professor "{profToDelete ? profToDelete.nome : ''}"?
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
@@ -113,14 +103,5 @@ export default function Cursos(){
                 </CssBaseline>
             </Container>
         </ThemeProvider>
-    )
-}
-*/
-export default function Profs(){
-    return (
-        <>
-            <h1>Página de Registro de Professores</h1>
-            <p>Futuramente esta página listará os professores cadastrados no sistema</p>
-        </>
     )
 }

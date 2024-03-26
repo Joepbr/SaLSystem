@@ -36,7 +36,7 @@ model modulo {
   preco           Float?
   curso           curso             @relation(fields: [cursoId], references: [id])
   cursoId         Int        
-  professor       professor         @relation(fields: [profId], references: [profId])
+  professor       professor         @relation(fields: [profId], references: [id])
   profId          Int
   aula            aula[]
   matricula       matricula[]
@@ -65,10 +65,12 @@ model user {
 
 model professor {
   cpf             String            @unique@db.VarChar(11)
-  formacao        String?
+  data_nasc       DateTime?         @db.Date
+  especialidade   String?
   salario         Float?
-  user            user              @relation(fields:[profId], references: [id])
-  profId          Int               @id
+  imageUrl        String?
+  user            user              @relation(fields:[id], references: [id])
+  id              Int               @id
   modulo          modulo[]
   aula            aula[]
   avaliacao       avaliacao[]
@@ -76,8 +78,8 @@ model professor {
 
 model aluno {
   data_nasc       DateTime          @db.Date
-  user            user              @relation(fields:[alunoId], references:[id])
-  alunoId         Int               @id
+  user            user              @relation(fields:[id], references:[id])
+  id              Int               @id
   responsavel     responsavel?
   matricula       matricula[]
   presenca        presenca[]
@@ -86,9 +88,10 @@ model aluno {
 
 model responsavel {
   cpf             String            @db.VarChar(11)
-  user            user              @relation(fields:[userId], references:[id])
-  userId          Int               @id
-  aluno           aluno             @relation(fields:[alunoId], references:[alunoId])
+  data_nasc       DateTime?         @db.Date
+  user            user              @relation(fields:[id], references:[id])
+  id              Int               @id
+  aluno           aluno             @relation(fields:[alunoId], references:[id])
   alunoId         Int               @unique
 }
 
@@ -96,7 +99,7 @@ model aula {
   id              Int               @id@default(autoincrement())
   modulo          modulo            @relation(fields:[moduloId], references:[id])
   moduloId        Int
-  professor       professor         @relation(fields: [profId], references: [profId])
+  professor       professor         @relation(fields: [profId], references: [id])
   profId          Int
   data            DateTime          @db.Date
   conteudo        String?
@@ -107,7 +110,7 @@ model aula {
 
 model matricula {
   id               Int              @id@default(autoincrement())
-  aluno            aluno            @relation(fields:[alunoId], references:[alunoId])
+  aluno            aluno            @relation(fields:[alunoId], references:[id])
   alunoId          Int
   modulo           modulo           @relation(fields:[moduloId], references:[id])
   moduloId         Int
@@ -118,7 +121,7 @@ model matricula {
 
 model presenca {
   id               Int               @id@default(autoincrement())
-  aluno            aluno             @relation(fields:[alunoId], references:[alunoId])
+  aluno            aluno             @relation(fields:[alunoId], references:[id])
   alunoId          Int
   aula             aula              @relation(fields:[aulaId], references:[id])
   aulaId           Int
@@ -129,11 +132,11 @@ model presenca {
 
 model avaliacao {
   id               Int               @id@default(autoincrement())
-  professor        professor         @relation(fields:[profId], references: [profId])
+  professor        professor         @relation(fields:[profId], references: [id])
   profId           Int
   modulo           modulo            @relation(fields: [moduloId], references: [id])
   moduloId         Int
-  aluno            aluno             @relation(fields: [alunoId], references: [alunoId])
+  aluno            aluno             @relation(fields: [alunoId], references: [id])
   alunoId          Int
   data             DateTime          @db.Date
   is_prova         Boolean
