@@ -7,6 +7,7 @@ router.post('/', controller.create)
 router.get('/', controller.retrieveAll)
 router.get('/:id', controller.retrieveOne)
 router.get('/curso/:cursoId', controller.retrieveByCourseId)
+router.get('/professor/:profId', controller.retrieveByProfId)
 router.put('/:id', controller.update)
 router.delete('/:id', controller.delete)
 

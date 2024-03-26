@@ -1,7 +1,7 @@
 import React from 'react'
 import myfetch from '../utils/myfetch'
 
-import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Accordion, AccordionSummary, AccordionDetails, Avatar, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Accordion, AccordionSummary, AccordionDetails, Avatar, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, AccordionActions, Stack, Link as MuiLink } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -13,6 +13,7 @@ export default function Profs(){
     const [profs, setProfs] = React.useState([])
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
     const [profToDelete, setProfToDelete] = React.useState(null)
+    const [expandedAccordion, setExpandedAccordion] = React.useState(null)
 
     React.useEffect(() => {
         fetchData()
@@ -28,6 +29,10 @@ export default function Profs(){
             console.error(error)
             alert('ERRO: ' + error.message)
         }
+    }
+
+    const handleAccordionChange = (index) => {
+        setExpandedAccordion(expandedAccordion === index ? null : index);
     }
 
     const handleDeleteConfirmation = (profs, event) => {
@@ -63,20 +68,32 @@ export default function Profs(){
                         Lista de Professores da Escola:
                     </Typography>
                     <Divider />
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', marginTop: 2}}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', marginTop: 2, marginBottom: 2}}>
                         {profs.map((prof, index) => (
-                            <Accordion key={index} sx={{ marginBottom: 2, width: '100%' }}>
+                            <Accordion key={index} expanded={expandedAccordion === index} onChange={() => handleAccordionChange(index)} sx={{ width: '100%' }}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
-                                    <Typography sx={{ ml: 2 }} variant="h5">{prof.user.nome}</Typography>
+                                    {expandedAccordion === index ? (
+                                        <MuiLink component={Link} to={`/prof/${prof.id}`} underline="none" color="inherit" style={{ width: '100%' }}>
+                                            <Stack direction="row" spacing={2} alignItems="center">
+                                                <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
+                                                <Typography sx={{ ml: 2 }} variant="h5">{prof.user.nome}</Typography>
+                                            </Stack>
+                                        </MuiLink> 
+                                    ) : (
+                                        <>
+                                            <Avatar alt={prof.user.nome} src={prof.imageUrl} />
+                                            <Typography sx={{ ml: 2 }} variant="h5">{prof.user.nome}</Typography>
+                                        </>
+                                    )}
+                                    
                                 </AccordionSummary>
-                                <AccordionDetails sx={{ flexDirection: 'column' }}>
+                                <AccordionDetails sx={{ flexDirection: 'column', padding: 1, marginLeft: 5 }}>
                                     <Typography>{prof.especialidade}</Typography>
-                                    <Box display="flex" justifyContent="space-between">
-                                        <Button component={Link} to={`/profs/${prof.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
-                                        <Button onClick={(event) => handleDeleteConfirmation(prof, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
-                                    </Box>
                                 </AccordionDetails>
+                                <AccordionActions sx={{padding: 1}}>
+                                    <Button component={Link} to={`/prof/${prof.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
+                                    <Button onClick={(event) => handleDeleteConfirmation(prof, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                                </AccordionActions>
                             </Accordion>
                         ))}
                     <Divider />

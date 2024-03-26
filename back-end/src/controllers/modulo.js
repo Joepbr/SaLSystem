@@ -63,6 +63,25 @@ controller.retrieveByCourseId = async function (req, res) {
     }
 }
 
+controller.retrieveByProfId = async function (req, res) {
+    try {
+        const profId = Number(req.params.cursoId);
+        const result = await prisma.modulo.findMany({
+            where: {
+                profId: profId
+            }
+        });
+
+        if(result) res.send(result)
+        else res.status(404).end()
+    }
+    catch (error) {
+        console.log(error);
+
+        res.status(500).end();
+    }
+}
+
 controller.update = async function (req, res) {
     try {
         const result = await prisma.modulo.update({

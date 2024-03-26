@@ -12,6 +12,9 @@ import NovoCursoForm from './pages/NovoCursoForm'
 import EditarCursoForm from './pages/EditarCursoForm'
 import Modulos from './pages/ModuloList'
 import Profs from './pages/ProfList'
+import ProfProfile from './pages/ProfProfile'
+import NovoProfForm from './pages/NovoProfForm'
+import EditarProfForm from './pages/EditarProfForm'
 import Alunos from './pages/AlunoList'
 import Aulas from './pages/AulaList'
 
@@ -30,14 +33,21 @@ function App() {
 
             <Route path="/" element={<ProtectedPage />} >
               <Route index element={ <Homepage /> } />
-              <Route path="/cursos" element={ <Cursos /> } />
-              <Route path="/profs" element={ <Profs /> } />
-              <Route path="/alunos" element={ <Alunos /> } />
-              <Route path="/aulas" element={ <Aulas /> } />
 
+              <Route path="/cursos" element={ <Cursos /> } />
               <Route path="/curso/:id" element={ <Modulos/> } />
               <Route path="/cursos/new" element={ <NovoCursoForm/> } />
               <Route path="/curso/:id/edit" element={ <EditarCursoForm/> } />
+
+              <Route path="/profs" element={ <Profs /> } />
+              <Route path="/prof/:id" element={ <ProfProfile/> } />
+              <Route path="/profs/new" element={ <NovoProfForm/> } />
+              <Route path="/prof/:id/edit" element={ <EditarProfForm/> } />
+
+              <Route path="/alunos" element={ <Alunos /> } />
+
+              <Route path="/aulas" element={ <Aulas /> } />
+
             </Route>
           </Routes>
       </ThemeProvider>
@@ -61,6 +71,7 @@ function ProtectedPage({ children }) {
           sx={{ 
             marginLeft: '250px',
             marginTop: '100px',
+            marginRight: '50px'
           }}
         >
           <Outlet>
