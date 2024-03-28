@@ -10,6 +10,9 @@ npm install @mui/material @emotion/react @emotion/styled
 npm install @fontsource/roboto
 npm install @mui/icons-material
 
+    ->instalar react-icons
+npm install react-icons --save
+
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma
 

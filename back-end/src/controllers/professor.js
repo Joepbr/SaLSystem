@@ -22,6 +22,9 @@ controller.retrieveAll = async function (req, res) {
                 user: true
             }
         })
+        for(let user of result) {
+            if(user.user.password) delete user.user.password
+        }
 
         res.send(result)
     }
@@ -40,6 +43,7 @@ controller.retrieveOne = async function (req, res) {
                 user: true
             }
         })
+        if(result.user.password) delete result.user.password
 
         if(result) res.send(result)
         else res.status(404).end()

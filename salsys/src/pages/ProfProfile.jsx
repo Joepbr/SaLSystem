@@ -2,8 +2,9 @@ import React from 'react'
 import myfetch from '../utils/myfetch'
 
 import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Accordion, AccordionSummary, AccordionDetails, Avatar, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, AccordionActions, Stack, Link as MuiLink } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { MdEmail } from "react-icons/md";
+import { FaWhatsapp } from "react-icons/fa";
+
 
 import { Link, useParams } from 'react-router-dom'
 import theme from '../utils/theme';
@@ -13,8 +14,6 @@ export default function ProfProfile() {
     const { id } = useParams()
     const [prof, setProf] = React.useState(null);
     const [modulos, setModulos] = React.useState([]);
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
-    const [moduloToDelete, setmoduloToDelete] = React.useState(null);
 
     React.useEffect(() => {
         fetchProf();
@@ -43,34 +42,46 @@ export default function ProfProfile() {
         }
     };
 
-    const handleDeleteConfirmation = (modulo) => {
-        setmoduloToDelete(modulo);
-        setOpenDeleteDialog(true);
-    };
-
-    const handleDelete = async () => {
-        if (moduloToDelete) {
-            try {
-                // Make delete request
-                // await myfetch.delete(`/modulos/${moduloToDelete.id}`);
-
-                // For demo, removing the modulo directly from the state
-                setModulos(modulos.filter(modulo => modulo.id !== moduloToDelete.id));
-                setOpenDeleteDialog(false);
-            } catch (error) {
-                console.error(error);
-                alert('ERRO: ' + error.message);
-            }
-        }
-    };
-
-    const handleCloseDeleteDialog = () => {
-        setOpenDeleteDialog(false);
-    };
     return (
-        <Container>
-            <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
-            <h2>Profile Page of Prof with ID: {id}</h2>
-        </Container>
+        <ThemeProvider theme={theme}>
+            <Container>
+                <CssBaseline>
+                    {prof && (
+                        <>
+                            <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
+                            <Typography variant="h4">{prof.user.nome}</Typography>
+                            <Typography variant="h6">{prof.especialidade}</Typography>
+                            <Divider />
+                            <Box sx={{ margin: "25px" }}>
+                                <Typography variant="body1" >
+                                    Contatos:
+                                    <Box>
+                                        <MdEmail /> <a href={`mailto:${prof.user.email}`}>E-mail</a>
+                                    </Box>
+                                    <Box>
+                                        <FaWhatsapp /> <a href={`https://wa.me/${prof.user.telefone}`}>WhatsApp</a>
+                                    </Box>
+                                </Typography>
+                            </Box>
+                        </>
+                    )}
+                    <Divider />
+                    <Typography variant="h5">Módulos</Typography>
+                    {modulos.map((modulo, index) => (
+                        <Accordion key={index}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography>{modulo.titulo}</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Typography>{`Dias de aula: ${modulo.dias_sem}, Horário: ${modulo.horario}`}</Typography>
+                                <IconButton component={Link} to={`/modulo/${modulo.id}`} aria-label="View modulo">
+                                    View
+                                </IconButton>
+                            </AccordionDetails>
+                        </Accordion>
+                    ))}
+                </CssBaseline>
+            </Container>
+        </ThemeProvider>
     )
 }

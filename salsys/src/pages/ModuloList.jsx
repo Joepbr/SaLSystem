@@ -78,7 +78,7 @@ export default function Modulos() {
                         <Typography>{modulo.title}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography>{`Weekday: ${modulo.weekday}, Hour: ${modulo.hour}`}</Typography>
+                        <Typography>{`Dias de aula: ${modulo.dias_sem}, Horário: ${modulo.horario}`}</Typography>
                         <IconButton component={Link} to={`/modulo/${modulo.id}`} aria-label="View modulo">
                             View
                         </IconButton>
@@ -96,7 +96,7 @@ export default function Modulos() {
                 <DialogTitle>Delete modulo</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete the modulo "{moduloToDelete ? moduloToDelete.title : ''}"?
+                        Are you sure you want to delete the modulo "{moduloToDelete ? moduloToDelete.titulo : ''}"?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

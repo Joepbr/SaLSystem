@@ -65,7 +65,7 @@ controller.retrieveByCourseId = async function (req, res) {
 
 controller.retrieveByProfId = async function (req, res) {
     try {
-        const profId = Number(req.params.cursoId);
+        const profId = Number(req.params.id);
         const result = await prisma.modulo.findMany({
             where: {
                 profId: profId
