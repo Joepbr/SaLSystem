@@ -12,6 +12,8 @@ npm install @mui/icons-material
 
     ->instalar react-icons
 npm install react-icons --save
+    ->instalar react-big-calendar
+npm install --save react-big-calendar
 
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma

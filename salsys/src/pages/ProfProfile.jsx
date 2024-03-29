@@ -63,6 +63,9 @@ export default function ProfProfile() {
                                     </Box>
                                 </Typography>
                             </Box>
+                            <Box display="flex" sx={{ margin: "10px" }}>
+                                <Button component={Link} to={`/prof/${prof.id}/disponib`} variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Ajustar Disponibilidade </Button>
+                            </Box>
                         </>
                     )}
                     <Divider />

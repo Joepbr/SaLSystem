@@ -15,6 +15,7 @@ import Profs from './pages/ProfList'
 import ProfProfile from './pages/ProfProfile'
 import NovoProfForm from './pages/NovoProfForm'
 import EditarProfForm from './pages/EditarProfForm'
+import Disponibilidade from './pages/DisponibForm'
 import Alunos from './pages/AlunoList'
 import Aulas from './pages/AulaList'
 
@@ -43,6 +44,7 @@ function App() {
               <Route path="/prof/:id" element={ <ProfProfile/> } />
               <Route path="/profs/new" element={ <NovoProfForm/> } />
               <Route path="/prof/:id/edit" element={ <EditarProfForm/> } />
+              <Route path="/prof/:id/disponib" element={ <Disponibilidade/> } />
 
               <Route path="/alunos" element={ <Alunos /> } />
 
