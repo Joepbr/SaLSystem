@@ -1,43 +1,104 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Box, Typography, TextField, Button, Divider } from '@mui/material';
+import { Container, Box, Typography, TextField, Button, Divider, Grid, Select, MenuItem } from '@mui/material';
 import myfetch from '../utils/myfetch';
+import IMask from 'imask';
 
 export default function CreateTeacherForm() {
     const navigate = useNavigate();
     const [nome, setNome] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [telefone, setTelefone] = React.useState('');
-    const [address, setAddress] = React.useState('');
-    const [subjectTaught, setSubjectTaught] = React.useState('');
-    const [profileImage, setProfileImage] = React.useState('');
+    const [end_logr, setEnd_logr] = React.useState('');
+    const [end_num, setEnd_num] = React.useState('');
+    const [end_compl, setEnd_compl] = React.useState('');
+    const [end_cid, setEnd_cid] = React.useState('');
+    const [end_estado, setEnd_estado] = React.useState('');
+    const [username, setUsername] = React.useState('')
+    const [password, setPassword] = React.useState('')
+    const [data_nasc, setData_nasc] = React.useState('')
+    const [especialidade, setEspecialidade] = React.useState('');
+    const [imageUrl, setImageUrl] = React.useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!nome || !email || !telefone || !end_logr || !end_num || !end_cid || !end_estado || !username || !password || !data_nasc || !especialidade) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+    
         try {
-            // Call your backend API to create a new user and a new teacher
-            const response = await myfetch.post('/create-teacher', {
+            const dateOfBirth = new Date(data_nasc)
+
+            const formattedDateOfBirth = dateOfBirth.toISOString()
+
+            const endNumInteger = parseInt(end_num, 10);
+
+            const response = await myfetch.post('/professores', {
                 nome,
                 email,
                 telefone,
-                address,
-                subjectTaught,
-                profileImage
+                end_logr,
+                end_num: endNumInteger,
+                end_compl,
+                end_cid,
+                end_estado,
+                username,
+                password,
+                data_nasc: formattedDateOfBirth,
+                especialidade,
+                imageUrl
             });
-            // Handle success
-            console.log('Teacher created:', response);
+            
+            console.log('Professor cadastrado:', response);
+            navigate('/profs')
         } catch (error) {
-            // Handle error
-            console.error('Error creating teacher:', error);
+
+            console.error('Erro ao cadastrar professor:', error);
         }
     };
+
+    const dataNascInputRef = React.useRef(null);
+
+    React.useEffect(() => {
+        const dataNascMask = IMask(dataNascInputRef.current, {
+            mask: Date,
+            pattern: 'd{.}`m{.}`Y',
+            lazy: false,
+            onAccept: function () {
+                // Update the value of the input field when the mask accepts a value
+                setData_nasc(this.value);
+            }    
+        });
+
+        return () => {
+            dataNascMask.destroy();
+        };
+    }, []);
+
+    const telefoneInputRef = React.useRef(null);
+
+    React.useEffect(() => {
+        if (telefoneInputRef.current) {
+            IMask(telefoneInputRef.current, {
+                mask: '+{55} (00) 00000-0000'
+            });
+        }
+    }, []);
+
+    const estados = [
+        'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB',
+        'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+    ];
+
 
     return (
         <Container>
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Cadastrar Novo Professor</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>
-                <Typography>Nome do professor: </Typography>
+                <Typography>Nome do Professor: </Typography>
                 <TextField
                     name="nome"
                     label="Nome"
@@ -50,7 +111,7 @@ export default function CreateTeacherForm() {
                     required
                 />
                 <Divider />
-                <Typography>E-mail de contato: </Typography>
+                <Typography>E-mail de Contato: </Typography>
                 <TextField
                     name="email"
                     label="Email"
@@ -63,8 +124,9 @@ export default function CreateTeacherForm() {
                     required
                 />
                 <Divider />
-                <Typography>Telefone de contato: </Typography>
+                <Typography>Telefone de Contato: </Typography>
                 <TextField
+                    inputRef={telefoneInputRef}
                     name="telefone"
                     label="Telefone"
                     variant="filled"
@@ -72,18 +134,121 @@ export default function CreateTeacherForm() {
                     margin="normal"
                     fullWidth
                     value={telefone}
-                    onChange={(e) => setTelephone(e.target.value)}
+                    onChange={(e) => setTelefone(e.target.value)}
                     required
                 />
                 <Divider />
                 <Typography>Endereço: </Typography>
+                <Grid container spacing={2}>
+                    <Grid item xs={8}>
+                        <TextField
+                            name="endereço"
+                            label="Endereço"
+                            variant="filled"
+                            sx={{backgroundColor: "white", color: "black", margin: "10px", flexGrow: 3}}
+                            margin="normal"
+                            fullWidth
+                            value={end_logr}
+                            onChange={(e) => setEnd_logr(e.target.value)}
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            name="número"
+                            label="Número"
+                            variant="filled"
+                            sx={{backgroundColor: "white", color: "black", margin: "10px"}}
+                            margin="normal"
+                            fullWidth
+                            value={end_num}
+                            onChange={(e) => setEnd_num(e.target.value)}
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            name="complemento"
+                            label="Complemento"
+                            variant="filled"
+                            sx={{backgroundColor: "white", color: "black", margin: "10px"}}
+                            margin="normal"
+                            fullWidth
+                            value={end_compl}
+                            onChange={(e) => setEnd_compl(e.target.value)}
+                        />
+                    </Grid>
+                </Grid>
+                
+                <Box>
+                    <TextField
+                        name="cidade"
+                        label="Cidade"
+                        variant="filled"
+                        sx={{backgroundColor: "white", color: "black", margin: "10px"}}
+                        margin="normal"
+                        value={end_cid}
+                        onChange={(e) => setEnd_cid(e.target.value)}
+                        required
+                    />
+                    <Select
+                        name="estado"
+                        label="Estado"
+                        variant="filled"
+                        sx={{backgroundColor: "white", color: "black", margin: "10px"}}
+                        margin="normal"
+                        value={end_estado}
+                        onChange={(e) => setEnd_estado(e.target.value)}
+                        required
+                    >
+                        {estados.map((estado) => (
+                            <MenuItem key={estado} value={estado}>{estado}</MenuItem>
+                        ))}
+                    </Select>
+                </Box>
+                <Divider />
+                <Typography>Nome de Usuário: </Typography>
                 <TextField
-                    label="Address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    name="username"
+                    label="Usuário"
+                    variant="filled"
+                    sx={{backgroundColor: "white", color: "black"}}
+                    margin="normal"
+                    fullWidth
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
                 />
                 <Divider />
-                <Typography>Idiomas e matérias que leciona: </Typography>
+                <Typography>Criar Senha: </Typography>
+                <TextField
+                    name="password"
+                    label="Senha"
+                    variant="filled"
+                    type="password"
+                    sx={{backgroundColor: "white", color: "black"}}
+                    margin="normal"
+                    fullWidth
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <Divider />
+                <Typography>Data de Nascimento: </Typography>
+                <TextField
+                    inputRef={dataNascInputRef}
+                    name="data de nascimento"
+                    label="Data de nascimento"
+                    variant="filled"
+                    sx={{backgroundColor: "white", color: "black"}}
+                    margin="normal"
+                    fullWidth
+                    value={data_nasc}
+                    onChange={(e) => setData_nasc(e.target.value)}
+                    required
+                />
+                <Divider />
+                <Typography>Idiomas e Matérias que Leciona: </Typography>
                 <TextField
                     name="idiomas e matérias"
                     label="Idiomas e matérias"
@@ -91,8 +256,8 @@ export default function CreateTeacherForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={subjectTaught}
-                    onChange={(e) => setSubjectTaught(e.target.value)}
+                    value={especialidade}
+                    onChange={(e) => setEspecialidade(e.target.value)}
                     required
                 />
                 <Divider />
@@ -104,8 +269,8 @@ export default function CreateTeacherForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={profileImage}
-                    onChange={(e) => setProfileImage(e.target.value)}
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
                 />
                 <Box sx={{ padding: '10px' }}>
                     <Button type="submit" variant="contained" color="primary">Cadastrar Professor</Button>

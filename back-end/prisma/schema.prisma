@@ -64,7 +64,7 @@ model user {
 }
 
 model professor {
-  cpf             String            @unique@db.VarChar(11)
+  cpf             String?           @unique@db.VarChar(11)
   data_nasc       DateTime?         @db.Date
   especialidade   String?
   salario         Float?
@@ -74,6 +74,7 @@ model professor {
   modulo          modulo[]
   aula            aula[]
   avaliacao       avaliacao[]
+  disponibilidade disponibilidade[]
 }
 
 model aluno {
@@ -143,4 +144,13 @@ model avaliacao {
   nota             Float?
 
   //@@id(name: "Id", [profId, moduloId, alunoId, data])
+}
+
+model disponibilidade {
+  id               Int               @id@default(autoincrement())
+  professor        professor         @relation(fields:[profId], references: [id])
+  profId           Int
+  dia              Int
+  start            DateTime
+  end              DateTime
 }

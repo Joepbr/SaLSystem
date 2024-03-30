@@ -14,6 +14,8 @@ npm install @mui/icons-material
 npm install react-icons --save
     ->instalar react-big-calendar
 npm install --save react-big-calendar
+    ->instaar iMask
+npm install imask
 
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma

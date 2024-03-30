@@ -63,4 +63,7 @@ app.use('/presencas', presencaRoute)
 import avaliacaoRoute from './routes/avaliacao.js'
 app.use('/avaliacoes', avaliacaoRoute)
 
+import disponibilidadeRoute from './routes/disponibilidade.js'
+app.use('/disponibilidade', disponibilidadeRoute)
+
 export default app;

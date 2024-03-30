@@ -2,7 +2,7 @@ import React from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import 'moment/locale/pt-br';
+import 'moment/dist/locale/pt-br';
 import myfetch from '../utils/myfetch';
 
 const localizer = momentLocalizer(moment);
@@ -83,7 +83,7 @@ export default function Disponibilidade() {
                 formats={{
                     dayFormat: 'dddd'
                 }}
-                culture="pt-BR"
+                culture={"pt-BR"}
             />
             <p>{JSON.stringify(selectedSlot)}</p>
             <p>{JSON.stringify(disponibilidade)}</p>
