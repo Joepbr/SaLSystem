@@ -55,6 +55,8 @@ export default function EditTeacherForm() {
 
             const dataNascISO = teacherData.data_nasc.toISOString()
     
+            console.log('Teacher data before submission:', teacherData);
+
             setTeacherData({
                 ...teacherData,
                 end_num: endNumInteger,
@@ -242,9 +244,19 @@ export default function EditTeacherForm() {
                         sx={{backgroundColor: "white", color: "black"}}
                         margin="normal"
                         fullWidth
-                        value={formatDate(teacherData.data_nasc instanceof Date ? teacherData.data_nasc : new Date())}
+                        value={teacherData.data_nasc instanceof Date ? teacherData.data_nasc.toLocaleDateString('pt-BR') : ''}
                         onChange={(e) => {
-                            const parsedDate = new Date(e.target.value)
+
+                        }}
+                        onBlur={(e) => {
+                            const inputDate = e.target.value;
+                            console.log('Input date:', inputDate);
+                            const [day, month, year] = inputDate.split('.');
+                            console.log('Day:', day);
+                            console.log('Month:', month);
+                            console.log('Year:', year);
+                            const parsedDate = new Date(`${year}-${month}-${day}`);
+                            console.log('Parsed date:', parsedDate);
                             setTeacherData({...teacherData, data_nasc: parsedDate});
                         }}
                         onFocus={() => {
