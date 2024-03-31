@@ -179,7 +179,6 @@ export default function CreateTeacherForm() {
                         />
                     </Grid>
                 </Grid>
-                
                 <Box>
                     <TextField
                         name="cidade"

@@ -47,6 +47,7 @@ export default function Profs(){
         if (profToDelete) {
             try {
                 await myfetch.delete(`/professores/${profToDelete.id}`);
+                await myfetch.delete(`/users/${profToDelete.id}`)
                 setOpenDeleteDialog(false)
                 fetchData()
             } catch (error) {

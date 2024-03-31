@@ -21,6 +21,11 @@ export default function EditTeacherForm() {
         imageUrl: ''
     });
 
+    function formatDate(date) {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return date.toLocaleDateString('pt-BR', options);
+    }    
+
     React.useEffect(() => {
         const fetchTeacherData = async () => {
             try {
@@ -29,12 +34,10 @@ export default function EditTeacherForm() {
                 const professorData = await myfetch.get(`/users/${id}`)
                 const combinedData = { ...userData, ...professorData}
 
-                const formattedBirthdate = new Date(combinedData.data_nasc).toLocaleDateString('pt-BR')
-                
-                setTeacherData({
-                    ...combinedData,
-                    data_nasc: formattedBirthdate
-                });
+                combinedData.data_nasc = new Date(combinedData.data_nasc)
+
+                setTeacherData(combinedData);
+
             } catch (error) {
                 console.error('Erro ao ler dados do professor:', error);
             }
@@ -50,21 +53,21 @@ export default function EditTeacherForm() {
 
             const endNumInteger = parseInt(teacherData.end_num)
 
-            const dataNascISO = new Date(teacherData.data_nasc).toISOString()
-
+            const dataNascISO = teacherData.data_nasc.toISOString()
+    
             setTeacherData({
                 ...teacherData,
                 end_num: endNumInteger,
                 data_nasc: dataNascISO
             })
 
-            await myfetch.put(`/professores/${id}`, {
+            const response1 = await myfetch.put(`/professores/${id}`, {
                 data_nasc: dataNascISO,
                 especialidade: teacherData.especialidade,
                 imageUrl: teacherData.imageUrl
             });
 
-            await myfetch.put(`/users/${teacherData.id}`, {
+            const response2 = await myfetch.put(`/users/${teacherData.id}`, {
                 nome: teacherData.nome,
                 email: teacherData.email,
                 telefone: teacherData.telefone,
@@ -75,7 +78,7 @@ export default function EditTeacherForm() {
                 end_estado: teacherData.end_estado
             })
 
-            console.log('Dados do professor editados com sucesso:', response);
+            console.log('Dados do professor editados com sucesso:', response1, response2);
             navigate('/profs');
         } catch (error) {
             console.error('Erro ao editar dados do professor:', error);
@@ -90,8 +93,11 @@ export default function EditTeacherForm() {
             pattern: 'd{.}`m{.}`Y',
             lazy: false,
             onAccept: function () {
-                setData_nasc(this.value);
-            }    
+                setTeacherData({...teacherData, data_nasc: this.value});
+            },
+            onAcceptDone: function () {
+                this.updateValue()
+            }
         });
 
         return () => {
@@ -200,7 +206,6 @@ export default function EditTeacherForm() {
                             />
                         </Grid>
                     </Grid>
-                    
                     <Box>
                         <TextField
                             name="cidade"
@@ -237,8 +242,17 @@ export default function EditTeacherForm() {
                         sx={{backgroundColor: "white", color: "black"}}
                         margin="normal"
                         fullWidth
-                        value={teacherData.data_nasc}
-                        onChange={(e) => setTeacherData({...teacherData, data_nasc: e.target.value})}
+                        value={formatDate(teacherData.data_nasc instanceof Date ? teacherData.data_nasc : new Date())}
+                        onChange={(e) => {
+                            const parsedDate = new Date(e.target.value)
+                            setTeacherData({...teacherData, data_nasc: parsedDate});
+                        }}
+                        onFocus={() => {
+                            if (dataNascInputRef.current && dataNascInputRef.current.input) {
+                                dataNascInputRef.current.input.value = formatDate(teacherData.data_nasc);
+                                dataNascInputRef.current.updateValue();
+                            }
+                        }}
                         required
                     />
                     <Divider />
