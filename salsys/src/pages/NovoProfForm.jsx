@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Box, Typography, TextField, Button, Divider, Grid, Select, MenuItem } from '@mui/material';
+import { Container, Box, Typography, TextField, Button, Divider, Grid, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
 
@@ -190,20 +190,23 @@ export default function CreateTeacherForm() {
                         onChange={(e) => setEnd_cid(e.target.value)}
                         required
                     />
-                    <Select
-                        name="estado"
-                        label="Estado"
-                        variant="filled"
-                        sx={{backgroundColor: "white", color: "black", margin: "10px"}}
-                        margin="normal"
-                        value={end_estado}
-                        onChange={(e) => setEnd_estado(e.target.value)}
-                        required
-                    >
-                        {estados.map((estado) => (
-                            <MenuItem key={estado} value={estado}>{estado}</MenuItem>
-                        ))}
-                    </Select>
+                    <FormControl>
+                        <InputLabel>Estado</InputLabel>
+                        <Select
+                            name="estado"
+                            label="Estado"
+                            variant="filled"
+                            sx={{backgroundColor: "white", color: "black", margin: "10px"}}
+                            margin="normal"
+                            value={end_estado}
+                            onChange={(e) => setEnd_estado(e.target.value)}
+                            required
+                        >
+                            {estados.map((estado) => (
+                                <MenuItem key={estado} value={estado}>{estado}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Box>
                 <Divider />
                 <Typography>Nome de Usuário: </Typography>

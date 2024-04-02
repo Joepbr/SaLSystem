@@ -28,7 +28,7 @@ model modulo {
   dias_sem        String
   horario         String
   dur_aula        Int
-  inicio          DateTime          @db.Date
+  inicio          DateTime
   dur_modulo      Int
   presencial      Boolean
   remoto          Boolean
@@ -65,7 +65,7 @@ model user {
 
 model professor {
   cpf             String?           @unique@db.VarChar(11)
-  data_nasc       DateTime?         @db.Date
+  data_nasc       DateTime?
   especialidade   String?
   salario         Float?
   imageUrl        String?
@@ -78,7 +78,7 @@ model professor {
 }
 
 model aluno {
-  data_nasc       DateTime          @db.Date
+  data_nasc       DateTime
   user            user              @relation(fields:[id], references:[id])
   id              Int               @id
   responsavel     responsavel?
@@ -89,7 +89,7 @@ model aluno {
 
 model responsavel {
   cpf             String            @db.VarChar(11)
-  data_nasc       DateTime?         @db.Date
+  data_nasc       DateTime?
   user            user              @relation(fields:[id], references:[id])
   id              Int               @id
   aluno           aluno             @relation(fields:[alunoId], references:[id])
@@ -102,7 +102,7 @@ model aula {
   moduloId        Int
   professor       professor         @relation(fields: [profId], references: [id])
   profId          Int
-  data            DateTime          @db.Date
+  data            DateTime
   conteudo        String?
   presenca        presenca[]
 
@@ -139,7 +139,7 @@ model avaliacao {
   moduloId         Int
   aluno            aluno             @relation(fields: [alunoId], references: [id])
   alunoId          Int
-  data             DateTime          @db.Date
+  data             DateTime
   is_prova         Boolean
   nota             Float?
 

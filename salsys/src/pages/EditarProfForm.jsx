@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Container, Typography, TextField, Button, Divider, Grid, Select, MenuItem, Box } from '@mui/material';
+import { Container, Typography, TextField, Button, Divider, Grid, Select, MenuItem, Box, InputLabel, FormControl } from '@mui/material';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
 
@@ -219,20 +219,23 @@ export default function EditTeacherForm() {
                             onChange={(e) => setTeacherData({...teacherData, end_cid: e.target.value})}
                             required
                         />
-                        <Select
-                            name="estado"
-                            label="Estado"
-                            variant="filled"
-                            sx={{backgroundColor: "white", color: "black", margin: "10px"}}
-                            margin="normal"
-                            value={teacherData.end_estado}
-                            onChange={(e) => setTeacherData({...teacherData, end_estado: e.target.value})}
-                            required
-                        >
-                            {estados.map((estado) => (
-                                <MenuItem key={estado} value={estado}>{estado}</MenuItem>
-                            ))}
-                        </Select>
+                        <FormControl>
+                            <InputLabel>Estado</InputLabel>
+                            <Select
+                                name="estado"
+                                label="Estado"
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black", margin: "10px"}}
+                                margin="normal"
+                                value={teacherData.end_estado}
+                                onChange={(e) => setTeacherData({...teacherData, end_estado: e.target.value})}
+                                required
+                            >
+                                {estados.map((estado) => (
+                                    <MenuItem key={estado} value={estado}>{estado}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Box>
                     <Divider />
                     <Typography>Data de Nascimento: </Typography>

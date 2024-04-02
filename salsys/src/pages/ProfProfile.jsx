@@ -51,7 +51,7 @@ export default function ProfProfile() {
                             <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
                             <Typography variant="h4">{prof.user.nome}</Typography>
                             <Typography variant="h6">{prof.especialidade} </Typography>
-                            <Typography variant="body1">{prof.data_nasc}</Typography>
+                            {/*<Typography variant="body1">{prof.data_nasc}</Typography>*/}
                             <Divider />
                             <Box sx={{ margin: "25px" }}>
                                 <Typography variant="body1" >
