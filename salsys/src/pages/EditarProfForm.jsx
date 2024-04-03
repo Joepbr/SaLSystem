@@ -1,6 +1,11 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import moment from 'moment';
 import { Container, Typography, TextField, Button, Divider, Grid, Select, MenuItem, Box, InputLabel, FormControl } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
 
@@ -30,11 +35,12 @@ export default function EditTeacherForm() {
         const fetchTeacherData = async () => {
             try {
 
-                const userData = await myfetch.get(`/professores/${id}`);
-                const professorData = await myfetch.get(`/users/${id}`)
-                const combinedData = { ...userData, ...professorData}
+                const professorData = await myfetch.get(`/professores/${id}`);
+                const userData = await myfetch.get(`/users/${id}`)
 
-                combinedData.data_nasc = new Date(combinedData.data_nasc)
+                professorData.data_nasc = moment(professorData.data_nasc);
+
+                const combinedData = { ...professorData, ...userData}
 
                 setTeacherData(combinedData);
 
@@ -86,26 +92,6 @@ export default function EditTeacherForm() {
             console.error('Erro ao editar dados do professor:', error);
         }
     };
-
-    const dataNascInputRef = React.useRef(null);
-
-    React.useEffect(() => {
-        const dataNascMask = IMask(dataNascInputRef.current, {
-            mask: Date,
-            pattern: 'd{.}`m{.}`Y',
-            lazy: false,
-            onAccept: function () {
-                setTeacherData({...teacherData, data_nasc: this.value});
-            },
-            onAcceptDone: function () {
-                this.updateValue()
-            }
-        });
-
-        return () => {
-            dataNascMask.destroy();
-        };
-    }, []);
 
     const telefoneInputRef = React.useRef(null);
 
@@ -239,37 +225,24 @@ export default function EditTeacherForm() {
                     </Box>
                     <Divider />
                     <Typography>Data de Nascimento: </Typography>
-                    <TextField
-                        inputRef={dataNascInputRef}
-                        name="data de nascimento"
-                        label="Data de nascimento"
-                        variant="filled"
-                        sx={{backgroundColor: "white", color: "black"}}
-                        margin="normal"
-                        fullWidth
-                        value={teacherData.data_nasc instanceof Date ? teacherData.data_nasc.toLocaleDateString('pt-BR') : ''}
-                        onChange={(e) => {
-
-                        }}
-                        onBlur={(e) => {
-                            const inputDate = e.target.value;
-                            console.log('Input date:', inputDate);
-                            const [day, month, year] = inputDate.split('.');
-                            console.log('Day:', day);
-                            console.log('Month:', month);
-                            console.log('Year:', year);
-                            const parsedDate = new Date(`${year}-${month}-${day}`);
-                            console.log('Parsed date:', parsedDate);
-                            setTeacherData({...teacherData, data_nasc: parsedDate});
-                        }}
-                        onFocus={() => {
-                            if (dataNascInputRef.current && dataNascInputRef.current.input) {
-                                dataNascInputRef.current.input.value = formatDate(teacherData.data_nasc);
-                                dataNascInputRef.current.updateValue();
-                            }
-                        }}
-                        required
-                    />
+                    <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                        {moment.isMoment(teacherData.data_nasc) ? (
+                            <DatePicker
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black"}}
+                                margin="normal"
+                                fullWidth
+                                value={teacherData.data_nasc}
+                                onChange={(newValue) => setTeacherData({...teacherData, data_nasc: newValue})}
+                            >
+                                <TextField
+                                    variant="filled"
+                                />
+                            </DatePicker>
+                        ) : (
+                            <div>Carregando...</div>
+                        )}
+                    </LocalizationProvider>
                     <Divider />
                     <Typography>Idiomas e Matérias que Leciona: </Typography>
                     <TextField

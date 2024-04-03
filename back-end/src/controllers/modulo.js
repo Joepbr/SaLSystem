@@ -4,9 +4,20 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        await prisma.modulo.create({ data: req.body })
+        const { dias_sem, ...moduloData } = req.body
 
-        res.status(201).end()
+        const modulo = await prisma.modulo.create({ 
+            data: {
+                ...moduloData,
+                dias_sem: {
+                    createMany: {
+                        data: dias_sem.map(dia => ({ dia }))
+                    }
+                }
+            } 
+        })
+
+        res.status(201).json(modulo)
     }
     catch(error) {
         console.log(error)
@@ -17,7 +28,11 @@ controller.create = async function (req, res) {
 
 controller.retrieveAll = async function (req, res) {
     try {
-        const result = await prisma.modulo.findMany()
+        const result = await prisma.modulo.findMany({
+            include: {
+                dias_sem: true
+            }
+        })
 
         res.send(result)
     }
@@ -31,7 +46,10 @@ controller.retrieveAll = async function (req, res) {
 controller.retrieveOne = async function (req, res) {
     try {
         const result = await prisma.modulo.findUnique({
-            where: { id: Number(req.params.id) }
+            where: { id: Number(req.params.id) },
+            include: {
+                dias_sem: true
+            }
         })
 
         if(result) res.send(result)
@@ -50,6 +68,9 @@ controller.retrieveByCourseId = async function (req, res) {
         const result = await prisma.modulo.findMany({
             where: {
                 cursoId: cursoId
+            },
+            include: {
+                dias_sem: true
             }
         });
 
@@ -69,6 +90,9 @@ controller.retrieveByProfId = async function (req, res) {
         const result = await prisma.modulo.findMany({
             where: {
                 profId: profId
+            },
+            include: {
+                dias_sem: true
             }
         });
 
@@ -84,9 +108,20 @@ controller.retrieveByProfId = async function (req, res) {
 
 controller.update = async function (req, res) {
     try {
+        const moduloId = Number(req.params.id)
+        const { dias_sem, ...moduloData } = req.body
+
         const result = await prisma.modulo.update({
-            where: { id: Number(req.params.id) },
-            data: req.body
+            where: { id: moduloId },
+            data: {
+                ...moduloData,
+                dias_sem: {
+                    deleteMany: {},
+                    createMany: {
+                        data: dias_sem.map(dia => ({ dia }))
+                    }
+                }
+            }
         })
 
         if(result) res.status(204).end()
@@ -101,8 +136,10 @@ controller.update = async function (req, res) {
 
 controller.delete = async function (req, res) {
     try {
-        const result = await prisma.modulo.delete({
-            where: { id: Number(req.params.id) }
+        const moduloId = Number(req.params.id)
+
+        const result = await prisma.modulo.deleteMany({
+            where: { id: moduloId }
         })
 
         if(result) res.status(204).end()

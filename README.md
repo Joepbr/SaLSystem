@@ -10,12 +10,16 @@ npm install @mui/material @emotion/react @emotion/styled
 npm install @fontsource/roboto
 npm install @mui/icons-material
 
-    ->instalar react-icons
+    -> instalar react-icons
 npm install react-icons --save
-    ->instalar react-big-calendar
+    -> instalar react-big-calendar
 npm install --save react-big-calendar
-    ->instaar iMask
+    -> instaar iMask
 npm install imask
+    -> instalar date-pickers
+npm install @mui/x-date-pickers
+    -> instalar moment
+npm install moment
 
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma

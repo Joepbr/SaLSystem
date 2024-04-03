@@ -1,6 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import { Container, Box, Typography, TextField, Button, Divider, Grid, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
 
@@ -16,7 +21,7 @@ export default function CreateTeacherForm() {
     const [end_estado, setEnd_estado] = React.useState('');
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
-    const [data_nasc, setData_nasc] = React.useState('')
+    const [data_nasc, setData_nasc] = React.useState(moment())
     const [especialidade, setEspecialidade] = React.useState('');
     const [imageUrl, setImageUrl] = React.useState('');
 
@@ -58,24 +63,6 @@ export default function CreateTeacherForm() {
             console.error('Erro ao cadastrar professor:', error);
         }
     };
-
-    const dataNascInputRef = React.useRef(null);
-
-    React.useEffect(() => {
-        const dataNascMask = IMask(dataNascInputRef.current, {
-            mask: Date,
-            pattern: 'd{.}`m{.}`Y',
-            lazy: false,
-            onAccept: function () {
-                // Update the value of the input field when the mask accepts a value
-                setData_nasc(this.value);
-            }    
-        });
-
-        return () => {
-            dataNascMask.destroy();
-        };
-    }, []);
 
     const telefoneInputRef = React.useRef(null);
 
@@ -237,18 +224,24 @@ export default function CreateTeacherForm() {
                 />
                 <Divider />
                 <Typography>Data de Nascimento: </Typography>
-                <TextField
-                    inputRef={dataNascInputRef}
-                    name="data de nascimento"
-                    label="Data de nascimento"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    fullWidth
-                    value={data_nasc}
-                    onChange={(e) => setData_nasc(e.target.value)}
-                    required
-                />
+                <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                        {moment.isMoment(data_nasc) ? (
+                            <DatePicker
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black"}}
+                                margin="normal"
+                                fullWidth
+                                value={data_nasc}
+                                onChange={(newValue) => setData_nasc(newValue)}
+                            >
+                                <TextField
+                                    variant="filled"
+                                />
+                            </DatePicker>
+                        ) : (
+                            <div>Carregando...</div>
+                        )}
+                    </LocalizationProvider>
                 <Divider />
                 <Typography>Idiomas e Matérias que Leciona: </Typography>
                 <TextField

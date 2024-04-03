@@ -1,16 +1,22 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Container, Typography, TextField, Button, Divider, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel } from '@mui/material';
+import moment from 'moment';
+import { Container, Typography, TextField, Button, Divider, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel, Grid } from '@mui/material';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import WeekdaySelector from '../ui/WeekdaySelector';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 
 export default function NovoModuloForm() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [titulo, setTitulo] = React.useState('');
-    const [diasSem, setDiasSem] = React.useState('');
+    const [diasSem, setDiasSem] = React.useState([]);
     const [horario, setHorario] = React.useState('');
     const [durAula, setDurAula] = React.useState('');
-    const [inicio, setInicio] = React.useState('');
+    const [inicio, setInicio] = React.useState(moment());
     const [durModulo, setDurModulo] = React.useState('');
     const [presencial, setPresencial] = React.useState(false);
     const [remoto, setRemoto] = React.useState(false);
@@ -38,6 +44,11 @@ export default function NovoModuloForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!titulo || !diasSem.length || !horario || !durAula || !inicio || !durModulo || !professorId){
+            alert('Por favor, preencha todos os campos obrigatórios.')
+        }
+
         try {
             const formData = {
                 titulo,
@@ -65,6 +76,11 @@ export default function NovoModuloForm() {
         }
     };
 
+    const handleWeekdaysChange = (weekdays) => {
+        setDiasSem(weekdays);
+      };
+      
+
     return (
         <Container>
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Criar Novo Módulo</Typography>
@@ -83,16 +99,7 @@ export default function NovoModuloForm() {
                 />
                 <Divider />
                 <Typography>Dias de Aula na Semana:</Typography>
-                <TextField
-                    label="Dias da Semana"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    value={diasSem}
-                    onChange={(e) => setDiasSem(e.target.value)}
-                    fullWidth
-                    required
-                />
+                <WeekdaySelector selectedWeekdays={diasSem} onChange={handleWeekdaysChange} />
                 <Divider />
                 <Typography>Horário das Aulas:</Typography>
                 <TextField
@@ -120,6 +127,25 @@ export default function NovoModuloForm() {
                 />
                 <Divider />
                 <Typography>Dia de Início das Aulas:</Typography>
+                <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                        {moment.isMoment(inicio) ? (
+                            <DatePicker
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black"}}
+                                margin="normal"
+                                fullWidth
+                                value={inicio}
+                                onChange={(newValue) => setInicio(newValue)}
+                            >
+                                <TextField
+                                    variant="filled"
+                                />
+                            </DatePicker>
+                        ) : (
+                            <div>Carregando...</div>
+                        )}
+                    </LocalizationProvider>
+                    {/*
                 <TextField
                     label="Início"
                     variant="filled"
@@ -131,6 +157,7 @@ export default function NovoModuloForm() {
                     fullWidth
                     required
                 />
+                        */}
                 <Divider />
                 <Typography>Tempo de Duração do Módulo:</Typography>
                 <TextField

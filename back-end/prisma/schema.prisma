@@ -25,8 +25,7 @@ model curso {
 model modulo {
   id              Int               @id@default(autoincrement())
   titulo          String
-  dias_sem        String
-  horario         String
+  dias_sem        dias_sem[]
   dur_aula        Int
   inicio          DateTime
   dur_modulo      Int
@@ -43,6 +42,13 @@ model modulo {
   avaliacao       avaliacao[]
 
   //@@id(name: "codigo", [cursoId, id])
+}
+
+model dias_sem {
+  id             Int                @id @default(autoincrement())
+  dia            String
+  modulo         modulo             @relation(fields: [moduloId], references: [id])
+  moduloId       Int
 }
 
 model user {
