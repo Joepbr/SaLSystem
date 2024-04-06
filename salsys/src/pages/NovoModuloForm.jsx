@@ -14,7 +14,7 @@ export default function NovoModuloForm() {
     const { id } = useParams();
     const [titulo, setTitulo] = React.useState('');
     const [diasSem, setDiasSem] = React.useState([]);
-    const [horario, setHorario] = React.useState('');
+    const [horario, setHorario] = React.useState(moment());
     const [durAula, setDurAula] = React.useState('');
     const [inicio, setInicio] = React.useState(moment());
     const [durModulo, setDurModulo] = React.useState('');
@@ -102,16 +102,24 @@ export default function NovoModuloForm() {
                 <WeekdaySelector selectedWeekdays={diasSem} onChange={handleWeekdaysChange} />
                 <Divider />
                 <Typography>Horário das Aulas:</Typography>
-                <TextField
-                    label="Horário"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    value={horario}
-                    onChange={(e) => setHorario(e.target.value)}
-                    fullWidth
-                    required
-                />
+                <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                    {moment.isMoment(horario) ? (
+                        <TimePicker
+                            variant="filled"
+                            sx={{backgroundColor: "white", color: "black"}}
+                            margin="normal"
+                            fullWidth
+                            value={horario}
+                            onChange={(newValue) => setHorario(newValue)}
+                        >
+                            <TextField
+                                variant="filled"
+                            />
+                        </TimePicker>
+                    ) : (
+                        <div>Carregando...</div>
+                    )}
+                </LocalizationProvider>
                 <Divider />
                 <Typography>Tempo de Duração das Aulas:</Typography>
                 <TextField
@@ -126,38 +134,25 @@ export default function NovoModuloForm() {
                     required
                 />
                 <Divider />
-                <Typography>Dia de Início das Aulas:</Typography>
+                <Typography>Data de Início das Aulas:</Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
-                        {moment.isMoment(inicio) ? (
-                            <DatePicker
+                    {moment.isMoment(inicio) ? (
+                        <DatePicker
+                            variant="filled"
+                            sx={{backgroundColor: "white", color: "black"}}
+                            margin="normal"
+                            fullWidth
+                            value={inicio}
+                            onChange={(newValue) => setInicio(newValue)}
+                        >
+                            <TextField
                                 variant="filled"
-                                sx={{backgroundColor: "white", color: "black"}}
-                                margin="normal"
-                                fullWidth
-                                value={inicio}
-                                onChange={(newValue) => setInicio(newValue)}
-                            >
-                                <TextField
-                                    variant="filled"
-                                />
-                            </DatePicker>
-                        ) : (
-                            <div>Carregando...</div>
-                        )}
-                    </LocalizationProvider>
-                    {/*
-                <TextField
-                    label="Início"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    value={inicio}
-                    onChange={(e) => setInicio(e.target.value)}
-                    type="datetime-local"
-                    fullWidth
-                    required
-                />
-                        */}
+                            />
+                        </DatePicker>
+                    ) : (
+                        <div>Carregando...</div>
+                    )}
+                </LocalizationProvider>
                 <Divider />
                 <Typography>Tempo de Duração do Módulo:</Typography>
                 <TextField

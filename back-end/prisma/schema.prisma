@@ -26,6 +26,7 @@ model modulo {
   id              Int               @id@default(autoincrement())
   titulo          String
   dias_sem        dias_sem[]
+  horario         String
   dur_aula        Int
   inicio          DateTime
   dur_modulo      Int

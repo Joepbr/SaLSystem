@@ -1,58 +1,102 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import myfetch from '../utils/myfetch';
-import { Button, CssBaseline, TextField, Box, Typography, Container, ThemeProvider } from '@mui/material';
+import { Paper, Button, TextField, Box, Typography, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 import logo from '../assets/Sallogo.png';
-import theme from '../utils/theme';
+import Notification from '../ui/Notification';
+import Waiting from '../ui/Waiting';
 
-function LoginForm() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [usernameError, setUsernameError] = useState(null);
-  const [passwordError, setPasswordError] = useState(null);
-  const [loginError, setLoginError] = useState(null);
-  const navigate = useNavigate();
+export default function LoginForm() {
+  const [state, setState] = React.useState({
+    showPassword: false,
+    username: '',
+    password: '',
+    showWaiting: false,
+    notif: {
+      show: false,
+      message: '',
+      severity: 'success',
+      timeout: 1500
+    }
+  })
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    showPassword,
+    username,
+    password,
+    showWaiting,
+    notif
+  } = state
+
+  const navigate = useNavigate()
+
+  const handleClickShowPassword = () => setState({...state, showPassword: !showPassword})
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault()
+  }
+
+  function handleChange(event) {
+    setState({...state, [event.target.name]: event.target.value})
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
 
     try {
+      setState({...state, showWaiting: true})
+
       const response = await myfetch.post('/users/login', { username, password });
-      //check if response contains a token
-      if (response.data && response.data.token){
-        const { token } = response.data; //Store token in localStorage
-        localStorage.setItem('token', token); // Store token in localStorage
-        navigate('/');
-      } else {
-        console.error('Login failed: Invalid response format')
-        setLoginError('Ocorreu um erro. Tente novamente mais tarde')
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-      if (error.response && error.response.status === 401) {
-        setLoginError('Usuário ou senha incorretos');
-      } else {
-        setLoginError('Ocorreu um erro. Tente novamente mais tarde.');
-      }
+      
+      window.localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_NAME, response.token);
+      
+      setState({...state,
+        showWaiting:false,
+        notif:{
+          show: true,
+          message: 'Autenticação realizada com sucesso',
+          severity: 'success',
+          timeout: 1500
+        }})
+    } 
+    catch (error) {
+      console.error(error);
+
+      setState({...state,
+        showWaiting: false,
+        notif: {
+          show: true,
+          message: error.message,
+          severity: 'error',
+          timeout: 4000
+        }})
     }
   };
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
-    setUsernameError(null); // Clear username error when user starts typing
-    setLoginError(null); // Clear login error when user starts typing
-  };
+  function handleNotificationClose() {
+    const status = notif.severity
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    setPasswordError(null); // Clear password error when user starts typing
-    setLoginError(null); // Clear login error when user starts typing
-  };
+    setState({...state, notif: {
+      show: false,
+      severity: status,
+      message: '',
+      timeout: 1500
+    }})
+
+    if(status ==='success') navigate('/')
+  }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+    <>
+      <Waiting show={showWaiting} />
+      <Notification
+        show={notif.show}
+        severity={notif.severity}
+        message={notif.message}
+        timeout={notif.timeout}
+        onClose={handleNotificationClose}
+      />
         <Box
           sx={{
             display: 'flex',
@@ -77,63 +121,58 @@ function LoginForm() {
           >
             Bem Vindo ao Sistema SaL!
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} aria-labelledby="login-form">
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Usuário"
-              name="username"
-              autoComplete="usuário"
-              variant="filled"
-              sx={{ backgroundColor: "white" }}
-              value={username}
-              onChange={handleUsernameChange}
-              error={!!usernameError}
-              helperText={usernameError}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="password"
-              label="Senha"
-              name="password"
-              autoComplete="current-password"
-              variant="filled"
-              type="password"
-              sx={{ backgroundColor: "white" }}
-              value={password}
-              onChange={handlePasswordChange}
-              error={!!passwordError}
-              helperText={passwordError}
-            />
-            <Typography variant="body2" color="error" align="center">
-              {loginError}
-            </Typography>
-            <Button
-              type="submit"
-              size="large"
-              fullWidth
-              variant="contained"
-              sx={{
-                fontFamily: 'Impact',
-                textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
-                backgroundColor: '#9d2f2e',
-                fontSize: 25,
-                mt: 2,
-                mb: 2,
-              }}
-              aria-label="Click to login"
-            >
-              Entrar
-            </Button>
-          </Box>
+          <Paper 
+            elevation={6}
+            sx={{
+              padding: '24px',
+              maxWidth: '500px',
+              margin: 'auto'
+            }}
+          >
+            <form onSubmit={handleSubmit}>
+              <TextField 
+                  name="username"
+                  value={username}
+                  onChange={handleChange}
+                  label="Usuário" 
+                  variant="filled" 
+                  fullWidth 
+                  sx={{ mb: '24px' }}
+              />
+              <TextField
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                  variant="filled"
+                  type={showPassword ? 'text' : 'password'}
+                  label="Senha"
+                  fullWidth
+                  sx={{ mb: '24px' }}
+                  InputProps={{
+                  endAdornment: 
+                      <InputAdornment position="end">
+                      <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                      >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                      </InputAdornment>
+                  }}
+              />
+              <Button 
+                  variant="contained" 
+                  type="submit"
+                  color="secondary"
+                  fullWidth
+              >
+                  Enviar
+              </Button>
+            </form>
+          </Paper>
         </Box>
-      </Container>
-    </ThemeProvider>
+    </>
   );
 }
-
-export default LoginForm;
