@@ -11,7 +11,9 @@ import Cursos from './pages/CursoList'
 import NovoCursoForm from './pages/NovoCursoForm'
 import EditarCursoForm from './pages/EditarCursoForm'
 import Modulos from './pages/ModuloList'
+import AulasModulo from './pages/AulasModulo'
 import NovoModuloForm from './pages/NovoModuloForm'
+import EditarModuloForm from './pages/EditarModuloForm'
 import Profs from './pages/ProfList'
 import ProfProfile from './pages/ProfProfile'
 import NovoProfForm from './pages/NovoProfForm'
@@ -41,7 +43,9 @@ function App() {
               <Route path="/cursos/new" element={ <NovoCursoForm/> } />
               <Route path="/curso/:id/edit" element={ <EditarCursoForm/> } />
               
+              <Route path="/modulo/:id" element={ <AulasModulo/> } />
               <Route path="/curso/:id/modulos/new" element={ <NovoModuloForm/> } />
+              <Route path="/modulo/:id/edit" element={ <EditarModuloForm/> } />
 
               <Route path="/profs" element={ <Profs /> } />
               <Route path="/prof/:id" element={ <ProfProfile/> } />

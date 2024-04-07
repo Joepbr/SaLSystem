@@ -1,13 +1,18 @@
 import React from 'react';
 import myfetch from '../utils/myfetch';
 import { Link, useParams } from 'react-router-dom';
-import { Container, Typography, Divider, Button, Accordion, AccordionSummary, AccordionDetails, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar } from '@mui/material';
+import { Box, Container, Typography, Divider, Button, Accordion, AccordionSummary, AccordionDetails, AccordionActions, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Link as MuiLink, Stack } from '@mui/material';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import moment from 'moment';
+
+moment.locale('pt-br');
 
 export default function Modulos() {
     const { id } = useParams()
     const [curso, setCurso] = React.useState(null);
     const [modulos, setModulos] = React.useState([]);
+    const [expandedAccordion, setExpandedAccordion] = React.useState(null)
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [moduloToDelete, setmoduloToDelete] = React.useState(null);
 
@@ -38,6 +43,19 @@ export default function Modulos() {
         }
     };
 
+    const formatDiasSem = (diasSem) => {
+        const formatedDias = diasSem.map(dia => dia.dia).join(', ')
+        return formatedDias.replace(/,\s*$/, '')
+    }
+
+    const formatHorario = (horario) => {
+        return moment(horario).format('HH:mm')
+    }
+
+    const handleAccordionChange = (index) => {
+        setExpandedAccordion(expandedAccordion === index ? null : index);
+    }
+
     const handleDeleteConfirmation = (modulo) => {
         setmoduloToDelete(modulo);
         setOpenDeleteDialog(true);
@@ -65,32 +83,40 @@ export default function Modulos() {
 
     return (
         <Container>
-            <Avatar alt={curso ? curso.nome : 'Loading...'} src={curso? curso.imageUrl : 'X'}>X</Avatar>
-            <Typography variant="h4">{curso ? curso.nome : 'Loading...'}</Typography>
+            <Avatar alt={curso ? curso.nome : 'Carregando...'} src={curso? curso.imageUrl : 'X'}>X</Avatar>
+            <Typography variant="h4">{curso ? curso.nome : 'Carregando...'}</Typography>
             <Divider />
-            <Typography variant="h6">{curso ? curso.descricao : 'Loading...'}</Typography>
-            <Typography variant="body1">{curso ? curso.detalhes : 'Loading...'}</Typography>
+            <Typography variant="h6">{curso ? curso.descricao : 'Carregando...'}</Typography>
+            <Typography variant="body1">{curso ? curso.detalhes : 'Carregando...'}</Typography>
             <Divider />
-            <Typography variant="h5">Módulos</Typography>
+            <Typography variant="h5">Módulos:</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', marginTop: 2, marginBottom: 2}}>
             {modulos.map((modulo, index) => (
-                <Accordion key={index}>
+                <Accordion key={index} expanded={expandedAccordion === index} onChange={() => handleAccordionChange(index)} sx={{ width: '100%' }}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{modulo.title}</Typography>
+                    {expandedAccordion === index ? (
+                        <MuiLink component={Link} to={`/modulo/${modulo.id}`} underline="none" color="inherit" style={{ width: '100%' }}>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            <Typography sx={{ ml: 2 }} variant="h5">{modulo.titulo}</Typography>
+                        </Stack>
+                        </MuiLink> 
+                    ) : (
+                        <>
+                            <Typography sx={{ ml: 2 }} variant="h5">{modulo.titulo}</Typography>
+                        </>
+                    )}
                     </AccordionSummary>
-                    <AccordionDetails>
-                        <Typography>{`Dias de aula: ${modulo.dias_sem}, Horário: ${modulo.horario}`}</Typography>
-                        <IconButton component={Link} to={`/modulo/${modulo.id}`} aria-label="View modulo">
-                            View
-                        </IconButton>
-                        <IconButton component={Link} to={`/modulo/${modulo.id}/edit`} aria-label="Edit modulo">
-                            Edit
-                        </IconButton>
-                        <IconButton onClick={() => handleDeleteConfirmation(modulo)} aria-label="Delete modulo">
-                            Delete
-                        </IconButton>
+                    <AccordionDetails sx={{ flexDirection: 'column', padding: 1, marginLeft: 5 }}>
+                        <Typography>{`Dias de aula: ${formatDiasSem(modulo.dias_sem)}, Horário: ${formatHorario(modulo.horario)}`}</Typography>
+                        <Typography>{`Professor: ${modulo.professor && modulo.professor.user && modulo.professor.user.nome ? modulo.professor.user.nome : 'Nome do professor não disponível'}`}</Typography>
                     </AccordionDetails>
+                    <AccordionActions>
+                        <Button component={Link} to={`/modulo/${modulo.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
+                        <Button onClick={(event) => handleDeleteConfirmation(modulo, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                    </AccordionActions>
                 </Accordion>
             ))}
+            </Box>
             <Button component={Link} to={`/curso/${id}/modulos/new`} variant="contained" color="primary">Criar Novo Módulo</Button>
             <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                 <DialogTitle>Delete modulo</DialogTitle>

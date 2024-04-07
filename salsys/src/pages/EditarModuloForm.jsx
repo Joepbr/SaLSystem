@@ -9,7 +9,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 
-export default function NovoModuloForm() {
+export default function EditarModuloForm() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [titulo, setTitulo] = React.useState('');
@@ -210,7 +210,7 @@ export default function NovoModuloForm() {
                     fullWidth
                 />
                 <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>
-                    Criar Módulo
+                    Editar Módulo
                 </Button>
                 <Button type="button" variant="outlined" onClick={() => navigate('/cursos')}>
                     Cancelar

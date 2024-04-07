@@ -48,7 +48,8 @@ controller.retrieveOne = async function (req, res) {
         const result = await prisma.modulo.findUnique({
             where: { id: Number(req.params.id) },
             include: {
-                dias_sem: true
+                dias_sem: true,
+                professor: true,
             }
         })
 
@@ -70,7 +71,12 @@ controller.retrieveByCourseId = async function (req, res) {
                 cursoId: cursoId
             },
             include: {
-                dias_sem: true
+                dias_sem: true,
+                professor: {
+                    include: {
+                        user: true
+                    }
+                },
             }
         });
 
@@ -92,7 +98,12 @@ controller.retrieveByProfId = async function (req, res) {
                 profId: profId
             },
             include: {
-                dias_sem: true
+                dias_sem: true,
+                professor: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         });
 
