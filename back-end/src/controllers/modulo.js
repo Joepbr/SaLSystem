@@ -49,7 +49,11 @@ controller.retrieveOne = async function (req, res) {
             where: { id: Number(req.params.id) },
             include: {
                 dias_sem: true,
-                professor: true,
+                professor: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         })
 

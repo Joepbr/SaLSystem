@@ -44,6 +44,22 @@ controller.retrieveOne = async function (req, res) {
     }
 }
 
+controller.retrieveByModuloId = async function (req, res) {
+    try {
+        const moduloId = Number(req.params.moduloId)
+        const result = await prisma.modulo.findMany({
+            where: {
+                moduloId: moduloId
+            }
+        })
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
 controller.update = async function (req, res) {
     try {
         const result = await prisma.aula.update({
