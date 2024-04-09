@@ -47,9 +47,20 @@ export default function EditarModuloForm() {
     React.useEffect(() => {
         const fetchModuloData = async () => {
             try {
-                const moduloData = await myfetch.get(`/modulos/${id}`)
+                const response = await myfetch.get(`/modulos/${id}`)
+                const { horario, inicio, professorId: fetchedProfessorId, ...restData } = response
 
-                setModuloData(moduloData)
+                const parsedHorario = moment(horario)
+                const parsedInicio = moment(inicio)
+                
+                setModuloData({
+                    ...restData,
+                    horario: parsedHorario,
+                    inicio: parsedInicio,
+                    professorId: fetchedProfessorId || ''
+                })
+
+                console.log('Modulo data from API:', moduloData);
             }
             catch (error) {
                 console.error('Erro ao ler dados do módulo:', error);
@@ -76,13 +87,15 @@ export default function EditarModuloForm() {
     };
 
     const handleWeekdaysChange = (weekdays) => {
-        setDiasSem(weekdays);
+        setModuloData(prevState => ({
+            ...prevState,
+            dias_sem: weekdays
+        }));
       };
       
-
     return (
         <Container>
-            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Criar Novo Módulo</Typography>
+            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Modificar Módulo</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>
                 <Typography>Título do Módulo:</Typography>
@@ -92,7 +105,7 @@ export default function EditarModuloForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     value={moduloData.titulo}
-                    onChange={(e) => setTitulo(e.target.value)}
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, titulo: e.target.value}))}
                     fullWidth
                     required
                 />
@@ -102,22 +115,15 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Horário das Aulas:</Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
-                    {moment.isMoment(moduloData.horario) ? (
-                        <TimePicker
-                            variant="filled"
-                            sx={{backgroundColor: "white", color: "black"}}
-                            margin="normal"
-                            fullWidth
-                            value={moduloData.horario}
-                            onChange={(newValue) => setHorario(newValue)}
-                        >
-                            <TextField
-                                variant="filled"
-                            />
-                        </TimePicker>
-                    ) : (
-                        <div>Carregando...</div>
-                    )}
+                    <TimePicker
+                        label="Horário"
+                        variant="filled"
+                        sx={{backgroundColor: "white", color: "black"}}
+                        margin="normal"
+                        fullWidth
+                        value={moduloData.horario}
+                        onChange={(newValue) => setModuloData(prevState => ({ ...prevState, horario: newValue }))}
+                    />
                 </LocalizationProvider>
                 <Divider />
                 <Typography>Tempo de Duração das Aulas:</Typography>
@@ -127,7 +133,7 @@ export default function EditarModuloForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     value={moduloData.dur_aula}
-                    onChange={(e) => setDurAula(e.target.value)}
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, dur_aula: e.target.value }))}
                     type="number"
                     fullWidth
                     required
@@ -135,22 +141,15 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Data de Início das Aulas:</Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
-                    {moment.isMoment(moduloData.inicio) ? (
                         <DatePicker
+                            label="Início das aulas"
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black"}}
                             margin="normal"
                             fullWidth
                             value={moduloData.inicio}
-                            onChange={(newValue) => setInicio(newValue)}
-                        >
-                            <TextField
-                                variant="filled"
-                            />
-                        </DatePicker>
-                    ) : (
-                        <div>Carregando...</div>
-                    )}
+                            onChange={(newValue) => setModuloData(prevState => ({ ...prevState, inicio: newValue }))}
+                        />
                 </LocalizationProvider>
                 <Divider />
                 <Typography>Tempo de Duração do Módulo:</Typography>
@@ -160,7 +159,7 @@ export default function EditarModuloForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     value={moduloData.dur_modulo}
-                    onChange={(e) => setDurModulo(e.target.value)}
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, dur_modulo: e.target.value }))}
                     type="number"
                     fullWidth
                     required
@@ -173,7 +172,10 @@ export default function EditarModuloForm() {
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
                         value={moduloData.professorId} 
-                        onChange={(e) => setProfessorId(e.target.value)} 
+                        onChange={(e) => setModuloData(prevState => ({
+                            ...prevState,
+                            professorId: e.target.value
+                        }))} 
                         required
                     >
                         {professores.map((professor) => (
@@ -186,17 +188,17 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Formato das aulas (presencal remoto ou híbrido)</Typography>
                 <FormControlLabel
-                    control={<Checkbox checked={moduloData.presencial} onChange={(e) => setPresencial(e.target.checked)} />}
+                    control={<Checkbox checked={moduloData.presencial} onChange={(e) => setModuloData(prevState => ({ ...prevState, presencial: e.target.checked}))} />}
                     label="Presencial"
                 />
                 <FormControlLabel
-                    control={<Checkbox checked={moduloData.remoto} onChange={(e) => setRemoto(e.target.checked)} />}
+                    control={<Checkbox checked={moduloData.remoto} onChange={(e) => setModuloData(prevState => ({ ...prevState, remoto: e.target.checked}))} />}
                     label="Remoto"
                 />
                 <Divider />
                 <Typography>Cheque esta opção se curso for VIP: </Typography>
                 <FormControlLabel
-                    control={<Checkbox checked={moduloData.vip} onChange={(e) => setVip(e.target.checked)} />}
+                    control={<Checkbox checked={moduloData.vip} onChange={(e) => setModuloData(prevState => ({ ...prevState, vip: e.target.checked}))} />}
                     label="VIP"
                 />
                 <Divider />
@@ -207,7 +209,7 @@ export default function EditarModuloForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     value={moduloData.preco}
-                    onChange={(e) => setPreco(e.target.value)}
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, preco: e.target.value}))}
                     type="number"
                     fullWidth
                 />
