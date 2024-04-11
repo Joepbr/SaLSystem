@@ -6,6 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 import logo from '../assets/Sallogo.png';
 import Notification from '../ui/Notification';
 import Waiting from '../ui/Waiting';
+import AuthUserContext from '../contexts/AuthUserContext';
 
 export default function LoginForm() {
   const [state, setState] = React.useState({
@@ -29,6 +30,8 @@ export default function LoginForm() {
     notif
   } = state
 
+  const { setAuthUser } = React.useContext(AuthUserContext)
+
   const navigate = useNavigate()
 
   const handleClickShowPassword = () => setState({...state, showPassword: !showPassword})
@@ -51,6 +54,8 @@ export default function LoginForm() {
       
       window.localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_NAME, response.token);
       
+      setAuthUser(response.user)
+
       setState({...state,
         showWaiting:false,
         notif:{

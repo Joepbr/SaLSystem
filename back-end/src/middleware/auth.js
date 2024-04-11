@@ -12,7 +12,7 @@ export default function(req, res, next) {
         }
     }
 
-    const authHeader = req.headers['authoization']
+    const authHeader = req.headers['authentication']
 
     if(! authHeader) return res.status(403).end()
 

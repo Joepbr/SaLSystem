@@ -24,6 +24,7 @@ export default function EditarModuloForm() {
         remoto: false,
         vip: false,
         preco: '',
+        livro: '',
         cursoId: '',
         professorId: ''
     });
@@ -57,7 +58,7 @@ export default function EditarModuloForm() {
                     ...restData,
                     horario: parsedHorario,
                     inicio: parsedInicio,
-                    professorId: fetchedProfessorId || ''
+                    professorId: fetchedProfessorId
                 })
 
                 console.log('Modulo data from API:', moduloData);
@@ -171,7 +172,7 @@ export default function EditarModuloForm() {
                     <Select 
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
-                        value={moduloData.professorId} 
+                        value={moduloData.professorId || ''} 
                         onChange={(e) => setModuloData(prevState => ({
                             ...prevState,
                             professorId: e.target.value
@@ -202,7 +203,7 @@ export default function EditarModuloForm() {
                     label="VIP"
                 />
                 <Divider />
-                <Typography>Preço do curso:</Typography>
+                <Typography>Preço Mensal do Curso:</Typography>
                 <TextField
                     label="Preço"
                     variant="filled"
@@ -211,6 +212,17 @@ export default function EditarModuloForm() {
                     value={moduloData.preco}
                     onChange={(e) => setModuloData(prevState => ({ ...prevState, preco: e.target.value}))}
                     type="number"
+                    fullWidth
+                />
+                <Divider />
+                <Typography>Livro a Ser Utilizado no Curso:</Typography>
+                <TextField
+                    label="Livro"
+                    variant="filled"
+                    sx={{backgroundColor: "white", color: "black"}}
+                    margin="normal"
+                    value={moduloData.livro}
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, livro: e.target.value}))}
                     fullWidth
                 />
                 <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>

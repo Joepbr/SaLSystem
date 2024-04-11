@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box, Drawer, CssBaseline, AppBar, Toolbar, List, Typography, Divider, ListItem, ListItemButton, ListItemText, Button} from '@mui/material';
 import logo from '../assets/Sallogo.png';
 import { Link, useLocation } from 'react-router-dom';
-
+import AuthControl from './AuthControl';
 
 export default function PermanentDrawerLeft() {
 
@@ -63,23 +63,7 @@ export default function PermanentDrawerLeft() {
               textAlign: 'center'
             }}
           >
-            <Button
-              component={Link}
-              to="/login"
-              sx={{
-                backgroundColor: '#9d2f2e',
-              }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "Impact",
-                  color: "white",
-                  textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
-                }}
-              >
-                Login
-              </Typography>
-            </Button>
+            <AuthControl />
           </Box>
         </Toolbar>
       </AppBar>

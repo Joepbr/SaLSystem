@@ -34,6 +34,7 @@ model modulo {
   remoto          Boolean
   vip             Boolean           @default(false)
   preco           Float?
+  livro           String?
   curso           curso             @relation(fields: [cursoId], references: [id])
   cursoId         Int        
   professor       professor         @relation(fields: [profId], references: [id])

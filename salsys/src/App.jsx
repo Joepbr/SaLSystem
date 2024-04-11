@@ -1,6 +1,8 @@
 import React from 'react'
 import './App.css'
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
+import AuthUserContext from './contexts/AuthUserContext'
+import myfetch from './utils/myfetch'
 
 import { ThemeProvider, CssBaseline, Box, Container } from '@mui/material'
 import theme from './utils/theme'
@@ -26,11 +28,28 @@ import LoginForm from './pages/LoginForm'
 
 function App() {
 
+  const [authUser, setAuthUser] = React.useState(null)
+
+  async function fetchAuthUser() {
+    try {
+      const authUser = await myfetch.get('users/me')
+      if(authUser) setAuthUser(authUser)
+    }
+    catch {
+      console.error(error)
+    }
+  }
+
+  React.useEffect(() => {
+    fetchAuthUser()
+  }, [])
+
   return (
     <>
       <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+          <AuthUserContext.Provider value={{authUser, setAuthUser}}>
             <Routes>
 
             <Route path="/login" element={<LoginPage/>} />
@@ -59,6 +78,7 @@ function App() {
 
             </Route>
           </Routes>
+        </AuthUserContext.Provider>
       </ThemeProvider>
       </BrowserRouter>
     </>

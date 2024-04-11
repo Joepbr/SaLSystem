@@ -33,6 +33,12 @@ class HttpError extends Error {
     switch(response.status) {
       case 401:   // Unauthorized
         return 'ERRO: usuário ou senha incorretos'
+
+      case 403:
+        return 'ERRO: acesso não autorizado'
+
+      case 500:
+        return 'ERRO: problema no servidor remoto'
   
       default:
         return `ERRO: HTTP ${response.status}: ${response.statusText}`

@@ -22,6 +22,7 @@ export default function NovoModuloForm() {
     const [remoto, setRemoto] = React.useState(false);
     const [vip, setVip] = React.useState(false);
     const [preco, setPreco] = React.useState('');
+    const [livro, setLivro] = React.useState('');
     const [professorId, setProfessorId] = React.useState('');
     const [professores, setProfessores] = React.useState([]);
 
@@ -61,6 +62,7 @@ export default function NovoModuloForm() {
                 remoto,
                 vip,
                 preco: parseFloat(preco),
+                livro,
                 curso: { connect: { id: parseInt(id) } },
                 professor: { connect: { id: parseInt(professorId) } },
             });
@@ -198,7 +200,7 @@ export default function NovoModuloForm() {
                     label="VIP"
                 />
                 <Divider />
-                <Typography>Preço do curso:</Typography>
+                <Typography>Preço Mensal do Curso:</Typography>
                 <TextField
                     label="Preço"
                     variant="filled"
@@ -207,6 +209,17 @@ export default function NovoModuloForm() {
                     value={preco}
                     onChange={(e) => setPreco(e.target.value)}
                     type="number"
+                    fullWidth
+                />
+                <Divider />
+                <Typography>Livro a Ser Utilizado no Curso:</Typography>
+                <TextField
+                    label="Livro"
+                    variant="filled"
+                    sx={{backgroundColor: "white", color: "black"}}
+                    margin="normal"
+                    value={preco}
+                    onChange={(e) => setLivro(e.target.value)}
                     fullWidth
                 />
                 <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>

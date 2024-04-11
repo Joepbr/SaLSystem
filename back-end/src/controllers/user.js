@@ -112,7 +112,7 @@ controller.login = async function(req, res) {
             process.env.TOKEN_SECRET,
             { expiresIn: '730h' }
         )
-        res.send({token})
+        res.send({token, user})
     }
     catch(error) {
         console.log(error)
