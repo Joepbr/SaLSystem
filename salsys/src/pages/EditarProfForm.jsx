@@ -61,10 +61,13 @@ export default function EditTeacherForm() {
 
             const dataNascISO = teacherData.data_nasc.toISOString()
     
+            const rawTelefone = teacherData.telefone.replace(/\D/g, '')
+
             console.log('Teacher data before submission:', teacherData);
 
             setTeacherData({
                 ...teacherData,
+                telefone: rawTelefone,
                 end_num: endNumInteger,
                 data_nasc: dataNascISO
             })
@@ -78,7 +81,7 @@ export default function EditTeacherForm() {
             const response2 = await myfetch.put(`/users/${teacherData.id}`, {
                 nome: teacherData.nome,
                 email: teacherData.email,
-                telefone: teacherData.telefone,
+                telefone: rawTelefone,
                 end_logr: teacherData.end_logr,
                 end_num: endNumInteger,
                 end_compl: teacherData.end_compl,

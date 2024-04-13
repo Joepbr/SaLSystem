@@ -64,11 +64,8 @@ export default function Modulos() {
     const handleDelete = async () => {
         if (moduloToDelete) {
             try {
-                // Make delete request
-                // await myfetch.delete(`/modulos/${moduloToDelete.id}`);
+                await myfetch.delete(`/modulos/${moduloToDelete.id}`);
 
-                // For demo, removing the modulo directly from the state
-                setModulos(modulos.filter(modulo => modulo.id !== moduloToDelete.id));
                 setOpenDeleteDialog(false);
             } catch (error) {
                 console.error(error);

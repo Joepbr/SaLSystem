@@ -47,11 +47,13 @@ controller.retrieveOne = async function (req, res) {
 controller.retrieveByModuloId = async function (req, res) {
     try {
         const moduloId = Number(req.params.moduloId)
-        const result = await prisma.modulo.findMany({
+        const result = await prisma.aula.findMany({
             where: {
                 moduloId: moduloId
             }
         })
+        if(result) res.send(result)
+        else res.status(404).end()
     }
     catch(error) {
         console.log(error)

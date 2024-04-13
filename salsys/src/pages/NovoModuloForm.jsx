@@ -23,6 +23,7 @@ export default function NovoModuloForm() {
     const [vip, setVip] = React.useState(false);
     const [preco, setPreco] = React.useState('');
     const [livro, setLivro] = React.useState('');
+    const [wagrupo, setWagrupo] = React.useState('');
     const [professorId, setProfessorId] = React.useState('');
     const [professores, setProfessores] = React.useState([]);
 
@@ -53,7 +54,7 @@ export default function NovoModuloForm() {
         try {
             const response = await myfetch.post('/modulos', {
                 titulo,
-                dias_sem: diasSem,
+                dias_sem: diasSem.map(dia => dia.dia),
                 horario,
                 dur_aula: parseInt(durAula),
                 inicio,
@@ -63,6 +64,7 @@ export default function NovoModuloForm() {
                 vip,
                 preco: parseFloat(preco),
                 livro,
+                wagrupo,
                 curso: { connect: { id: parseInt(id) } },
                 professor: { connect: { id: parseInt(professorId) } },
             });
@@ -186,17 +188,20 @@ export default function NovoModuloForm() {
                 <Divider />
                 <Typography>Formato das aulas (presencal remoto ou híbrido)</Typography>
                 <FormControlLabel
-                    control={<Checkbox checked={presencial} onChange={(e) => setPresencial(e.target.checked)} />}
+                    control={<Checkbox checked={presencial} 
+                    onChange={(e) => setPresencial(e.target.checked)} />}
                     label="Presencial"
                 />
                 <FormControlLabel
-                    control={<Checkbox checked={remoto} onChange={(e) => setRemoto(e.target.checked)} />}
+                    control={<Checkbox checked={remoto} 
+                    onChange={(e) => setRemoto(e.target.checked)} />}
                     label="Remoto"
                 />
                 <Divider />
                 <Typography>Cheque esta opção se curso for VIP: </Typography>
                 <FormControlLabel
-                    control={<Checkbox checked={vip} onChange={(e) => setVip(e.target.checked)} />}
+                    control={<Checkbox checked={vip} 
+                    onChange={(e) => setVip(e.target.checked)} />}
                     label="VIP"
                 />
                 <Divider />
@@ -218,8 +223,19 @@ export default function NovoModuloForm() {
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
-                    value={preco}
+                    value={livro}
                     onChange={(e) => setLivro(e.target.value)}
+                    fullWidth
+                />
+                <Divider />
+                <Typography>Link para Grupo no WhatsApp:</Typography>
+                <TextField
+                    label="WhatsApp"
+                    variant="filled"
+                    sx={{backgroundColor: "white", color: "black"}}
+                    margin="normal"
+                    value={wagrupo}
+                    onChange={(e) => setWagrupo(e.target.value)}
                     fullWidth
                 />
                 <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>

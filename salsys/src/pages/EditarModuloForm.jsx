@@ -25,6 +25,7 @@ export default function EditarModuloForm() {
         vip: false,
         preco: '',
         livro: '',
+        wagrupo: '',
         cursoId: '',
         professorId: ''
     });
@@ -49,7 +50,9 @@ export default function EditarModuloForm() {
         const fetchModuloData = async () => {
             try {
                 const response = await myfetch.get(`/modulos/${id}`)
-                const { horario, inicio, professorId: fetchedProfessorId, ...restData } = response
+                const { horario, inicio, ...restData } = response
+
+                console.log('Parsed data: ', restData)
 
                 const parsedHorario = moment(horario)
                 const parsedInicio = moment(inicio)
@@ -58,10 +61,8 @@ export default function EditarModuloForm() {
                     ...restData,
                     horario: parsedHorario,
                     inicio: parsedInicio,
-                    professorId: fetchedProfessorId
+                    professorId: restData.professorId
                 })
-
-                console.log('Modulo data from API:', moduloData);
             }
             catch (error) {
                 console.error('Erro ao ler dados do módulo:', error);
@@ -78,7 +79,21 @@ export default function EditarModuloForm() {
     
             console.log('Modulo data before submission:', moduloData);
 
-            const response = await myfetch.put(`/modulos/${id}`);
+            const response = await myfetch.put(`/modulos/${id}`, {
+                titulo: moduloData.titulo,
+                dias_sem: moduloData.dias_sem.map(dia => dia.dia),
+                horario: moduloData.horario,
+                dur_aula: parseInt(moduloData.dur_aula),
+                inicio: moduloData.inicio,
+                dur_modulo: parseInt(moduloData.dur_modulo),
+                presencial: moduloData.presencial,
+                remoto: moduloData.remoto,
+                vip: moduloData.vip,
+                preco: moduloData.preco,
+                livro: moduloData.livro,
+                wagrupo: moduloData.wagrupo,
+                professor: {connect: { id: parseInt(moduloData.professorId) }}
+            });
 
             console.log('Dados do professor editados com sucesso:', response);
             navigate('/cursos');
@@ -127,7 +142,7 @@ export default function EditarModuloForm() {
                     />
                 </LocalizationProvider>
                 <Divider />
-                <Typography>Tempo de Duração das Aulas:</Typography>
+                <Typography>Tempo de Duração das Aulas (em minutos):</Typography>
                 <TextField
                     label="Duração da Aula (min)"
                     variant="filled"
@@ -153,7 +168,7 @@ export default function EditarModuloForm() {
                         />
                 </LocalizationProvider>
                 <Divider />
-                <Typography>Tempo de Duração do Módulo:</Typography>
+                <Typography>Tempo de Duração do Módulo (em semanas):</Typography>
                 <TextField
                     label="Duração do Módulo (semanas)"
                     variant="filled"
@@ -172,7 +187,7 @@ export default function EditarModuloForm() {
                     <Select 
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
-                        value={moduloData.professorId || ''} 
+                        value={moduloData.professorId} 
                         onChange={(e) => setModuloData(prevState => ({
                             ...prevState,
                             professorId: e.target.value
@@ -187,19 +202,22 @@ export default function EditarModuloForm() {
                     </Select>
                 </FormControl>
                 <Divider />
-                <Typography>Formato das aulas (presencal remoto ou híbrido)</Typography>
+                <Typography>Formato das Aulas (presencal remoto ou híbrido)</Typography>
                 <FormControlLabel
-                    control={<Checkbox checked={moduloData.presencial} onChange={(e) => setModuloData(prevState => ({ ...prevState, presencial: e.target.checked}))} />}
+                    control={<Checkbox checked={moduloData.presencial} 
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, presencial: e.target.checked}))} />}
                     label="Presencial"
                 />
                 <FormControlLabel
-                    control={<Checkbox checked={moduloData.remoto} onChange={(e) => setModuloData(prevState => ({ ...prevState, remoto: e.target.checked}))} />}
+                    control={<Checkbox checked={moduloData.remoto} 
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, remoto: e.target.checked}))} />}
                     label="Remoto"
                 />
                 <Divider />
                 <Typography>Cheque esta opção se curso for VIP: </Typography>
                 <FormControlLabel
-                    control={<Checkbox checked={moduloData.vip} onChange={(e) => setModuloData(prevState => ({ ...prevState, vip: e.target.checked}))} />}
+                    control={<Checkbox checked={moduloData.vip} 
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, vip: e.target.checked}))} />}
                     label="VIP"
                 />
                 <Divider />
@@ -223,6 +241,17 @@ export default function EditarModuloForm() {
                     margin="normal"
                     value={moduloData.livro}
                     onChange={(e) => setModuloData(prevState => ({ ...prevState, livro: e.target.value}))}
+                    fullWidth
+                />
+                <Divider />
+                <Typography>Link para Grupo no WhatsApp:</Typography>
+                <TextField
+                    label="WhatsApp"
+                    variant="filled"
+                    sx={{backgroundColor: "white", color: "black"}}
+                    margin="normal"
+                    value={moduloData.wagrupo}
+                    onChange={(e) => setModuloData(prevState => ({ ...prevState, wagrupo: e.target.value}))}
                     fullWidth
                 />
                 <Button type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>
