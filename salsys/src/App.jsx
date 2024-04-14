@@ -22,6 +22,8 @@ import NovoProfForm from './pages/NovoProfForm'
 import EditarProfForm from './pages/EditarProfForm'
 import Disponibilidade from './pages/DisponibForm'
 import Alunos from './pages/AlunoList'
+import AlunoProfile from './pages/AlunoProfile'
+import NovoAlunoForm from './pages/NovoAlunoForm'
 import Aulas from './pages/AulaList'
 
 import LoginForm from './pages/LoginForm'
@@ -73,6 +75,8 @@ function App() {
               <Route path="/prof/:id/disponib" element={ <Disponibilidade/> } />
 
               <Route path="/alunos" element={ <Alunos /> } />
+              <Route path="/aluno/:id" element={ <AlunoProfile/> } />
+              <Route path="/alunos/new" element={ <NovoAlunoForm/> } />
 
               <Route path="/aulas" element={ <Aulas /> } />
 

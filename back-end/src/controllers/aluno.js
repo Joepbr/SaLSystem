@@ -1,10 +1,37 @@
 import prisma from '../database/client.js'
+import bcrypt from 'bcrypt'
 
 const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        await prisma.aluno.create({ data: req.body })
+        const { nome, email, telefone, end_logr, end_num, end_compl, end_cid, end_estado, username, password, data_nasc } = req.body
+
+        const hashedPassword = await bcrypt.hash(password, 12)
+
+        const newUser = await prisma.user.create({
+            data: {
+                nome,
+                email,
+                telefone,
+                end_logr,
+                end_num,
+                end_compl,
+                end_cid,
+                end_estado,
+                username,
+                password: hashedPassword
+            }
+        })
+
+        await prisma.aluno.create({ 
+            data:  {
+                data_nasc,
+                user: {
+                    connect: { id: newUser.id }
+                }
+            }
+        })
 
         res.status(201).end()
     }

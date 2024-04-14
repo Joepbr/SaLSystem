@@ -187,7 +187,7 @@ export default function EditarModuloForm() {
                     <Select 
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
-                        value={moduloData.professorId} 
+                        value={moduloData.professorId ? moduloData.professorId : ''} 
                         onChange={(e) => setModuloData(prevState => ({
                             ...prevState,
                             professorId: e.target.value

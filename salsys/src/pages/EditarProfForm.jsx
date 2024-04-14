@@ -116,10 +116,9 @@ export default function EditTeacherForm() {
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Editar Professor</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>
-                <Typography>Nome do Professor: </Typography>
+                <Typography>Nome do Professor*: </Typography>
                     <TextField
                         name="nome"
-                        label="Nome"
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
                         margin="normal"
@@ -129,10 +128,9 @@ export default function EditTeacherForm() {
                         required
                     />
                     <Divider />
-                    <Typography>E-mail de Contato: </Typography>
+                    <Typography>E-mail de Contato*: </Typography>
                     <TextField
                         name="email"
-                        label="Email"
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
                         margin="normal"
@@ -142,11 +140,10 @@ export default function EditTeacherForm() {
                         required
                     />
                     <Divider />
-                    <Typography>Telefone de Contato: </Typography>
+                    <Typography>Telefone de Contato*: </Typography>
                     <TextField
                         inputRef={telefoneInputRef}
                         name="telefone"
-                        label="Telefone"
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
                         margin="normal"
@@ -160,8 +157,8 @@ export default function EditTeacherForm() {
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
                             <TextField
-                                name="endereço"
-                                label="Endereço"
+                                name="logradouro"
+                                label="Logradouro"
                                 variant="filled"
                                 sx={{backgroundColor: "white", color: "black", margin: "10px", flexGrow: 3}}
                                 margin="normal"
@@ -227,7 +224,7 @@ export default function EditTeacherForm() {
                         </FormControl>
                     </Box>
                     <Divider />
-                    <Typography>Data de Nascimento: </Typography>
+                    <Typography>Data de Nascimento*: </Typography>
                     <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
                         {moment.isMoment(teacherData.data_nasc) ? (
                             <DatePicker
@@ -247,10 +244,9 @@ export default function EditTeacherForm() {
                         )}
                     </LocalizationProvider>
                     <Divider />
-                    <Typography>Idiomas e Matérias que Leciona: </Typography>
+                    <Typography>Idiomas e Matérias que Leciona*: </Typography>
                     <TextField
                         name="idiomas e matérias"
-                        label="Idiomas e matérias"
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
                         margin="normal"

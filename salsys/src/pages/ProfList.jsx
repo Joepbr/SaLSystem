@@ -106,7 +106,7 @@ export default function Profs(){
                         <DialogTitle>Remover Professor</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Tem certeza que você deseja remover o professor "{profToDelete ? profToDelete.nome : ''}"?
+                                Tem certeza que você deseja remover o professor "{profToDelete ? profToDelete.user.nome : ''}"?
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>

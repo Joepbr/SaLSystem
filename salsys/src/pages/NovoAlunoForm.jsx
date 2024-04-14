@@ -10,7 +10,7 @@ import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
 
-export default function CreateTeacherForm() {
+export default function NovoAlunoForm() {
     const navigate = useNavigate();
     const [nome, setNome] = React.useState('');
     const [email, setEmail] = React.useState('');
@@ -23,19 +23,18 @@ export default function CreateTeacherForm() {
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [data_nasc, setData_nasc] = React.useState(moment())
-    const [especialidade, setEspecialidade] = React.useState('');
-    const [imageUrl, setImageUrl] = React.useState('');
-
+    
     const [showPassword, setShowPassword] = React.useState(false)
 
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!nome || !email || !telefone || !end_logr || !end_num || !end_cid || !end_estado || !username || !password || !data_nasc || !especialidade) {
+        if (!nome || !email || !telefone || !end_logr || !end_num || !end_cid || !end_estado || !username || !password || !data_nasc ) {
             alert('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -49,7 +48,7 @@ export default function CreateTeacherForm() {
 
             const rawTelefone = telefone.replace(/\D/g, '')
 
-            const response = await myfetch.post('/professores', {
+            const response = await myfetch.post('/alunos', {
                 nome,
                 email,
                 telefone: rawTelefone,
@@ -61,15 +60,18 @@ export default function CreateTeacherForm() {
                 username,
                 password,
                 data_nasc: formattedDateOfBirth,
-                especialidade,
-                imageUrl
             });
             
-            console.log('Professor cadastrado:', response);
-            navigate('/profs')
+            if (response.status === 201) {
+                console.log('Aluno cadastrado:', response);
+                navigate('/alunos');
+            } else {
+                console.error('Erro ao cadastrar aluno:', response.statusText);
+            }
+    
         } catch (error) {
 
-            console.error('Erro ao cadastrar professor:', error);
+            console.error('Erro ao cadastrar aluno:', error);
         }
     };
 
@@ -90,10 +92,10 @@ export default function CreateTeacherForm() {
 
     return (
         <Container>
-            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Cadastrar Novo Professor</Typography>
+            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Cadastrar Novo Aluno</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>
-                <Typography>Nome do Professor*: </Typography>
+                <Typography>Nome do Aluno*: </Typography>
                 <TextField
                     name="nome"
                     variant="filled"
@@ -238,7 +240,7 @@ export default function CreateTeacherForm() {
                         }}
                 />
                 <Divider />
-                <Typography>Data de Nascimento: </Typography>
+                <Typography>Data de Nascimento*: </Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
                         {moment.isMoment(data_nasc) ? (
                             <DatePicker
@@ -257,35 +259,11 @@ export default function CreateTeacherForm() {
                             <div>Carregando...</div>
                         )}
                     </LocalizationProvider>
-                <Divider />
-                <Typography>Idiomas e Matérias que Leciona*: </Typography>
-                <TextField
-                    name="idiomas e matérias"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    fullWidth
-                    value={especialidade}
-                    onChange={(e) => setEspecialidade(e.target.value)}
-                    required
-                />
-                <Divider />
-                <Typography>Foto: </Typography>
-                <TextField
-                    name="imagem"
-                    label="URL da imagem"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    fullWidth
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                />
                 <Box sx={{ padding: '10px' }}>
-                    <Button type="submit" variant="contained" color="primary">Cadastrar Professor</Button>
+                    <Button type="submit" variant="contained" color="primary">Cadastrar Aluno</Button>
                 </Box>
                 <Box sx={{ padding: '10px' }}>
-                    <Button type="button" variant="outlined" onClick={() => navigate('/profs')}>Cancelar</Button>
+                    <Button type="button" variant="outlined" onClick={() => navigate('/alunos')}>Cancelar</Button>
                 </Box>
             </form>
         </Container>
