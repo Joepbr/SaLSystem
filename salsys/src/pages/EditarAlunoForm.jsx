@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { Container, Box, Typography, TextField, Button, Divider, Grid, Select, MenuItem, FormControl, InputLabel, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material'
@@ -10,8 +10,9 @@ import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
 
-export default function NovoAlunoForm() {
+export default function EditarAlunoForm() {
     const navigate = useNavigate();
+    const { id } = useParams();
     const [aluno, setAluno] = React.useState({
         nome: '',
         email: '',
@@ -21,19 +22,12 @@ export default function NovoAlunoForm() {
         end_compl: '',
         end_cid: '',
         end_estado: '',
-        username: '',
-        password: '',
         data_nasc: moment(),
         resp_nome: '',
         resp_email: '',
         resp_telefone: ''
     })
-    const [showPassword, setShowPassword] = React.useState(false)
     const [idade, setIdade] = React.useState(null)
-
-    const handleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
 
     React.useEffect(() =>{
         const today = moment()
@@ -41,18 +35,29 @@ export default function NovoAlunoForm() {
         setIdade(parseInt(alunoIdade))
     }, [aluno.data_nasc])
 
+    React.useEffect(() => {
+        const fetchAlunoData = async () => {
+            try {
+
+                const alunoData = await myfetch.get(`/alunos/${id}`);
+                const userData = await myfetch.get(`/users/${id}`)
+
+                alunoData.data_nasc = moment(alunoData.data_nasc);
+
+                const combinedData = { ...alunoData, ...userData}
+
+                setAluno(combinedData);
+
+            } catch (error) {
+                console.error('Erro ao ler dados do aluno:', error);
+            }
+        };
+
+        fetchAlunoData();
+    }, [id]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!aluno.nome || !aluno.email || !aluno.telefone || !aluno.end_logr || !aluno.end_num || !aluno.end_cid || !aluno.end_estado || !aluno.username || !aluno.password || !aluno.data_nasc ) {
-            alert('Por favor, preencha todos os campos obrigatórios.');
-            return;
-        }
-
-        if (idade < 18 && (!aluno.resp_nome || !aluno.resp_email || !aluno.resp_telefone)) {
-            alert('Por favor, preencha os campos obrigatórios do responsável')
-            return
-        }
 
         try {
             const dateOfBirth = new Date(aluno.data_nasc)
@@ -62,10 +67,25 @@ export default function NovoAlunoForm() {
             const endNumInteger = parseInt(aluno.end_num, 10);
 
             const rawTelefone = aluno.telefone.replace(/\D/g, '')
+            
+            const rawRespTelefone = idade < 18 ? aluno.resp_telefone.replace(/\D/g, '') : null
 
-            const rawRespTelefone = aluno.resp_telefone.replace(/\D/g, '')
+            setAluno({
+                ...aluno,
+                telefone: rawTelefone,
+                end_num: endNumInteger,
+                data_nasc: formattedDateOfBirth,
+                resp_telefone: rawRespTelefone
+            })
 
-            const response = await myfetch.post('/alunos', {
+            const response1 = await myfetch.put(`/alunos/${id}`, {
+                data_nasc: formattedDateOfBirth,
+                resp_nome: idade < 18 ? aluno.resp_nome : null,
+                resp_email: idade < 18 ? aluno.resp_email : null,
+                resp_telefone: idade < 18 ? rawRespTelefone : null
+            });
+
+            const response2 = await myfetch.put(`/users/${aluno.id}`, {
                 nome: aluno.nome,
                 email: aluno.email,
                 telefone: rawTelefone,
@@ -74,15 +94,9 @@ export default function NovoAlunoForm() {
                 end_compl: aluno.end_compl,
                 end_cid: aluno.end_cid,
                 end_estado: aluno.end_estado,
-                username: aluno.username,
-                password: aluno.password,
-                data_nasc: formattedDateOfBirth,
-                resp_nome: idade < 18 ? aluno.resp_nome : null,
-                resp_email: idade < 18 ? aluno.resp_email : null,
-                resp_telefone: idade < 18 ? rawRespTelefone : null
-            });
+            })
             
-            console.log('Aluno cadastrado:', response);
+            console.log('Dados do aluno editados com sucesso:', response1, response2);
             navigate('/alunos');
     
         } catch (error) {
@@ -125,7 +139,7 @@ export default function NovoAlunoForm() {
 
     return (
         <Container>
-            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Cadastrar Novo Aluno</Typography>
+            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Editar Aluno</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>
                 <Typography>Nome do Aluno*: </Typography>
@@ -236,43 +250,6 @@ export default function NovoAlunoForm() {
                     </FormControl>
                 </Box>
                 <Divider />
-                <Typography>Nome de Usuário*: </Typography>
-                <TextField
-                    name="username"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    fullWidth
-                    value={aluno.username}
-                    onChange={(e) => setAluno({...aluno, username: e.target.value})}
-                    required
-                />
-                <Divider />
-                <Typography>Criar Senha*: </Typography>
-                <TextField
-                    name="password"
-                    variant="filled"
-                    type={showPassword ? 'text' : 'password'}
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    fullWidth
-                    value={aluno.password}
-                    onChange={(e) => setAluno({...aluno, password: e.target.value})}
-                    required
-                    InputProps={{
-                        endAdornment: 
-                            <InputAdornment position="end">
-                            <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleShowPassword}
-                                edge="end"
-                            >
-                                {showPassword ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                            </InputAdornment>
-                    }}
-                />
-                <Divider />
                 <Typography>Data de Nascimento*: </Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
                     {moment.isMoment(aluno.data_nasc) ? (
@@ -343,7 +320,7 @@ export default function NovoAlunoForm() {
                     </>
                 )}
                 <Box sx={{ padding: '10px' }}>
-                    <Button type="submit" variant="contained" color="primary">Cadastrar Aluno</Button>
+                    <Button type="submit" variant="contained" color="primary">Confirmar</Button>
                 </Box>
                 <Box sx={{ padding: '10px' }}>
                     <Button type="button" variant="outlined" onClick={() => navigate('/alunos')}>Cancelar</Button>

@@ -24,7 +24,7 @@ controller.create = async function (req, res) {
             }
         })
 
-        await prisma.professor.create({ 
+        const professor = await prisma.professor.create({ 
             data:  {
                 data_nasc,
                 especialidade,
@@ -35,7 +35,7 @@ controller.create = async function (req, res) {
             }
         })
 
-        res.status(201).end()
+        res.status(201).json(professor)
     }
     catch(error) {
         console.error('Erro ao cadastrar professor', error)

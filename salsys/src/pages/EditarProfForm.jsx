@@ -140,7 +140,7 @@ export default function EditTeacherForm() {
                         required
                     />
                     <Divider />
-                    <Typography>Telefone de Contato*: </Typography>
+                    <Typography>Telefone de Contato (WhatsApp)*: </Typography>
                     <TextField
                         inputRef={telefoneInputRef}
                         name="telefone"

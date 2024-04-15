@@ -48,9 +48,6 @@ app.use('/professores', professorRoute)
 import alunoRoute from './routes/aluno.js'
 app.use('/alunos', alunoRoute)
 
-import responsavelRoute from './routes/responsavel.js'
-app.use('/responsaveis', responsavelRoute)
-
 import aulaRoute from './routes/aula.js'
 app.use('/aulas', aulaRoute)
 

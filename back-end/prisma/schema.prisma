@@ -69,7 +69,6 @@ model user {
   end_estado      String
   professor       professor?
   aluno           aluno?
-  responsavel     responsavel?
 }
 
 model professor {
@@ -90,19 +89,12 @@ model aluno {
   data_nasc       DateTime
   user            user              @relation(fields:[id], references:[id])
   id              Int               @id
-  responsavel     responsavel?
+  resp_nome       String?
+  resp_email      String?
+  resp_telefone   String?
   matricula       matricula[]
   presenca        presenca[]
   avaliacao       avaliacao[]
-}
-
-model responsavel {
-  cpf             String            @db.VarChar(11)
-  data_nasc       DateTime?
-  user            user              @relation(fields:[id], references:[id])
-  id              Int               @id
-  aluno           aluno             @relation(fields:[alunoId], references:[id])
-  alunoId         Int               @unique
 }
 
 model aula {

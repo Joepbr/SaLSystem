@@ -24,6 +24,7 @@ import Disponibilidade from './pages/DisponibForm'
 import Alunos from './pages/AlunoList'
 import AlunoProfile from './pages/AlunoProfile'
 import NovoAlunoForm from './pages/NovoAlunoForm'
+import EditarAlunoForm from './pages/EditarAlunoForm'
 import Aulas from './pages/AulaList'
 
 import LoginForm from './pages/LoginForm'
@@ -77,6 +78,7 @@ function App() {
               <Route path="/alunos" element={ <Alunos /> } />
               <Route path="/aluno/:id" element={ <AlunoProfile/> } />
               <Route path="/alunos/new" element={ <NovoAlunoForm/> } />
+              <Route path="/aluno/:id/edit" element={ <EditarAlunoForm/> } />
 
               <Route path="/aulas" element={ <Aulas /> } />
 

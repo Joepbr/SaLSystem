@@ -5,7 +5,7 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        const { nome, email, telefone, end_logr, end_num, end_compl, end_cid, end_estado, username, password, data_nasc } = req.body
+        const { nome, email, telefone, end_logr, end_num, end_compl, end_cid, end_estado, username, password, data_nasc, resp_nome, resp_email, resp_telefone } = req.body
 
         const hashedPassword = await bcrypt.hash(password, 12)
 
@@ -24,16 +24,19 @@ controller.create = async function (req, res) {
             }
         })
 
-        await prisma.aluno.create({ 
+        const aluno = await prisma.aluno.create({ 
             data:  {
                 data_nasc,
+                resp_nome,
+                resp_email,
+                resp_telefone,
                 user: {
                     connect: { id: newUser.id }
                 }
             }
         })
 
-        res.status(201).end()
+        res.status(201).json(aluno)
     }
     catch(error) {
         console.log(error)

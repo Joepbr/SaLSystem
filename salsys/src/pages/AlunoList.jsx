@@ -17,6 +17,7 @@ export default function Alunos() {
     async function fetchData() {
         try {
             const result = await myfetch.get('/alunos');
+            result.sort((a, b) => a.user.nome.localeCompare(b.user.nome))
             setAlunos(result);
         } catch (error) {
             console.error(error);
@@ -66,7 +67,13 @@ export default function Alunos() {
                                         to={`/aluno/${aluno.id}`}
                                         sx={{ borderBottom: index < alunos.length - 1 ? '1px solid #ccc' : 'none' }}
                                     >
-                                        <ListItemText primary={aluno.user.nome} />
+                                        <ListItemText 
+                                            primary={aluno.user.nome} 
+                                            primaryTypographyProps={{
+                                                fontSize: 20,
+                                                fontWeight: 'medium'
+                                            }}
+                                        />
                                         <Button component={Link} to={`/aluno/${aluno.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
                                         <Button onClick={(event) => handleDeleteConfirmation(aluno, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
                                         <Divider component="li" />
