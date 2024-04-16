@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import { Container, Box, Typography, TextField, Button, Divider, Grid, Select, MenuItem, FormControl, InputLabel, IconButton, InputAdornment } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { Container, Box, Typography, TextField, Button, Divider, Grid, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -25,7 +24,9 @@ export default function EditarAlunoForm() {
         data_nasc: moment(),
         resp_nome: '',
         resp_email: '',
-        resp_telefone: ''
+        resp_telefone: '',
+        resp_data_nasc: moment(),
+        resp_parent: ''
     })
     const [idade, setIdade] = React.useState(null)
 
@@ -43,6 +44,8 @@ export default function EditarAlunoForm() {
                 const userData = await myfetch.get(`/users/${id}`)
 
                 alunoData.data_nasc = moment(alunoData.data_nasc);
+
+                alunoData.resp_data_nasc = moment(aluno.resp_data_nasc)
 
                 const combinedData = { ...alunoData, ...userData}
 
@@ -70,19 +73,26 @@ export default function EditarAlunoForm() {
             
             const rawRespTelefone = idade < 18 ? aluno.resp_telefone.replace(/\D/g, '') : null
 
+            const dateOfBirth2 = new Date(aluno.resp_data_nasc)
+
+            const formattedDateOfBirth2 = dateOfBirth2.toISOString()
+
             setAluno({
                 ...aluno,
                 telefone: rawTelefone,
                 end_num: endNumInteger,
                 data_nasc: formattedDateOfBirth,
-                resp_telefone: rawRespTelefone
+                resp_telefone: rawRespTelefone,
+                resp_data_nasc: formattedDateOfBirth2
             })
 
             const response1 = await myfetch.put(`/alunos/${id}`, {
                 data_nasc: formattedDateOfBirth,
                 resp_nome: idade < 18 ? aluno.resp_nome : null,
                 resp_email: idade < 18 ? aluno.resp_email : null,
-                resp_telefone: idade < 18 ? rawRespTelefone : null
+                resp_telefone: idade < 18 ? rawRespTelefone : null,
+                resp_data_nasc: idade < 18 ? formattedDateOfBirth2 : null,
+                resp_parent: idade < 18 ? aluno.resp_parent : null
             });
 
             const response2 = await myfetch.put(`/users/${aluno.id}`, {
@@ -314,6 +324,46 @@ export default function EditarAlunoForm() {
                             fullWidth
                             value={aluno.resp_telefone}
                             onChange={(e) => setAluno({...aluno, resp_telefone: e.target.value})}
+                            required
+                        />
+                        <Divider />
+                    </>
+                )}
+                {idade < 18 &&(
+                    <>
+                    <Typography>Data de Nascimento do Responsável*:</Typography>
+                    <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                        {moment.isMoment(aluno.resp_data_nasc) ? (
+                            <DatePicker
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black"}}
+                                margin="normal"
+                                fullWidth
+                                value={aluno.resp_data_nasc}
+                                onChange={(newValue) => setAluno({...aluno, resp_data_nasc: newValue})}
+                            >
+                                <TextField
+                                    variant="filled"
+                                />
+                            </DatePicker>
+                        ) : (
+                            <div>Carregando...</div>
+                        )}
+                    </LocalizationProvider>
+                    <Divider />
+                </>
+                )}
+                {idade < 18 &&(
+                    <>
+                        <Typography>Grau de Parentesco do Responsável*:</Typography>
+                        <TextField
+                            name="paarentesco_responsavel"
+                            variant="filled"
+                            sx={{ backgroundColor: "white", color: "black" }}
+                            margin="normal"
+                            fullWidth
+                            value={aluno.resp_parent}
+                            onChange={(e) => setAluno({...aluno, resp_parent: e.target.value})}
                             required
                         />
                         <Divider />

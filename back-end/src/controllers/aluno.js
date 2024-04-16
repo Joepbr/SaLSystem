@@ -5,7 +5,7 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        const { nome, email, telefone, end_logr, end_num, end_compl, end_cid, end_estado, username, password, data_nasc, resp_nome, resp_email, resp_telefone } = req.body
+        const { nome, email, telefone, end_logr, end_num, end_compl, end_cid, end_estado, username, password, data_nasc, resp_nome, resp_email, resp_telefone, resp_data_nasc, resp_parent } = req.body
 
         const hashedPassword = await bcrypt.hash(password, 12)
 
@@ -30,6 +30,8 @@ controller.create = async function (req, res) {
                 resp_nome,
                 resp_email,
                 resp_telefone,
+                resp_data_nasc,
+                resp_parent,
                 user: {
                     connect: { id: newUser.id }
                 }

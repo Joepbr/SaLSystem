@@ -26,7 +26,9 @@ export default function NovoAlunoForm() {
         data_nasc: moment(),
         resp_nome: '',
         resp_email: '',
-        resp_telefone: ''
+        resp_telefone: '',
+        resp_data_nasc: moment(),
+        resp_parent: ''
     })
     const [showPassword, setShowPassword] = React.useState(false)
     const [idade, setIdade] = React.useState(null)
@@ -49,7 +51,7 @@ export default function NovoAlunoForm() {
             return;
         }
 
-        if (idade < 18 && (!aluno.resp_nome || !aluno.resp_email || !aluno.resp_telefone)) {
+        if (idade < 18 && (!aluno.resp_nome || !aluno.resp_email || !aluno.resp_telefone || !aluno.resp_data_nasc || !aluno.resp_parent)) {
             alert('Por favor, preencha os campos obrigatórios do responsável')
             return
         }
@@ -65,6 +67,10 @@ export default function NovoAlunoForm() {
 
             const rawRespTelefone = aluno.resp_telefone.replace(/\D/g, '')
 
+            const dateOfBirth2 = new Date(aluno.resp_data_nasc)
+
+            const formattedDateOfBirth2 = dateOfBirth2.toISOString()
+
             const response = await myfetch.post('/alunos', {
                 nome: aluno.nome,
                 email: aluno.email,
@@ -79,7 +85,9 @@ export default function NovoAlunoForm() {
                 data_nasc: formattedDateOfBirth,
                 resp_nome: idade < 18 ? aluno.resp_nome : null,
                 resp_email: idade < 18 ? aluno.resp_email : null,
-                resp_telefone: idade < 18 ? rawRespTelefone : null
+                resp_telefone: idade < 18 ? rawRespTelefone : null,
+                resp_data_nasc: idade < 18 ? formattedDateOfBirth2 : null,
+                resp_parent: idade < 18 ? aluno.resp_parent : null
             });
             
             console.log('Aluno cadastrado:', response);
@@ -337,6 +345,46 @@ export default function NovoAlunoForm() {
                             fullWidth
                             value={aluno.resp_telefone}
                             onChange={(e) => setAluno({...aluno, resp_telefone: e.target.value})}
+                            required
+                        />
+                        <Divider />
+                    </>
+                )}
+                {idade < 18 &&(
+                    <>
+                    <Typography>Data de Nascimento do Responsável*:</Typography>
+                    <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                        {moment.isMoment(aluno.resp_data_nasc) ? (
+                            <DatePicker
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black"}}
+                                margin="normal"
+                                fullWidth
+                                value={aluno.resp_data_nasc}
+                                onChange={(newValue) => setAluno({...aluno, resp_data_nasc: newValue})}
+                            >
+                                <TextField
+                                    variant="filled"
+                                />
+                            </DatePicker>
+                        ) : (
+                            <div>Carregando...</div>
+                        )}
+                    </LocalizationProvider>
+                    <Divider />
+                </>
+                )}
+                {idade < 18 &&(
+                    <>
+                        <Typography>Grau de Parentesco do Responsável*:</Typography>
+                        <TextField
+                            name="paarentesco_responsavel"
+                            variant="filled"
+                            sx={{ backgroundColor: "white", color: "black" }}
+                            margin="normal"
+                            fullWidth
+                            value={aluno.resp_parent}
+                            onChange={(e) => setAluno({...aluno, resp_parent: e.target.value})}
                             required
                         />
                         <Divider />

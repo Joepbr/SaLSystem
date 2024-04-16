@@ -30,7 +30,8 @@ controller.retrieveAll = async function (req, res) {
     try {
         const result = await prisma.modulo.findMany({
             include: {
-                dias_sem: true
+                dias_sem: true,
+                curso: true
             }
         })
 
@@ -49,6 +50,7 @@ controller.retrieveOne = async function (req, res) {
             where: { id: Number(req.params.id) },
             include: {
                 dias_sem: true,
+                curso: true,
                 professor: {
                     include: {
                         user: true
@@ -76,6 +78,7 @@ controller.retrieveByCourseId = async function (req, res) {
             },
             include: {
                 dias_sem: true,
+                curso: true,
                 professor: {
                     include: {
                         user: true
@@ -103,6 +106,7 @@ controller.retrieveByProfId = async function (req, res) {
             },
             include: {
                 dias_sem: true,
+                curso: true,
                 professor: {
                     include: {
                         user: true

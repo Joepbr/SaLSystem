@@ -36,6 +36,7 @@ model modulo {
   preco           Float?
   livro           String?
   wagrupo         String?
+  active          Boolean           @default(true)
   curso           curso             @relation(fields: [cursoId], references: [id])
   cursoId         Int        
   professor       professor         @relation(fields: [profId], references: [id])
@@ -92,6 +93,8 @@ model aluno {
   resp_nome       String?
   resp_email      String?
   resp_telefone   String?
+  resp_data_nasc  DateTime?
+  resp_parent     String?
   matricula       matricula[]
   presenca        presenca[]
   avaliacao       avaliacao[]

@@ -95,11 +95,13 @@ export default function ProfProfile() {
                             {expandedAccordion === index ? (
                                 <MuiLink component={Link} to={`/modulo/${modulo.id}`} underline="none" color="inherit" style={{ width: '100%' }}>
                                     <Stack direction="row" spacing={2} alignItems="center">
+                                        <Avatar alt={modulo.curso.nome} src={modulo.curso.imageUrl} />
                                         <Typography sx={{ ml: 2 }} variant="h5">{modulo.titulo}</Typography>
                                     </Stack>
                                 </MuiLink>
                             ) : (
                                 <>
+                                    <Avatar alt={modulo.curso.nome} src={modulo.curso.imageUrl} />
                                     <Typography sx={{ ml: 2 }} variant="h5">{modulo.titulo}</Typography>
                                 </>
                             )}
