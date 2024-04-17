@@ -48,7 +48,6 @@ export default function EditarCursoForm() {
                 <Typography>Nome do curso</Typography>
                 <TextField
                     name="nome"
-                    label="Nome"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -61,7 +60,6 @@ export default function EditarCursoForm() {
                 <Typography>Breve descrição</Typography>
                 <TextField
                     name="descricao"
-                    label="Descrição"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -76,7 +74,6 @@ export default function EditarCursoForm() {
                 <Typography>Descrição Detalhada</Typography>
                 <TextField
                     name="detalhes"
-                    label="Detalhes"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"

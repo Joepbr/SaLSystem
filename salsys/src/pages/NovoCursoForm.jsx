@@ -32,7 +32,6 @@ export default function NovoCursoForm() {
                 <Typography>Nome do curso</Typography>
                 <TextField
                     name="nome"
-                    label="Nome"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -45,7 +44,6 @@ export default function NovoCursoForm() {
                 <Typography>Breve descrição</Typography>
                 <TextField
                     name="descricao"
-                    label="Descrição"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -60,7 +58,6 @@ export default function NovoCursoForm() {
                 <Typography>Descrição Detalhada</Typography>
                 <TextField
                     name="detalhes"
-                    label="Detalhes"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"

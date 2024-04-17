@@ -89,7 +89,6 @@ export default function NovoModuloForm() {
             <form onSubmit={handleSubmit}>
                 <Typography>Título do Módulo:</Typography>
                 <TextField
-                    label="Título"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -122,9 +121,8 @@ export default function NovoModuloForm() {
                     )}
                 </LocalizationProvider>
                 <Divider />
-                <Typography>Tempo de Duração das Aulas:</Typography>
+                <Typography>Tempo de Duração das Aulas (em minutos):</Typography>
                 <TextField
-                    label="Duração da Aula (min)"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -155,9 +153,8 @@ export default function NovoModuloForm() {
                     )}
                 </LocalizationProvider>
                 <Divider />
-                <Typography>Tempo de Duração do Módulo:</Typography>
+                <Typography>Tempo de Duração do Módulo (em Semanas):</Typography>
                 <TextField
-                    label="Duração do Módulo (semanas)"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -170,7 +167,6 @@ export default function NovoModuloForm() {
                 <Divider />
                 <Typography>Professor:</Typography>
                 <FormControl fullWidth>
-                    <InputLabel>Professor</InputLabel>
                     <Select 
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
@@ -207,7 +203,6 @@ export default function NovoModuloForm() {
                 <Divider />
                 <Typography>Preço Mensal do Curso:</Typography>
                 <TextField
-                    label="Preço"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -219,7 +214,6 @@ export default function NovoModuloForm() {
                 <Divider />
                 <Typography>Livro a Ser Utilizado no Curso:</Typography>
                 <TextField
-                    label="Livro"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -230,7 +224,6 @@ export default function NovoModuloForm() {
                 <Divider />
                 <Typography>Link para Grupo no WhatsApp:</Typography>
                 <TextField
-                    label="WhatsApp"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"

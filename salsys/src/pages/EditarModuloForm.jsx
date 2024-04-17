@@ -116,7 +116,6 @@ export default function EditarModuloForm() {
             <form onSubmit={handleSubmit}>
                 <Typography>Título do Módulo:</Typography>
                 <TextField
-                    label="Título"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -132,7 +131,6 @@ export default function EditarModuloForm() {
                 <Typography>Horário das Aulas:</Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
                     <TimePicker
-                        label="Horário"
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
                         margin="normal"
@@ -144,7 +142,6 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Tempo de Duração das Aulas (em minutos):</Typography>
                 <TextField
-                    label="Duração da Aula (min)"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -158,7 +155,6 @@ export default function EditarModuloForm() {
                 <Typography>Data de Início das Aulas:</Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
                         <DatePicker
-                            label="Início das aulas"
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black"}}
                             margin="normal"
@@ -170,7 +166,6 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Tempo de Duração do Módulo (em semanas):</Typography>
                 <TextField
-                    label="Duração do Módulo (semanas)"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -183,7 +178,6 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Professor:</Typography>
                 <FormControl fullWidth>
-                    <InputLabel>Professor</InputLabel>
                     <Select 
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
@@ -223,7 +217,6 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Preço Mensal do Curso:</Typography>
                 <TextField
-                    label="Preço"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -235,7 +228,6 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Livro a Ser Utilizado no Curso:</Typography>
                 <TextField
-                    label="Livro"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
@@ -246,7 +238,6 @@ export default function EditarModuloForm() {
                 <Divider />
                 <Typography>Link para Grupo no WhatsApp:</Typography>
                 <TextField
-                    label="WhatsApp"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
