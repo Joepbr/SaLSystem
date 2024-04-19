@@ -82,7 +82,7 @@ function App() {
               <Route path="/aluno/:id/edit" element={ <EditarAlunoForm/> } />
 
               <Route path="/aulas" element={ <Aulas /> } />
-              <Route path="/aula/new" element={ <NovaAulaForm /> } />
+              <Route path="/modulo/:id/aula/new" element={ <NovaAulaForm /> } />
 
             </Route>
           </Routes>

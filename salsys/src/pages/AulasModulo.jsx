@@ -78,7 +78,7 @@ export default function AulasModulo() {
             </Box>
             <Divider />
             <Box display="flex" sx={{ margin: 2 }}>
-                <Button component={Link} to="/aula/new" variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Registrar Nova Aula </Button>
+                <Button component={Link} to={`/modulo/${id}/aula/new`} variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Registrar Nova Aula </Button>
             </Box>
         </Container>
     )
