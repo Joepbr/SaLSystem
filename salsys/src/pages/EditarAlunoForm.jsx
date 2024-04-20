@@ -8,6 +8,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
+import Waiting from '../ui/Waiting';
 
 export default function EditarAlunoForm() {
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ export default function EditarAlunoForm() {
         resp_parent: ''
     })
     const [idade, setIdade] = React.useState(null)
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() =>{
         const today = moment()
@@ -39,7 +41,7 @@ export default function EditarAlunoForm() {
     React.useEffect(() => {
         const fetchAlunoData = async () => {
             try {
-
+                setWaiting(true)
                 const alunoData = await myfetch.get(`/alunos/${id}`);
                 const userData = await myfetch.get(`/users/${id}`)
 
@@ -50,7 +52,7 @@ export default function EditarAlunoForm() {
                 const combinedData = { ...alunoData, ...userData}
 
                 setAluno(combinedData);
-
+                setWaiting(false)
             } catch (error) {
                 console.error('Erro ao ler dados do aluno:', error);
             }
@@ -63,6 +65,7 @@ export default function EditarAlunoForm() {
         e.preventDefault();
 
         try {
+            setWaiting(true)
             const dateOfBirth = new Date(aluno.data_nasc)
 
             const formattedDateOfBirth = dateOfBirth.toISOString()
@@ -107,6 +110,7 @@ export default function EditarAlunoForm() {
             })
             
             console.log('Dados do aluno editados com sucesso:', response1, response2);
+            setWaiting(false)
             navigate('/alunos');
     
         } catch (error) {
@@ -149,6 +153,7 @@ export default function EditarAlunoForm() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Editar Aluno</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>

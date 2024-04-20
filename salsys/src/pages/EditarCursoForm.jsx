@@ -2,11 +2,13 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Divider } from '@mui/material';
 import myfetch from '../utils/myfetch';
+import Waiting from '../ui/Waiting';
 
 export default function EditarCursoForm() {
     const [cursoData, setCursoData] = React.useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
     const navigate = useNavigate();
     const { id } = useParams()
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
         fetchCursoData();
@@ -14,8 +16,10 @@ export default function EditarCursoForm() {
 
     const fetchCursoData = async () => {
         try {
+            setWaiting(true)
             const result = await myfetch.get(`/cursos/${id}`);
             setCursoData(result);
+            setWaiting(false)
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
@@ -31,8 +35,9 @@ export default function EditarCursoForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Make put request
+            setWaiting(true)
             await myfetch.put(`/cursos/${id}`, cursoData);
+            setWaiting(false)
             navigate('/cursos');
         } catch (error) {
             console.error(error);
@@ -42,6 +47,7 @@ export default function EditarCursoForm() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Editar Curso</Typography>
             <Divider/>
             <form onSubmit={handleSubmit}>

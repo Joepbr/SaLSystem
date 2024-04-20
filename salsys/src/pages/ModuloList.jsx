@@ -5,6 +5,7 @@ import { Box, Container, Typography, Divider, Button, Accordion, AccordionSummar
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import moment from 'moment';
+import Waiting from '../ui/Waiting';
 
 moment.locale('pt-br');
 
@@ -15,6 +16,7 @@ export default function Modulos() {
     const [expandedAccordion, setExpandedAccordion] = React.useState(null)
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [moduloToDelete, setmoduloToDelete] = React.useState(null);
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
         fetchCurso();
@@ -23,9 +25,11 @@ export default function Modulos() {
 
     const fetchCurso = async () => {
         try {
+            setWaiting(true)
             const cursoId = id;
             const result = await myfetch.get(`/cursos/${cursoId}`);
             setCurso(result);
+            setWaiting(false)
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
@@ -34,9 +38,11 @@ export default function Modulos() {
 
     const fetchModulos = async () => {
         try {
+            setWaiting(true)
             const cursoId = id;
             const result = await myfetch.get(`/modulos/curso/${cursoId}`);
             setModulos(result);
+            setWaiting(false)
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
@@ -64,9 +70,11 @@ export default function Modulos() {
     const handleDelete = async () => {
         if (moduloToDelete) {
             try {
+                setWaiting(true)
                 await myfetch.delete(`/modulos/${moduloToDelete.id}`);
-
+                
                 setOpenDeleteDialog(false);
+                setWaiting(false)
             } catch (error) {
                 console.error(error);
                 alert('ERRO: ' + error.message);
@@ -80,6 +88,7 @@ export default function Modulos() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Avatar alt={curso ? curso.nome : 'Carregando...'} src={curso? curso.imageUrl : 'X'}>X</Avatar>
             <Typography variant="h4">{curso ? curso.nome : 'Carregando...'}</Typography>
             <Divider />

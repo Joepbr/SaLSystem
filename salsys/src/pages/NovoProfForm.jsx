@@ -9,6 +9,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
+import Waiting from '../ui/Waiting';
 
 export default function CreateTeacherForm() {
     const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function CreateTeacherForm() {
     const [imageUrl, setImageUrl] = React.useState('');
 
     const [showPassword, setShowPassword] = React.useState(false)
+    const [waiting, setWaiting] = React.useState(false)
 
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
@@ -41,6 +43,7 @@ export default function CreateTeacherForm() {
         }
     
         try {
+            setWaiting(true)
             const dateOfBirth = new Date(data_nasc)
 
             const formattedDateOfBirth = dateOfBirth.toISOString()
@@ -66,6 +69,7 @@ export default function CreateTeacherForm() {
             });
             
             console.log('Professor cadastrado:', response);
+            setWaiting(false)
             navigate('/profs')
         } catch (error) {
 
@@ -90,6 +94,7 @@ export default function CreateTeacherForm() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Cadastrar Novo Professor</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>

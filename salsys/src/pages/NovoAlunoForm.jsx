@@ -9,6 +9,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
+import Waiting from '../ui/Waiting';
 
 export default function NovoAlunoForm() {
     const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function NovoAlunoForm() {
     })
     const [showPassword, setShowPassword] = React.useState(false)
     const [idade, setIdade] = React.useState(null)
+    const [waiting, setWaiting] = React.useState(false)
 
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
@@ -57,6 +59,7 @@ export default function NovoAlunoForm() {
         }
 
         try {
+            setWaiting(true)
             const dateOfBirth = new Date(aluno.data_nasc)
 
             const formattedDateOfBirth = dateOfBirth.toISOString()
@@ -91,6 +94,7 @@ export default function NovoAlunoForm() {
             });
             
             console.log('Aluno cadastrado:', response);
+            setWaiting(false)
             navigate('/alunos');
     
         } catch (error) {
@@ -133,6 +137,7 @@ export default function NovoAlunoForm() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Cadastrar Novo Aluno</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>

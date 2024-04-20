@@ -4,9 +4,9 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        await prisma.curso.create({ data: req.body })
+        const curso = await prisma.curso.create({ data: req.body })
 
-        res.status(201).end()
+        res.status(201).json(curso)
     }
     catch(error) {
         console.log(error)

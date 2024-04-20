@@ -2,10 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Divider } from '@mui/material';
 import myfetch from '../utils/myfetch';
+import Waiting from '../ui/Waiting';
 
 export default function NovoCursoForm() {
     const [cursoData, setCursoData] = React.useState({ nome: '', descricao: '', detalhes: '', imageUrl: '' });
     const navigate = useNavigate();
+    const [waiting, setWaiting] = React.useState(false)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -15,8 +17,9 @@ export default function NovoCursoForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Make post request
+            setWaiting(true)
             await myfetch.post('/cursos', cursoData);
+            setWaiting(false)
             navigate('/cursos')
         } catch (error) {
             console.error(error);
@@ -26,6 +29,7 @@ export default function NovoCursoForm() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Criar Novo Curso</Typography>
             <Divider/>
             <form onSubmit={handleSubmit}>

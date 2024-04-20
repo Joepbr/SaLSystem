@@ -4,9 +4,9 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        const result = await prisma.matricula.create({ data: req.body })
+        const matricula = await prisma.matricula.create({ data: req.body })
 
-        res.status(201).json(result)
+        res.status(201).json(matricula)
     }
     catch(error) {
         console.log(error)

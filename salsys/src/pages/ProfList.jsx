@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Link } from 'react-router-dom'
 import theme from '../utils/theme';
+import Waiting from '../ui/Waiting';
 
 
 export default function Profs(){
@@ -14,6 +15,7 @@ export default function Profs(){
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
     const [profToDelete, setProfToDelete] = React.useState(null)
     const [expandedAccordion, setExpandedAccordion] = React.useState(null)
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
         fetchData()
@@ -21,9 +23,11 @@ export default function Profs(){
 
     async function fetchData() {
         try {
+            setWaiting(true)
             const result = await myfetch.get('/professores')
             result.sort((a, b) => a.user.nome.localeCompare(b.user.nome))
             setProfs(result)
+            setWaiting(false)
         }
         catch(error) {
             console.error(error)
@@ -46,10 +50,12 @@ export default function Profs(){
     const handleDelete = async () => {
         if (profToDelete) {
             try {
+                setWaiting(true)
                 await myfetch.delete(`/professores/${profToDelete.id}`);
                 await myfetch.delete(`/users/${profToDelete.id}`)
                 setOpenDeleteDialog(false)
                 fetchData()
+                setWaiting(false)
             } catch (error) {
                 console.error(error)
                 alert('ERRO: '+ error.message)
@@ -65,6 +71,7 @@ export default function Profs(){
         <ThemeProvider theme={theme}>
             <Container>
                 <CssBaseline>
+                    <Waiting show={waiting} />
                     <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
                         Lista de Professores da Escola:
                     </Typography>

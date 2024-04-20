@@ -9,6 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import theme from '../utils/theme';
 import moment from 'moment';
+import Waiting from '../ui/Waiting';
 
 moment.locale('pt-br');
 
@@ -17,6 +18,7 @@ export default function ProfProfile() {
     const [prof, setProf] = React.useState(null);
     const [modulos, setModulos] = React.useState([]);
     const [expandedAccordion, setExpandedAccordion] = React.useState(null)
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
         fetchProf();
@@ -25,9 +27,11 @@ export default function ProfProfile() {
 
     const fetchProf = async () => {
         try {
+            setWaiting(true)
             const profId = id;
             const result = await myfetch.get(`/professores/${profId}`);
             setProf(result);
+            setWaiting(false)
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
@@ -36,9 +40,11 @@ export default function ProfProfile() {
 
     const fetchModulos = async () => {
         try {
+            setWaiting(true)
             const profId = id;
             const result = await myfetch.get(`/modulos/professor/${profId}`);
             setModulos(result);
+            setWaiting(false)
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
@@ -62,6 +68,7 @@ export default function ProfProfile() {
         <ThemeProvider theme={theme}>
             <Container>
                 <CssBaseline>
+                    <Waiting show={waiting} />
                     {prof && (
                         <>
                             <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />

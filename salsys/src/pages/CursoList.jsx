@@ -6,12 +6,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom'
 import theme from '../utils/theme';
+import Waiting from '../ui/Waiting';
 
 
 export default function Cursos(){
     const [cursos, setCursos] = React.useState([])
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
     const [cursoToDelete, setCursoToDelete] = React.useState(null)
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
         fetchData()
@@ -19,9 +21,11 @@ export default function Cursos(){
 
     async function fetchData() {
         try {
+            setWaiting(true)
             const result = await myfetch.get('/cursos')
             result.sort((a, b) => a.id - b.id)
             setCursos(result)
+            setWaiting(false)
         }
         catch(error) {
             console.error(error)
@@ -40,8 +44,10 @@ export default function Cursos(){
     const handleDelete = async () => {
         if (cursoToDelete) {
             try {
+                setWaiting(true)
                 await myfetch.delete(`/cursos/${cursoToDelete.id}`);
                 setOpenDeleteDialog(false)
+                setWaiting(false)
             } catch (error) {
                 console.error(error)
                 alert('ERRO: '+ error.message)
@@ -57,6 +63,7 @@ export default function Cursos(){
         <ThemeProvider theme={theme}>
             <Container>
                 <CssBaseline>
+                    <Waiting show={waiting} />
                     <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
                         Cursos oferecidos pela Escola:
                     </Typography>

@@ -9,6 +9,8 @@ import { FaWhatsapp } from "react-icons/fa";
 
 import theme from '../utils/theme';
 import moment from 'moment';
+import Waiting from '../ui/Waiting';
+
 
 moment.locale('pt-br');
 
@@ -20,6 +22,7 @@ export default function AlunoProfile() {
     const [selectedModulo, setSelectedModulo] = React.useState(null)
     const [availableModulos, setAvailableModulos] = React.useState([])
     const [matriculas, setMatriculas] = React.useState([])
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() =>{
         if (aluno) {
@@ -35,9 +38,11 @@ export default function AlunoProfile() {
 
     const fetchAluno = async () => {
         try {
+            setWaiting(true)
             const alunoId = id;
             const result = await myfetch.get(`/alunos/${alunoId}`);
             setAluno(result);
+            setWaiting(false)
             fetchModulos()
             fetchMatriculas()
         } catch (error) {
@@ -48,8 +53,10 @@ export default function AlunoProfile() {
 
     const fetchModulos = async () => {
         try {
+            setWaiting(true)
             const result = await myfetch.get('/modulos')
             setAvailableModulos(result)
+            setWaiting(false)
         } catch (error) {
             console.error(error)
             alert('ERRO: ' + error.message)
@@ -58,8 +65,10 @@ export default function AlunoProfile() {
 
     const fetchMatriculas = async () => {
         try {
+            setWaiting(true)
             const result = await myfetch.get(`/matriculas/aluno/${id}`)
             setMatriculas(result)
+            setWaiting(false)
         } catch (error) {
             console.error(error)
             alert('ERRO: ' + error.message)
@@ -73,11 +82,13 @@ export default function AlunoProfile() {
     const handleEnrollConfirmation = async () => {
         if (selectedModulo) {
             try {
+                setWaiting(true)
                 await myfetch.post('/matriculas', {
                     alunoId: aluno.id,
                     moduloId: selectedModulo.id
                 })
                 setOpenEnrollDialog(false)
+                setWaiting(false)
 
                 await fetchAluno()
             } catch (error) {
@@ -95,7 +106,9 @@ export default function AlunoProfile() {
 
     const handleCancelMatricula = async (matriculaId) => {
         try {
+            setWaiting(true)
             await myfetch.delete(`/matriculas/${matriculaId}`)
+            setWaiting(false)
             await fetchMatriculas()
         } catch (error) {
             console.error(error)
@@ -107,6 +120,7 @@ export default function AlunoProfile() {
         <ThemeProvider theme={theme}>
             <Container>
                 <CssBaseline />
+                <Waiting show={waiting} />
                 {aluno && (
                     <>
                         <Typography variant="h4">{aluno.user.nome}</Typography>

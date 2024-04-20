@@ -4,11 +4,13 @@ import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import theme from '../utils/theme';
 import myfetch from '../utils/myfetch';
+import Waiting from '../ui/Waiting';
 
 export default function Alunos() {
     const [alunos, setAlunos] = useState([]);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [alunoToDelete, setAlunoToDelete] = useState(null);
+    const [waiting, setWaiting] = React.useState(false)
 
     useEffect(() => {
         fetchData();
@@ -16,9 +18,11 @@ export default function Alunos() {
 
     async function fetchData() {
         try {
+            setWaiting(true)
             const result = await myfetch.get('/alunos');
             result.sort((a, b) => a.user.nome.localeCompare(b.user.nome))
             setAlunos(result);
+            setWaiting(false)
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
@@ -34,9 +38,11 @@ export default function Alunos() {
     const handleDelete = async () => {
         if (alunoToDelete) {
             try {
+                setWaiting(true)
                 await myfetch.delete(`/alunos/${alunoToDelete.id}`);
                 await myfetch.delete(`/users/${alunoToDelete.id}`)
                 setOpenDeleteDialog(false);
+                setWaiting(false)
                 fetchData();
             } catch (error) {
                 console.error(error);
@@ -53,6 +59,7 @@ export default function Alunos() {
         <ThemeProvider theme={theme}>
             <Container>
                 <CssBaseline>
+                    <Waiting show={waiting} />
                     <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
                         Lista de Alunos da Escola:
                     </Typography>

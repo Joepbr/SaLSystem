@@ -27,7 +27,7 @@ export default function EditarModuloForm() {
         livro: '',
         wagrupo: '',
         cursoId: '',
-        professorId: ''
+        professor: {}
     });
 
     React.useEffect(() => {
@@ -61,7 +61,7 @@ export default function EditarModuloForm() {
                     ...restData,
                     horario: parsedHorario,
                     inicio: parsedInicio,
-                    professorId: restData.professorId
+                    professor: restData.professor
                 })
             }
             catch (error) {
@@ -92,7 +92,7 @@ export default function EditarModuloForm() {
                 preco: moduloData.preco,
                 livro: moduloData.livro,
                 wagrupo: moduloData.wagrupo,
-                professor: {connect: { id: parseInt(moduloData.professorId) }}
+                professor: {connect: { id: parseInt(moduloData.professor.id) }}
             });
 
             console.log('Dados do professor editados com sucesso:', response);
@@ -181,7 +181,7 @@ export default function EditarModuloForm() {
                     <Select 
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black"}}
-                        value={moduloData.professorId ? moduloData.professorId : ''} 
+                        value={moduloData.professor.id ? moduloData.professor.id : ''} 
                         onChange={(e) => setModuloData(prevState => ({
                             ...prevState,
                             professorId: e.target.value

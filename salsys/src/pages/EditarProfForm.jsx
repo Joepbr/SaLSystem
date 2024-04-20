@@ -8,6 +8,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
 import IMask from 'imask';
+import Waiting from '../ui/Waiting';
 
 export default function EditTeacherForm() {
     const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function EditTeacherForm() {
         especialidade: '',
         imageUrl: ''
     });
+    const [waiting, setWaiting] = React.useState(false)
 
     function formatDate(date) {
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -34,7 +36,7 @@ export default function EditTeacherForm() {
     React.useEffect(() => {
         const fetchTeacherData = async () => {
             try {
-
+                setWaiting(true)
                 const professorData = await myfetch.get(`/professores/${id}`);
                 const userData = await myfetch.get(`/users/${id}`)
 
@@ -43,7 +45,7 @@ export default function EditTeacherForm() {
                 const combinedData = { ...professorData, ...userData}
 
                 setTeacherData(combinedData);
-
+                setWaiting(false)
             } catch (error) {
                 console.error('Erro ao ler dados do professor:', error);
             }
@@ -56,7 +58,7 @@ export default function EditTeacherForm() {
         e.preventDefault();
 
         try {
-
+            setWaiting(true)
             const endNumInteger = parseInt(teacherData.end_num)
 
             const dataNascISO = teacherData.data_nasc.toISOString()
@@ -90,6 +92,7 @@ export default function EditTeacherForm() {
             })
 
             console.log('Dados do professor editados com sucesso:', response1, response2);
+            setWaiting(false)
             navigate('/profs');
         } catch (error) {
             console.error('Erro ao editar dados do professor:', error);
@@ -113,6 +116,7 @@ export default function EditTeacherForm() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Editar Professor</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>

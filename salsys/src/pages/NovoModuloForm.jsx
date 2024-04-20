@@ -8,6 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
+import Waiting from '../ui/Waiting';
 
 export default function NovoModuloForm() {
     const navigate = useNavigate();
@@ -26,16 +27,19 @@ export default function NovoModuloForm() {
     const [wagrupo, setWagrupo] = React.useState('');
     const [professorId, setProfessorId] = React.useState('');
     const [professores, setProfessores] = React.useState([]);
+    const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
         const fetchProfessores = async () => {
             try {
+                setWaiting(true)
                 const response = await myfetch.get('/professores');
                 const professores = response.map(professor => ({
                     id: professor.id,
                     nome: professor.user.nome
                 }))
-                setProfessores(professores); 
+                setProfessores(professores);
+                setWaiting(false)
             } catch (error) {
                 console.error(error);
             }
@@ -52,6 +56,7 @@ export default function NovoModuloForm() {
         }
 
         try {
+            setWaiting(true)
             const response = await myfetch.post('/modulos', {
                 titulo,
                 dias_sem: diasSem.map(dia => dia.dia),
@@ -70,6 +75,7 @@ export default function NovoModuloForm() {
             });
             
             console.log('Módulo criado: ', response)
+            setWaiting(false)
             navigate('/cursos');
         } catch (error) {
             console.error(error);
@@ -84,6 +90,7 @@ export default function NovoModuloForm() {
 
     return (
         <Container>
+            <Waiting show={waiting} />
             <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>Criar Novo Módulo</Typography>
             <Divider />
             <form onSubmit={handleSubmit}>

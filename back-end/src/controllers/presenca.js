@@ -4,9 +4,9 @@ const controller = {}
 
 controller.create = async function (req, res) {
     try {
-        await prisma.presenca.create({ data: req.body })
+        const presenca = await prisma.presenca.create({ data: req.body })
 
-        res.status(201).end()
+        res.status(201).json(presenca)
     }
     catch(error) {
         console.log(error)
@@ -44,6 +44,24 @@ controller.retrieveOne = async function (req, res) {
     }
 }
 
+controller.retrieveByAlunoId = async function (req, res) {
+    try {
+        const alunoId = Number(req.params.id)
+        const result = await prisma.presenca.findMany({
+            where: {
+                alunoId: alunoId
+            }
+        })
+        if(result) res.send(result)
+        else res.status(404).end()
+    }
+    catch (error) {
+        console.log(error);
+
+        res.status(500).end();
+    }
+}
+
 controller.update = async function (req, res) {
     try {
         const result = await prisma.presenca.update({
@@ -69,6 +87,27 @@ controller.delete = async function (req, res) {
 
         if(result) res.status(204).end()
         else res.status(404).end()
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
+controller.deleteByAulaId = async function (req, res) {
+    try {
+        const aulaId = Number(req.params.id)
+        const result = await prisma.presenca.deleteMany({
+            where: {
+                aulaId: aulaId
+            }
+        })
+        if(result.count > 0){
+            res.status(204).end()
+        } else {
+            res.status(404).end()
+        }
     }
     catch(error) {
         console.log(error)
