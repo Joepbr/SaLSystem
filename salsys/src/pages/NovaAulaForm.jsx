@@ -22,11 +22,7 @@ export default function NovaAulaForm() {
     const [profs, setProfs] = React.useState([])
     const [alunos, setAlunos] = React.useState([])
     const [modulo, setModulo] = React.useState({})
-    const [presencas, setPresencas] = React.useState({
-        presente: false,
-        alunoId: '',
-        aulaId: ''
-    })
+    const [presencas, setPresencas] = React.useState([])
     const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
@@ -53,6 +49,14 @@ export default function NovaAulaForm() {
             const response = await myfetch.get(`/alunos/modulo/${id}`)
             const sortedAlunos = response.sort((a, b) => (a.user.nome > b.user.nome) ? 1 : -1);
             setAlunos(sortedAlunos);
+
+            const initialPresencas = sortedAlunos.map((aluno) => ({
+                alunoId: aluno.id,
+                aulaId: null,
+                presente: false
+            }))
+            setPresencas(initialPresencas)
+
             setWaiting(false)
         } catch (error) {
             console.error('Erro lendo dados dos alunos: ', error)
@@ -77,7 +81,14 @@ export default function NovaAulaForm() {
     }
 
     const handlePresencaChange = (alunoId) => (event) => {
-        setPresencas({ ...presencas, [alunoId]: event.target.checked })
+        const { checked } = event.target
+        const updatedPresencas = presencas.map((presenca) => {
+            if (presenca.alunoId === alunoId) {
+                return { ...presenca, presente: checked }
+            }
+            return presenca
+        })
+        setPresencas(updatedPresencas)
     }
 
     const handleSubmit = async (e) => {
@@ -93,15 +104,17 @@ export default function NovaAulaForm() {
                 professor: { connect: { id: parseInt(aula.professorId) } },
                 modulo: { connect: { id: parseInt(aula.moduloId)}}
             })
-
-            for (const aluno of alunos) {
-                const presente = presencas[aluno.id] || false
-                await myfetch.post('/presencas', {
+            
+            await Promise.all(alunos.map(async (aluno) => {
+                const presente = presencas.find((presenca) => presenca.alunoId === aluno.id)?.presente || false
+                const response = await myfetch.post('/presencas', {
                     presente,
                     aluno: { connect: { id: aluno.id } },
                     aula: { connect: { id: newAula.id } }
                 })
-            }
+                console.log(response)
+            }))
+            
             setWaiting(false)
             navigate(`/modulo/${modulo.id}`)
         } catch(error) {
@@ -173,11 +186,18 @@ export default function NovaAulaForm() {
                         <Typography sx={{ mt:2 }}>Registrar Presenças:</Typography>
                         <FormGroup>
                             {alunos.map(aluno => (
-                                <FormControlLabel
-                                    key={aluno.id}
-                                    control={<Checkbox checked={presencas[aluno.id] || false} onChange={handlePresencaChange(aluno.id)} />}
-                                    label={aluno.user.nome}
-                                />
+                                <div key={aluno.id}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox 
+                                                checked={presencas.find(presenca => presenca.alunoId === aluno.id)?.presente || false} 
+                                                onChange={handlePresencaChange(aluno.id)} 
+                                            />
+                                        }
+                                        label={aluno.user.nome}
+                                    />
+                                
+                                </div>
                             ))}
                         </FormGroup>
                         <Box >

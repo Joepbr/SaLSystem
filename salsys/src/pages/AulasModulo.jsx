@@ -68,11 +68,11 @@ export default function AulasModulo() {
         if (aulaToDelete) {
             try {
                 setWaiting(true)
-                await myfetch.delete(`/aulas/${aulaToDelete.id}`);
                 await myfetch.delete(`/presencas/aula/${aulaToDelete.id}`)
+                await myfetch.delete(`/aulas/${aulaToDelete.id}`);
                 setOpenDeleteDialog(false);
                 setWaiting(false)
-                fetchData();
+                fetchAulas();
             } catch (error) {
                 console.error(error);
                 alert('ERRO: ' + error.message);

@@ -27,6 +27,7 @@ import NovoAlunoForm from './pages/NovoAlunoForm'
 import EditarAlunoForm from './pages/EditarAlunoForm'
 import Aulas from './pages/AulaList'
 import NovaAulaForm from './pages/NovaAulaForm'
+import AulaRecord from './pages/AulaRecord'
 
 import LoginForm from './pages/LoginForm'
 
@@ -83,6 +84,7 @@ function App() {
 
               <Route path="/aulas" element={ <Aulas /> } />
               <Route path="/modulo/:id/aula/new" element={ <NovaAulaForm /> } />
+              <Route path="/aula/:id" element={ <AulaRecord /> }/>
 
             </Route>
           </Routes>
