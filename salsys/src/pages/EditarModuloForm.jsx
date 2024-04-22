@@ -99,6 +99,7 @@ export default function EditarModuloForm() {
             navigate('/cursos');
         } catch (error) {
             console.error('Erro ao editar dados do professor:', error);
+            alert('ERRO: ' + error.message)
         }
     };
 

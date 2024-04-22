@@ -41,7 +41,8 @@ export default function Modulos() {
             setWaiting(true)
             const cursoId = id;
             const result = await myfetch.get(`/modulos/curso/${cursoId}`);
-            setModulos(result);
+            const activeModulos = result.filter(modulo => modulo.active)
+            setModulos(activeModulos);
             setWaiting(false)
         } catch (error) {
             console.error(error);
@@ -89,8 +90,10 @@ export default function Modulos() {
     return (
         <Container>
             <Waiting show={waiting} />
-            <Avatar alt={curso ? curso.nome : 'Carregando...'} src={curso? curso.imageUrl : 'X'}>X</Avatar>
-            <Typography variant="h4">{curso ? curso.nome : 'Carregando...'}</Typography>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                <Avatar alt={curso ? curso.nome : 'Carregando...'} src={curso? curso.imageUrl : 'X'}>X</Avatar>
+                <Typography variant="h4">{curso ? curso.nome : 'Carregando...'}</Typography>
+            </Stack>
             <Divider />
             <Typography variant="h6">{curso ? curso.descricao : 'Carregando...'}</Typography>
             <Typography variant="body1">{curso ? curso.detalhes : 'Carregando...'}</Typography>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemText } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
@@ -7,12 +7,12 @@ import myfetch from '../utils/myfetch';
 import Waiting from '../ui/Waiting';
 
 export default function Alunos() {
-    const [alunos, setAlunos] = useState([]);
-    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-    const [alunoToDelete, setAlunoToDelete] = useState(null);
+    const [alunos, setAlunos] = React.useState([]);
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+    const [alunoToDelete, setAlunoToDelete] = React.useState(null);
     const [waiting, setWaiting] = React.useState(false)
 
-    useEffect(() => {
+    React.useEffect(() => {
         fetchData();
     }, []);
 

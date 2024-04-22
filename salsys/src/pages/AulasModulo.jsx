@@ -1,7 +1,7 @@
 import React from 'react';
 import myfetch from '../utils/myfetch';
 import { Link, useParams } from 'react-router-dom';
-import { Container, Typography, Divider, Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Box, List, ListItem, ListItemText } from '@mui/material';
+import { Container, Typography, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Box, List, ListItem, ListItemText, Stack, Switch, FormControlLabel } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { FaBook } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
@@ -16,6 +16,7 @@ export default function AulasModulo() {
     const [aulas, setAulas] = React.useState([]);
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [aulaToDelete, setAulaToDelete] = React.useState(null);
+    const [openDeactivateDialog, setOpenDeactivateDialog] = React.useState(false);
     const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
@@ -41,6 +42,7 @@ export default function AulasModulo() {
         setWaiting(true)
         const moduloId = id
         const result = await myfetch.get(`/aulas/modulo/${moduloId}`)
+        result.sort((a, b) => new Date(b.data) - new Date(a.data))
         setAulas(result)
         setWaiting(false)
     } catch (error) {
@@ -52,10 +54,6 @@ export default function AulasModulo() {
     const formatDiasSem = (diasSem) => {
         const formatedDias = diasSem.map(dia => dia.dia).join(', ')
         return formatedDias.replace(/,\s*$/, '')
-    }
-
-    const formatHorario = (horario) => {
-        return moment(horario).format('HH:mm')
     }
 
     const handleDeleteConfirmation = (aula, event) => {
@@ -84,10 +82,56 @@ export default function AulasModulo() {
         setOpenDeleteDialog(false);
     }
 
+    const openDeactivationDialog = () => {
+        setOpenDeactivateDialog(true);
+    };
+    
+    const handleModuloDeactivation = async () => {
+        try {
+            setWaiting(true)
+
+            const isActive = modulo.active
+            const updatedActive = isActive ? !modulo.active : true
+
+            const updatedModuloData = {
+                active: updatedActive,
+                dias_sem: modulo.dias_sem.map(dia => dia.dia) 
+            }
+            delete updatedModuloData.id
+            
+            await myfetch.put(`/modulos/${modulo.id}`, updatedModuloData)
+            
+            const updatedModulo = { ...modulo, ...updatedModuloData }
+            setModulo(updatedModulo)
+            setOpenDeactivateDialog(false)
+            setWaiting(false)
+        } catch (error) {
+            console.error(error)
+            alert('ERRO: ' + error.message)
+        }
+    }
+
+    const closeDeactivationDialog = () => {
+        setOpenDeactivateDialog(false);
+    };
+
     return (
         <Container>
             <Waiting show={waiting} />
-            <Typography variant="h4">{modulo ? modulo.titulo : 'Carregando...'}</Typography>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                <Avatar alt={modulo ? modulo.curso.nome : 'Carregando...'} src={modulo ? modulo.curso.imageUrl : 'Carregando...'} >X</Avatar>
+                <Typography variant="h4">
+                    {modulo ? modulo.titulo : 'Carregando...'}
+                </Typography>
+                    {modulo && (
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: '400px' }}>
+                            <FormControlLabel
+                                control={<Switch checked={modulo.active} onChange={openDeactivationDialog} />}
+                                label={modulo.active ? "Ativo" : "Inativo"}
+                            />
+                        </Box>
+                    )}
+            </Stack>
             <Divider />
             <Typography variant="h6">{modulo ? 
                     <Box>
@@ -95,7 +139,10 @@ export default function AulasModulo() {
                             Dias de aula: {formatDiasSem(modulo.dias_sem)}
                         </Box>
                         <Box>
-                            Horário: {formatHorario(modulo.horario)}
+                            Horário: {moment(modulo.horario).format('HH:mm') + ' (' + modulo.dur_aula + ' minutos)'}
+                        </Box>
+                        <Box>
+                            Início das aulas: {moment(modulo.inicio).format('L')}
                         </Box>
                     </Box>
                 : 'Carregando...'}
@@ -131,6 +178,7 @@ export default function AulasModulo() {
                                     fontSize: 20,
                                     fontWeight: 'medium'
                                 }}
+                                secondary={aula.conteudo}
                             />
                             <Button onClick={(event) => handleDeleteConfirmation(aula, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar Registro de Aula</Button>
                         </ListItem>
@@ -139,20 +187,36 @@ export default function AulasModulo() {
             </List>
             <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                 <DialogTitle>Remover Registro de Aula</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Tem certeza que você deseja remover o registro da aula "{aulaToDelete ? moment(aulaToDelete.data).format('L') : ''}"?
-                        </DialogContentText>
-                    </DialogContent>
+                <DialogContent>
+                    <DialogContentText>
+                        Tem certeza que você deseja remover o registro da aula "{aulaToDelete ? moment(aulaToDelete.data).format('L') : ''}"?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDelete} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
+                        Deletar
+                    </Button>
+                    <Button onClick={handleCloseDeleteDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>
+                        Cancelar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openDeactivateDialog} onClose={closeDeactivationDialog}>
+                <DialogTitle>Desativar Módulo</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Tem certeza que deseja desativar este módulo?
+                    </DialogContentText>
+                </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleDelete} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
-                            Deletar
-                        </Button>
-                        <Button onClick={handleCloseDeleteDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>
+                        <Button onClick={closeDeactivationDialog} color="primary">
                             Cancelar
                         </Button>
+                        <Button onClick={handleModuloDeactivation} color="secondary">
+                            Desativar
+                        </Button>
                     </DialogActions>
-                </Dialog>
+            </Dialog>
         </Container>
     )
 }

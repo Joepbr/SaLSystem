@@ -17,7 +17,20 @@ controller.create = async function (req, res) {
 
 controller.retrieveAll = async function (req, res) {
     try {
-        const result = await prisma.aula.findMany()
+        const result = await prisma.aula.findMany({
+            include: {
+                modulo: {
+                    include: {
+                        curso: true
+                    }
+                },
+                professor: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
+        })
 
         res.send(result)
     }

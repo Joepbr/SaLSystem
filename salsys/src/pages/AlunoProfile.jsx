@@ -165,13 +165,15 @@ export default function AlunoProfile() {
                                         value={selectedModulo}
                                         onChange={(e) => setSelectedModulo(e.target.value)}
                                     >
-                                        {availableModulos.map(modulo => (
-                                            <MenuItem key={modulo.id} value={modulo}>
-                                                <ListItemIcon>
-                                                    <Avatar alt={modulo.curso.nome} src={modulo.curso.imageUrl} sx={{ width: 24, height: 24 }} />
-                                                </ListItemIcon>
-                                                <ListItemText>{modulo.titulo}</ListItemText>
-                                            </MenuItem>
+                                        {availableModulos
+                                            .filter(modulo => modulo.active)
+                                            .map(modulo => (
+                                                <MenuItem key={modulo.id} value={modulo}>
+                                                    <ListItemIcon>
+                                                        <Avatar alt={modulo.curso.nome} src={modulo.curso.imageUrl} sx={{ width: 24, height: 24 }} />
+                                                    </ListItemIcon>
+                                                    <ListItemText>{modulo.titulo}</ListItemText>
+                                                </MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>

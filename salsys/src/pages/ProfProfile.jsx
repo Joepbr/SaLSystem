@@ -71,8 +71,10 @@ export default function ProfProfile() {
                     <Waiting show={waiting} />
                     {prof && (
                         <>
-                            <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
-                            <Typography variant="h4">{prof.user.nome}</Typography>
+                            <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                                <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
+                                <Typography variant="h4">{prof.user.nome}</Typography>
+                            </Stack>
                             <Typography variant="h6">{prof.especialidade} </Typography>
                             {/*<Typography variant="body1">{prof.data_nasc}</Typography>*/}
                             <Divider />
@@ -97,7 +99,16 @@ export default function ProfProfile() {
                         <Typography variant="h5">Módulos</Typography>
                     </Box>
                     {modulos.map((modulo, index) => (
-                        <Accordion key={index} expanded={expandedAccordion === index} onChange={() => handleAccordionChange(index)} sx={{ width: '100%' }}>
+                        <Accordion 
+                            key={index} 
+                            expanded={expandedAccordion === index} 
+                            onChange={() => handleAccordionChange(index)} 
+                            sx={{ 
+                                width: '100%',
+                                opacity: modulo.active ? 1 : 0.5,
+                                backgroundColor: modulo.active ? 'inherit' : '#f0f0f0'
+                            }}
+                        >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             {expandedAccordion === index ? (
                                 <MuiLink component={Link} to={`/modulo/${modulo.id}`} underline="none" color="inherit" style={{ width: '100%' }}>
