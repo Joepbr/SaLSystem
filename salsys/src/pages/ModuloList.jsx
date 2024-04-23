@@ -91,7 +91,7 @@ export default function Modulos() {
         <Container>
             <Waiting show={waiting} />
             <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
-                <Avatar alt={curso ? curso.nome : 'Carregando...'} src={curso? curso.imageUrl : 'X'}>X</Avatar>
+                <Avatar alt={curso ? curso.nome : 'Carregando...'} src={curso? curso.imageUrl : 'X' } sx={{ width: 56, height: 56 }}>X</Avatar>
                 <Typography variant="h4">{curso ? curso.nome : 'Carregando...'}</Typography>
             </Stack>
             <Divider />

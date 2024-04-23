@@ -11,7 +11,6 @@ import theme from '../utils/theme';
 import moment from 'moment';
 import Waiting from '../ui/Waiting';
 
-
 moment.locale('pt-br');
 
 export default function AlunoProfile() {

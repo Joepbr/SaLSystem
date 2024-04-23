@@ -106,7 +106,7 @@ export default function ProfProfile() {
                             sx={{ 
                                 width: '100%',
                                 opacity: modulo.active ? 1 : 0.5,
-                                backgroundColor: modulo.active ? 'inherit' : '#f0f0f0'
+                                backgroundColor: modulo.active ? 'white' : '#f0f0f0'
                             }}
                         >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
