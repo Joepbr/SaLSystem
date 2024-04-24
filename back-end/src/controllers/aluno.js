@@ -69,7 +69,16 @@ controller.retrieveOne = async function (req, res) {
         const result = await prisma.aluno.findUnique({
             where: { id: Number(req.params.id) },
             include: {
-                user: true
+                user: true,
+                presenca: {
+                    include: {
+                        aula: {
+                            include: {
+                                modulo: true
+                            }
+                        }
+                    }
+                }
             }
         })
 

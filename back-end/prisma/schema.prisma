@@ -107,7 +107,9 @@ model aula {
   professor       professor         @relation(fields: [profId], references: [id])
   profId          Int
   data            DateTime
+  num             Int?
   conteudo        String?
+  detalhes        String?
   presenca        presenca[]
 
   //@@id(name: "aulaId", [moduloId, data])

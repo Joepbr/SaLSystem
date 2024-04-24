@@ -2,7 +2,8 @@ import React from 'react';
 import myfetch from '../utils/myfetch'
 import { Link, useParams } from 'react-router-dom'
 
-import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Select, FormControl, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Select, FormControl, MenuItem, ListItemIcon, ListItemText, Accordion, AccordionSummary, AccordionDetails, AccordionActions, Stack, Link as MuiLink } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { MdEmail } from "react-icons/md";
 import { FaWhatsapp } from "react-icons/fa";
@@ -21,6 +22,7 @@ export default function AlunoProfile() {
     const [selectedModulo, setSelectedModulo] = React.useState(null)
     const [availableModulos, setAvailableModulos] = React.useState([])
     const [matriculas, setMatriculas] = React.useState([])
+    const [expandedAccordion, setExpandedAccordion] = React.useState(null)
     const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() =>{
@@ -97,6 +99,10 @@ export default function AlunoProfile() {
         }
     }
 
+    const handleAccordionChange = (index) => {
+        setExpandedAccordion(expandedAccordion === index ? null : index);
+    }
+
     const handleDeleteConfirmation = (matriculaId) => {
         if(window.confirm('Tem certeza que deseja cancelar esta matrícula?')) {
             handleCancelMatricula(matriculaId)
@@ -113,6 +119,18 @@ export default function AlunoProfile() {
             console.error(error)
             alert('ERRO: ' + error.message)
         }
+    }
+
+    const presencaNum = (presencas, matricula) => {
+        let num = 0
+        for (let i=0; i<presencas.length; i++){
+            if(presencas[i].aula.modulo.id === matricula.modulo.id){
+                if(presencas[i].presente){
+                    num++
+                }
+            }
+        }
+        return num
     }
 
     return (
@@ -186,11 +204,35 @@ export default function AlunoProfile() {
                         {matriculas.length > 0 && (
                             <>
                                 <Typography variant="h5">Módulos Matriculados:</Typography>
-                                {matriculas.map(matricula => (
-                                    <Box key={matricula.id}>
-                                        <Typography>{matricula.modulo.titulo}</Typography>
-                                        <Button onClick={() => handleDeleteConfirmation(matricula.id)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
-                                    </Box>
+                                {matriculas.map((matricula, index) => (
+                                    <Accordion key={index} expanded={expandedAccordion === index} onChange={() => handleAccordionChange(index)} sx={{ width: '100%' }}>
+                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                        {expandedAccordion === index ? (
+                                            <MuiLink component={Link} to={`/modulo/${matricula.modulo.id}`} underline="none" color="inherit" style={{ width: '100%' }}>
+                                                <Stack direction="row" spacing={2} alignItems="center">
+                                                    <Avatar alt={matricula.modulo.curso.nome} src={matricula.modulo.curso.imageUrl} />
+                                                    <Typography sx={{ ml: 2 }} variant="h5">{matricula.modulo.titulo}</Typography>
+                                                </Stack>
+                                            </MuiLink>
+                                        ) : (
+                                            <>
+                                                <Stack direction="row" spacing={2} alignItems="center">
+                                                    <Avatar alt={matricula.modulo.curso.nome} src={matricula.modulo.curso.imageUrl} />
+                                                    <Typography sx={{ ml: 2 }} variant="h5">{matricula.modulo.titulo}</Typography>
+                                                </Stack>
+                                            </>
+                                        )}
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Stack direction="column" spacing={2} alignItems="Left">
+                                                <Typography>Aulas: {matricula.modulo.aula.length}</Typography>
+                                                <Typography>Presenças: {presencaNum(aluno.presenca, matricula)} ({(presencaNum(aluno.presenca, matricula) / matricula.modulo.aula.length) * 100}%)</Typography>
+                                            </Stack>
+                                        </AccordionDetails>
+                                        <AccordionActions>
+                                            <Button onClick={() => handleDeleteConfirmation(matricula.id)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Desmatricular</Button>
+                                        </AccordionActions>
+                                    </Accordion>
                                 ))}
                                 <Divider />
                             </>

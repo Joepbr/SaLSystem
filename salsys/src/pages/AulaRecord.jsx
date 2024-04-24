@@ -1,13 +1,14 @@
 import React from 'react';
 import myfetch from '../utils/myfetch'
-import { Link, useParams } from 'react-router-dom'
-import { Container, Typography, Divider, Box, Avatar, Checkbox, Stack, Link as MuiLink } from '@mui/material';
+import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Container, Typography, Divider, Box, Avatar, Checkbox, Stack, Button, Link as MuiLink } from '@mui/material';
 import moment from 'moment';
 import Waiting from '../ui/Waiting';
 
 moment.locale('pt-br');
 
 export default function AulaRecord(){
+    const navigate = useNavigate()
     const {id} = useParams()
     const [aula, setAula] = React.useState(null)
     const [waiting, setWaiting] = React.useState(false)
@@ -57,12 +58,17 @@ export default function AulaRecord(){
                     </Stack>
                     <Divider />
                     <Typography variant="h6" sx={{ margin: 2 }}>Professor: <MuiLink component={Link} to={`/prof/${aula.professor.id}`} underline="none" >{aula.professor.user.nome}</MuiLink></Typography>
-                    <Typography variant="h4" sx={{ margin: 2 }}>{aula.conteudo}</Typography>
+                    <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                        <Typography variant="h5">Aula {aula.num}: </Typography>
+                        <Typography variant="h4" sx={{ margin: 2 }}>{aula.conteudo}</Typography>
+                    </Stack>
+                    <Typography variant="body2" sx={{ margin: 2 }}>{aula.detalhes}</Typography>
                     <Divider />
                     <Typography variant="h6" sx={{ margin: 2 }}>Registro de presenças:</Typography>
                     <Box sx={{ ml: 2 }}>
                         {alunos.map(renderAluno)}
                     </Box>
+                    <Button type="button" variant="outlined" sx={{ margin: 2 }} onClick={() => navigate(`/modulo/${aula.modulo.id}`)}>Voltar</Button>
                 </>
             )}
         </Container>

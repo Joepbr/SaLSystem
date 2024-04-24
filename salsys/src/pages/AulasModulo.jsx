@@ -160,7 +160,8 @@ export default function AulasModulo() {
             </Box>
             <Divider />
             <Box display="flex" sx={{ margin: 2 }}>
-                <Button component={Link} to={`/modulo/${id}/aula/new`} variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Registrar Nova Aula </Button>
+                <Button component={Link} to={`/modulo/${id}/aula/new`} variant="contained" sx={{ backgroundColor: "#9d2f2e", margin: 2 }}> Registrar Nova Aula </Button>
+                <Button component={Link} to={`/modulo/${id}/avaliacao/new`} variant="contained" sx={{ backgroundColor: "#25254b", margin: 2 }}>Registrar Nova Avaliação</Button>
             </Box>
             <Typography variant='h6'>Aulas Registradas no Sistema:</Typography>
             <List>
@@ -173,7 +174,7 @@ export default function AulasModulo() {
                             sx={{ borderBottom: index < aulas.length - 1 ? '1px solid #ccc' : 'none' }}
                         >
                             <ListItemText
-                                primary={moment(aula.data).format('L')}
+                                primary={moment(aula.data).format('L') + ' - Aula ' + aula.num}
                                 primaryTypographyProps={{
                                     fontSize: 20,
                                     fontWeight: 'medium'

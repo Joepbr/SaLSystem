@@ -14,8 +14,10 @@ export default function NovaAulaForm() {
     const navigate = useNavigate();
     const { id } = useParams()
     const [aula, setAula] = React.useState({
+        num: '',
         data: moment(),
         conteudo: '',
+        detalhes: '',
         moduloId: id,
         professorId: ''
     })
@@ -99,8 +101,10 @@ export default function NovaAulaForm() {
             const aulaData = new Date(aula.data)
 
             const newAula = await myfetch.post('/aulas', {
+                num: parseInt(aula.num),
                 data: aulaData,
                 conteudo: aula.conteudo,
+                detalhes: aula.detalhes,
                 professor: { connect: { id: parseInt(aula.professorId) } },
                 modulo: { connect: { id: parseInt(aula.moduloId)}}
             })
@@ -112,7 +116,6 @@ export default function NovaAulaForm() {
                     aluno: { connect: { id: aluno.id } },
                     aula: { connect: { id: newAula.id } }
                 })
-                console.log(response)
             }))
             
             setWaiting(false)
@@ -137,6 +140,18 @@ export default function NovaAulaForm() {
                     </Stack>
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
+                            <Grid item xs={2}>
+                            <Typography>Aula número:</Typography>
+                            <TextField
+                                type="number"
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black"}}
+                                value={aula.num}
+                                onChange={(e) => setAula(prevState => ({ ...prevState, num: e.target.value }))}
+                                fullWidth
+                                margin="dense"
+                            />
+                            </Grid>
                             <Grid item xs={4}>
                                 <Typography>Data da Aula:</Typography>
                                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
@@ -150,7 +165,7 @@ export default function NovaAulaForm() {
                                     />
                                 </LocalizationProvider>
                             </Grid>
-                            <Grid item xs={8}>
+                            <Grid item xs={6}>
                                 <Typography>Professor:</Typography>
                                 <FormControl fullWidth>
                                     <Select 
@@ -172,14 +187,23 @@ export default function NovaAulaForm() {
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <Typography sx={{ mt:2 }}>Conteúdo Dado em Aula:</Typography>
+                        <Typography sx={{ mt:2 }}>Título da Aula:</Typography>
+                        <TextField
+                            variant="filled"
+                            sx={{backgroundColor: "white", color: "black"}}
+                            value={aula.conteudo}
+                            onChange={(e) => setAula(prevState => ({ ...prevState, conteudo: e.target.value }))}
+                            fullWidth
+                            margin="normal"
+                        />
+                        <Typography sx={{ mt:2 }}>Conteúdo da Aula:</Typography>
                         <TextField
                             multiline
                             rows={2}
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black"}}
-                            value={aula.conteudo}
-                            onChange={(e) => setAula(prevState => ({ ...prevState, conteudo: e.target.value }))}
+                            value={aula.detalhes}
+                            onChange={(e) => setAula(prevState => ({ ...prevState, detalhes: e.target.value }))}
                             fullWidth
                             margin="normal"
                         />

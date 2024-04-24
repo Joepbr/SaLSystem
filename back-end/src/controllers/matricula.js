@@ -54,7 +54,8 @@ controller.retrieveByAlunoId = async function (req, res) {
             include: {
                 modulo: {
                     include: {
-                        curso: true
+                        curso: true,
+                        aula: true
                     }
                 }
             }
