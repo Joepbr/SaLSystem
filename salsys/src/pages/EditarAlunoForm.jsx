@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'moment/locale/pt-br';
 import myfetch from '../utils/myfetch';
-import IMask from 'imask';
+import InputMask from 'react-input-mask'
 import Waiting from '../ui/Waiting';
 
 export default function EditarAlunoForm() {
@@ -119,33 +119,6 @@ export default function EditarAlunoForm() {
         }
     };
 
-    const telefoneInputRef = React.useRef(null)
-    const respTelefoneInputRef = React.useRef(null)
-
-    React.useEffect(() => {
-        if (telefoneInputRef.current) {
-            const maskOptions = {
-                mask: '+{55} (00) 00000-0000'
-            }
-            const telefoneMask = IMask(telefoneInputRef.current, maskOptions);
-            return () => {
-                telefoneMask.destroy()
-            }
-        }
-    }, []);
-
-    React.useEffect(() => {
-        if (respTelefoneInputRef.current) {
-            const maskOptions = {
-                mask: '+{55} (00) 00000-0000'
-            }
-            const respTelefoneMask = IMask(respTelefoneInputRef.current, maskOptions);
-            return () => {
-                respTelefoneMask.destroy()
-            }
-        }
-    }, []);
-
     const estados = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB',
         'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
@@ -182,17 +155,21 @@ export default function EditarAlunoForm() {
                 />
                 <Divider />
                 <Typography>Telefone de Contato (WhatsApp)*: </Typography>
-                <TextField
-                    inputRef={telefoneInputRef}
-                    name="telefone"
-                    variant="filled"
-                    sx={{backgroundColor: "white", color: "black"}}
-                    margin="normal"
-                    fullWidth
+                <InputMask
+                    mask="+55 (99) 99999 9999"
                     value={aluno.telefone}
                     onChange={(e) => setAluno({...aluno, telefone: e.target.value})}
-                    required
-                />
+                >
+                    { () => <TextField
+                        name="telefone"
+                        variant="filled"
+                        sx={{backgroundColor: "white", color: "black"}}
+                        margin="normal"
+                        fullWidth
+                        required
+                    />
+                    }
+                </InputMask>
                 <Divider />
                 <Typography>Endereço: </Typography>
                 <Grid container spacing={2}>
@@ -320,17 +297,21 @@ export default function EditarAlunoForm() {
                 {idade < 18 &&(
                     <>
                         <Typography>Telefone do Responsável (WhatsApp)*:</Typography>
-                        <TextField
-                            inputRef={respTelefoneInputRef}
-                            name="telefone_responsavel"
-                            variant="filled"
-                            sx={{ backgroundColor: "white", color: "black" }}
-                            margin="normal"
-                            fullWidth
+                        <InputMask
+                            mask="+55 (99) 99999 9999"
                             value={aluno.resp_telefone}
                             onChange={(e) => setAluno({...aluno, resp_telefone: e.target.value})}
-                            required
-                        />
+                        >
+                            { () => <TextField
+                                    name="telefone"
+                                    variant="filled"
+                                    sx={{backgroundColor: "white", color: "black"}}
+                                    margin="normal"
+                                    fullWidth
+                                    required
+                                />
+                            }
+                        </InputMask>
                         <Divider />
                     </>
                 )}

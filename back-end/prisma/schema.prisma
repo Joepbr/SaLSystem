@@ -73,7 +73,6 @@ model user {
 }
 
 model professor {
-  cpf             String?           @unique@db.VarChar(11)
   data_nasc       DateTime?
   especialidade   String?
   salario         Float?
@@ -146,8 +145,9 @@ model avaliacao {
   aluno            aluno             @relation(fields: [alunoId], references: [id])
   alunoId          Int
   data             DateTime
-  is_prova         Boolean
+  titulo           String
   nota             Float?
+  peso             Int               @default(1)
 
   //@@id(name: "Id", [profId, moduloId, alunoId, data])
 }

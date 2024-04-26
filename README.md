@@ -15,12 +15,15 @@ npx create-react-app salsys
     npm install react-icons --save
 -> instalar react-big-calendar
     npm install --save react-big-calendar
--> instaar iMask
+-> instaar Máscaras
     npm install imask
+    npm install react-input-mask
 -> instalar date-pickers
     npm install @mui/x-date-pickers
 -> instalar moment
     npm install moment
+-> instalar MUI Base
+    npm install @mui/base
 
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma

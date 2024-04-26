@@ -14,6 +14,7 @@ export default function AulasModulo() {
     const { id } = useParams()
     const [modulo, setModulo] = React.useState(null);
     const [aulas, setAulas] = React.useState([]);
+    const [avaliacoes, setAvaliacoes] = React.useState([])
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [aulaToDelete, setAulaToDelete] = React.useState(null);
     const [openDeactivateDialog, setOpenDeactivateDialog] = React.useState(false);
@@ -22,6 +23,7 @@ export default function AulasModulo() {
     React.useEffect(() => {
         fetchModulo();
         fetchAulas()
+        fetchAvaliacoes()
     }, []);
 
     const fetchModulo = async () => {
@@ -34,6 +36,7 @@ export default function AulasModulo() {
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
+            setWaiting(false)
         }
     };
 
@@ -48,6 +51,22 @@ export default function AulasModulo() {
     } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
+            setWaiting(false)
+        }
+    }
+
+    const fetchAvaliacoes = async () => {
+        try {
+            setWaiting(true)
+            const moduloId = id
+            const result = await myfetch.get(`/avaliacoes/modulo/${moduloId}`)
+            result.sort((a, b) => new Date(b.data) - new Date(a.data))
+            setAvaliacoes(result)
+            setWaiting(false)
+        } catch (error) {
+            console.error(error);
+            alert('ERRO: ' + error.message);
+            setWaiting(false)
         }
     }
 
@@ -62,7 +81,7 @@ export default function AulasModulo() {
         setOpenDeleteDialog(true);
     }
 
-    const handleDelete = async () => {
+    const handleDeleteAula = async () => {
         if (aulaToDelete) {
             try {
                 setWaiting(true)
@@ -74,6 +93,7 @@ export default function AulasModulo() {
             } catch (error) {
                 console.error(error);
                 alert('ERRO: ' + error.message);
+                setWaiting(false)
             }
         }
     }
@@ -108,6 +128,7 @@ export default function AulasModulo() {
         } catch (error) {
             console.error(error)
             alert('ERRO: ' + error.message)
+            setWaiting(false)
         }
     }
 
@@ -161,7 +182,6 @@ export default function AulasModulo() {
             <Divider />
             <Box display="flex" sx={{ margin: 2 }}>
                 <Button component={Link} to={`/modulo/${id}/aula/new`} variant="contained" sx={{ backgroundColor: "#9d2f2e", margin: 2 }}> Registrar Nova Aula </Button>
-                <Button component={Link} to={`/modulo/${id}/avaliacao/new`} variant="contained" sx={{ backgroundColor: "#25254b", margin: 2 }}>Registrar Nova Avaliação</Button>
             </Box>
             <Typography variant='h6'>Aulas Registradas no Sistema:</Typography>
             <List>
@@ -186,6 +206,31 @@ export default function AulasModulo() {
                     </React.Fragment>
                 ))}
             </List>
+            <Divider />
+            <Box display="flex" sx={{ margin: 2 }}>
+                <Button component={Link} to={`/modulo/${id}/avaliacao/new`} variant="contained" sx={{ backgroundColor: "#25254b", margin: 2 }}>Registrar Nova Avaliação</Button>
+            </Box>
+            <Typography variant='h6' sx={{ mt: 2 }}>Avaliações Registradas no Sistema:</Typography>
+            <List>
+                {avaliacoes.map((avaliacao, index) => (
+                    <React.Fragment key={avaliacao.id}>
+                        <ListItem
+                            button
+                            component={Link}
+                            to={`/avaliacao/${avaliacao.id}`}
+                            sx={{ borderBottom: index < aulas.length - 1 ? '1px solid #ccc' : 'none' }}
+                        >
+                            <ListItemText
+                                primary={moment(avaliacao.data).format('L') + ' - ' + avaliacao.titulo}
+                                primaryTypographyProps={{
+                                    fontSize: 20,
+                                    fontWeight: 'medium'
+                                }}
+                            />
+                        </ListItem>
+                    </React.Fragment>
+                ))}
+            </List>
             <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                 <DialogTitle>Remover Registro de Aula</DialogTitle>
                 <DialogContent>
@@ -194,7 +239,7 @@ export default function AulasModulo() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDelete} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
+                    <Button onClick={handleDeleteAula} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
                         Deletar
                     </Button>
                     <Button onClick={handleCloseDeleteDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>

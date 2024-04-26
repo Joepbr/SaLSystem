@@ -8,6 +8,8 @@ import { ThemeProvider, CssBaseline, Box, Container } from '@mui/material'
 import theme from './utils/theme'
 import Drawer from './ui/Drawer'
 
+import AuthRoute from './routes/AuthRoute'
+
 import Homepage from './pages/Homepage'
 import Cursos from './pages/CursoList'
 import NovoCursoForm from './pages/NovoCursoForm'
@@ -29,6 +31,7 @@ import Aulas from './pages/AulaList'
 import NovaAulaForm from './pages/NovaAulaForm'
 import AulaRecord from './pages/AulaRecord'
 import NovaAvaliacaoForm from './pages/NovaAvaliacaoForm'
+import AvaliacaoRecord from './pages/AvaliacaoRecord'
 
 import LoginForm from './pages/LoginForm'
 
@@ -53,46 +56,47 @@ function App() {
   return (
     <>
       <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
           <AuthUserContext.Provider value={{authUser, setAuthUser}}>
             <Routes>
 
-            <Route path="/login" element={<LoginPage/>} />
+              <Route path="/login" element={<LoginPage/>} />
 
-            <Route path="/" element={<ProtectedPage />} >
-              <Route index element={ <Homepage /> } />
+              <Route path="/" element={<ProtectedPage />} >
+                <Route index element={ <Homepage /> } />
 
-              <Route path="/cursos" element={ <Cursos /> } />
-              <Route path="/curso/:id" element={ <Modulos/> } />
-              <Route path="/cursos/new" element={ <NovoCursoForm/> } />
-              <Route path="/curso/:id/edit" element={ <EditarCursoForm/> } />
-              
-              <Route path="/modulo/:id" element={ <AulasModulo/> } />
-              <Route path="/curso/:id/modulos/new" element={ <NovoModuloForm/> } />
-              <Route path="/modulo/:id/edit" element={ <EditarModuloForm/> } />
+                <Route path="/cursos" element={ <Cursos /> } />
+                <Route path="/curso/:id" element={ <Modulos/> } />
+                <Route path="/cursos/new" element={ <NovoCursoForm/> } />
+                <Route path="/curso/:id/edit" element={ <EditarCursoForm/> } />
+                
+                <Route path="/modulo/:id" element={ <AulasModulo/> } />
+                <Route path="/curso/:id/modulos/new" element={ <NovoModuloForm/> } />
+                <Route path="/modulo/:id/edit" element={ <EditarModuloForm/> } />
 
-              <Route path="/profs" element={ <Profs /> } />
-              <Route path="/prof/:id" element={ <ProfProfile/> } />
-              <Route path="/profs/new" element={ <NovoProfForm/> } />
-              <Route path="/prof/:id/edit" element={ <EditarProfForm/> } />
-              <Route path="/prof/:id/disponib" element={ <Disponibilidade/> } />
+                <Route path="/profs" element={ <Profs /> } />
+                <Route path="/prof/:id" element={ <ProfProfile/> } />
+                <Route path="/profs/new" element={ <NovoProfForm/> } />
+                <Route path="/prof/:id/edit" element={ <EditarProfForm/> } />
+                <Route path="/prof/:id/disponib" element={ <Disponibilidade/> } />
 
-              <Route path="/alunos" element={ <Alunos /> } />
-              <Route path="/aluno/:id" element={ <AlunoProfile/> } />
-              <Route path="/alunos/new" element={ <NovoAlunoForm/> } />
-              <Route path="/aluno/:id/edit" element={ <EditarAlunoForm/> } />
+                <Route path="/alunos" element={ <Alunos /> } />
+                <Route path="/aluno/:id" element={ <AlunoProfile/> } />
+                <Route path="/alunos/new" element={ <NovoAlunoForm/> } />
+                <Route path="/aluno/:id/edit" element={ <EditarAlunoForm/> } />
 
-              <Route path="/aulas" element={ <Aulas /> } />
-              <Route path="/modulo/:id/aula/new" element={ <NovaAulaForm /> } />
-              <Route path="/aula/:id" element={ <AulaRecord /> }/>
+                <Route path="/aulas" element={ <Aulas /> } />
+                <Route path="/modulo/:id/aula/new" element={ <NovaAulaForm /> } />
+                <Route path="/aula/:id" element={ <AulaRecord /> }/>
 
-              <Route path="/modulo/:id/avaliacao/new" element={ <NovaAvaliacaoForm /> } />
+                <Route path="/modulo/:id/avaliacao/new" element={ <NovaAvaliacaoForm /> } />
+                <Route path="/avaliacao/:id" element={ <AvaliacaoRecord /> } />
 
-            </Route>
-          </Routes>
-        </AuthUserContext.Provider>
-      </ThemeProvider>
+              </Route>
+            </Routes>
+          </AuthUserContext.Provider>
+        </ThemeProvider>
       </BrowserRouter>
     </>
   );

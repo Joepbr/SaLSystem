@@ -121,8 +121,10 @@ export default function AlunoProfile() {
         }
     }
 
-    const presencaNum = (presencas, matricula) => {
+    const showPresencas = (presencas, matricula) => {
+        let total = matricula.modulo.aula.length
         let num = 0
+        let perc = 0
         for (let i=0; i<presencas.length; i++){
             if(presencas[i].aula.modulo.id === matricula.modulo.id){
                 if(presencas[i].presente){
@@ -130,7 +132,14 @@ export default function AlunoProfile() {
                 }
             }
         }
-        return num
+        perc = (num / total) * 100
+
+        return (
+            <Stack direction="column" spacing={1} alignItems="Left" sx={{ ml: 2 }}>
+                <Typography>Aulas: {total}</Typography>
+                <Typography>Presenças: {num} ({perc}%)</Typography>
+            </Stack>
+        )
     }
 
     return (
@@ -207,27 +216,24 @@ export default function AlunoProfile() {
                                 {matriculas.map((matricula, index) => (
                                     <Accordion key={index} expanded={expandedAccordion === index} onChange={() => handleAccordionChange(index)} sx={{ width: '100%' }}>
                                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                        {expandedAccordion === index ? (
-                                            <MuiLink component={Link} to={`/modulo/${matricula.modulo.id}`} underline="none" color="inherit" style={{ width: '100%' }}>
-                                                <Stack direction="row" spacing={2} alignItems="center">
-                                                    <Avatar alt={matricula.modulo.curso.nome} src={matricula.modulo.curso.imageUrl} />
-                                                    <Typography sx={{ ml: 2 }} variant="h5">{matricula.modulo.titulo}</Typography>
-                                                </Stack>
-                                            </MuiLink>
-                                        ) : (
-                                            <>
-                                                <Stack direction="row" spacing={2} alignItems="center">
-                                                    <Avatar alt={matricula.modulo.curso.nome} src={matricula.modulo.curso.imageUrl} />
-                                                    <Typography sx={{ ml: 2 }} variant="h5">{matricula.modulo.titulo}</Typography>
-                                                </Stack>
-                                            </>
-                                        )}
+                                            {expandedAccordion === index ? (
+                                                <MuiLink component={Link} to={`/modulo/${matricula.modulo.id}`} underline="none" color="inherit" style={{ width: '100%' }}>
+                                                    <Stack direction="row" spacing={2} alignItems="center">
+                                                        <Avatar alt={matricula.modulo.curso.nome} src={matricula.modulo.curso.imageUrl} />
+                                                        <Typography sx={{ ml: 2 }} variant="h5">{matricula.modulo.titulo}</Typography>
+                                                    </Stack>
+                                                </MuiLink>
+                                            ) : (
+                                                <>
+                                                    <Stack direction="row" spacing={2} alignItems="center">
+                                                        <Avatar alt={matricula.modulo.curso.nome} src={matricula.modulo.curso.imageUrl} />
+                                                        <Typography sx={{ ml: 2 }} variant="h5">{matricula.modulo.titulo}</Typography>
+                                                    </Stack>
+                                                </>
+                                            )}
                                         </AccordionSummary>
                                         <AccordionDetails>
-                                            <Stack direction="column" spacing={2} alignItems="Left">
-                                                <Typography>Aulas: {matricula.modulo.aula.length}</Typography>
-                                                <Typography>Presenças: {presencaNum(aluno.presenca, matricula)} ({(presencaNum(aluno.presenca, matricula) / matricula.modulo.aula.length) * 100}%)</Typography>
-                                            </Stack>
+                                            {showPresencas(aluno.presenca, matricula)}
                                         </AccordionDetails>
                                         <AccordionActions>
                                             <Button onClick={() => handleDeleteConfirmation(matricula.id)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Desmatricular</Button>

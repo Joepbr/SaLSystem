@@ -1,16 +1,38 @@
-import React from "react";
-import { Route, useNavigate } from 'react-router-dom'
-import myfetch from "../utils/myfetch";
+import React from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
+import myfetch from '../utils/myfetch'
+import AuthUserContext from '../contexts/AuthUserContext'
+import Waiting from '../ui/Waiting'
 
-export default async function AuthRoute({props}) {
-    const navigate = useNavigate()
+export default function AuthRoute({ children }) {
 
+  const [hasAuthUser, setHasAuthUser] = React.useState() // undefined
+  const { setAuthUser } = React.useContext(AuthUserContext)
+
+  const location = useLocation()
+
+  async function checkAuthUser() {
     try {
-        const user = await myfetch.get('/users/me')
-        return <Route {...props} />
+      await myfetch.get('/users/me')
+      setHasAuthUser(true)
     }
     catch(error) {
-        console.error(error)
-        navigate('/login')
+      console.log(error)
+      
+      // Apaga as informações do usuário logado no contexto
+      setAuthUser(null)
+      setHasAuthUser(false)
     }
+  }
+
+  React.useEffect(() => {
+    checkAuthUser()
+  }, [location])
+
+  // Enquanto ainda não temos a resposta do back-end para /users/me,
+  // exibimos um componente Waiting
+  if(hasAuthUser === undefined) return <Waiting show={true} />
+
+  return hasAuthUser ? children : <Navigate to="/login" replace />
+  
 }

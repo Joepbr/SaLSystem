@@ -41,7 +41,9 @@ export default function NovaAulaForm() {
             setProfs(sortedProfs);
             setWaiting(false)
         } catch (error) {
-            console.error('Erro lendo dados dos professores: ', error)
+            console.error(error)
+            alert('Erro lendo dados dos professores: ', error.message)
+            setWaiting(false)
         }
     }
 
@@ -61,7 +63,9 @@ export default function NovaAulaForm() {
 
             setWaiting(false)
         } catch (error) {
-            console.error('Erro lendo dados dos alunos: ', error)
+            console.error(error)
+            alert('Erro lendo dados dos alunos: ', error.message)
+            setWaiting(false)
         }
     }
 
@@ -78,7 +82,9 @@ export default function NovaAulaForm() {
             }
             setWaiting(false)
         } catch (error) {
-            console.error('Erro lendo dados do módulo: ', error)
+            console.error(error)
+            alert('Erro lendo dados do módulo: ', error.message)
+            setWaiting(false)
         }
     }
 
@@ -106,7 +112,7 @@ export default function NovaAulaForm() {
                 conteudo: aula.conteudo,
                 detalhes: aula.detalhes,
                 professor: { connect: { id: parseInt(aula.professorId) } },
-                modulo: { connect: { id: parseInt(aula.moduloId)}}
+                modulo: { connect: { id: parseInt(aula.moduloId) } }
             })
             
             await Promise.all(alunos.map(async (aluno) => {
@@ -122,6 +128,7 @@ export default function NovaAulaForm() {
             navigate(`/modulo/${modulo.id}`)
         } catch(error) {
             console.error('Erro registrando aula: ', error)
+            setWaiting(false)
         }
     }
     
