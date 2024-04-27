@@ -127,7 +127,8 @@ export default function NovaAulaForm() {
             setWaiting(false)
             navigate(`/modulo/${modulo.id}`)
         } catch(error) {
-            console.error('Erro registrando aula: ', error)
+            console.error(error)
+            alert('Erro ao registrar avaliações: ', error.message)
             setWaiting(false)
         }
     }

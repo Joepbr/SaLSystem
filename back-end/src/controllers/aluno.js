@@ -74,6 +74,19 @@ controller.retrieveOne = async function (req, res) {
                     include: {
                         aula: {
                             include: {
+                                modulo: {
+                                    include: {
+                                        avaliacao: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                notas: {
+                    include: {
+                        avaliacao: {
+                            include: {
                                 modulo: true
                             }
                         }

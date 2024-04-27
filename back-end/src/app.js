@@ -60,6 +60,9 @@ app.use('/presencas', presencaRoute)
 import avaliacaoRoute from './routes/avaliacao.js'
 app.use('/avaliacoes', avaliacaoRoute)
 
+import notasRoute from './routes/notas.js'
+app.use('/notas', notasRoute)
+
 import disponibilidadeRoute from './routes/disponibilidade.js'
 app.use('/disponibilidade', disponibilidadeRoute)
 

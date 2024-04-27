@@ -135,10 +135,58 @@ export default function AlunoProfile() {
         perc = (num / total) * 100
 
         return (
-            <Stack direction="column" spacing={1} alignItems="Left" sx={{ ml: 2 }}>
-                <Typography>Aulas: {total}</Typography>
-                <Typography>Presenças: {num} ({perc}%)</Typography>
-            </Stack>
+            <>
+                <Stack direction="column" spacing={1} alignItems="Left" sx={{ ml: 2, paddingRight: 2 }}>
+                    <Typography>Aulas: {total}</Typography>
+                    <Typography>Presenças: {num} ({perc}%)</Typography>
+                </Stack>
+                <Divider orientation="vertical" variant="middle" flexItem />
+            </>
+        )
+    }
+
+    const showNotas = (notas, matricula) => {
+        const notasModulo = notas.filter(nota => nota.avaliacao.modulo.id === matricula.modulo.id)
+
+        const notasByAvaliacao = {}
+        notasModulo.forEach(nota => {
+            const titulo = nota.avaliacao.titulo
+            if (!notasByAvaliacao[titulo]) {
+                notasByAvaliacao[titulo] = {notas: [], peso: nota.avaliacao.peso}
+            }
+            notasByAvaliacao[titulo].notas.push(nota.nota)
+        })
+        return (
+            <>
+                <table style={{ borderCollapse: 'collapse', width: '30%' }}>
+                    <thead>
+                        <tr style={{ borderBottom: '1px solid #ccc' }}>
+                            <th style={{ textAlign: 'center', padding: '8px' }}>Avaliação</th>
+                            <th style={{ textAlign: 'center', padding: '8px' }}>Peso</th>
+                            <th style={{ textAlign: 'center', padding: '8px' }}>Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Object.entries(notasByAvaliacao).map(([titulo, { notas, peso }]) => (
+                            <tr key={titulo} style={{ borderBottom: '1px solid #ccc' }}>
+                                <td style={{ textAlign: 'center', padding: '8px' }}>{titulo}</td>
+                                <td style={{ textAlign: 'center', padding: '8px' }}>{peso}</td>
+                                <td style={{ textAlign: 'center', padding: '8px', fontWeight: 'bold', fontSize: 'larger'}}>
+                                    {notas.map((nota, index) => (
+                                        <React.Fragment key={index}>
+                                            <span style={{ color: nota < 6 ? 'red' : 'blue' }}>
+                                                {nota}
+                                            </span>
+                                            {index !== notas.length -1 && ', '}
+                                        </React.Fragment>
+                                    ))}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <Divider orientation="vertical" variant="middle" flexItem />
+            </>
         )
     }
 
@@ -233,7 +281,10 @@ export default function AlunoProfile() {
                                             )}
                                         </AccordionSummary>
                                         <AccordionDetails>
-                                            {showPresencas(aluno.presenca, matricula)}
+                                            <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 2 }}>
+                                                {showPresencas(aluno.presenca, matricula)}
+                                                {showNotas(aluno.notas, matricula)}
+                                            </Stack>
                                         </AccordionDetails>
                                         <AccordionActions>
                                             <Button onClick={() => handleDeleteConfirmation(matricula.id)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Desmatricular</Button>

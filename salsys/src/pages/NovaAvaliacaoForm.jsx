@@ -12,12 +12,16 @@ import Waiting from '../ui/Waiting';
 export default function NovaAvaliacaoForm() {
     const navigate = useNavigate();
     const { id } = useParams()
-    const [avaliacoes, setAvaliacoes] = React.useState([])
+    const [avaliacao, setAvaliacao] = React.useState({
+        titulo: '',
+        data: moment(),
+        peso: 1,
+        moduloId: id,
+        professorId: ''
+    })
     const [alunos, setAlunos] = React.useState([])
     const [modulo, setModulo] = React.useState({})
-    const [titulo, setTitulo] = React.useState('')
-    const [data, setData] = React.useState(moment())
-    const [peso, setPeso] = React.useState(1)
+    const [notas, setNotas] = React.useState([])
     const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
@@ -31,10 +35,14 @@ export default function NovaAvaliacaoForm() {
             const response = await myfetch.get(`/alunos/modulo/${id}`)
             const sortedAlunos = response.sort((a, b) => (a.user.nome > b.user.nome) ? 1 : -1);
             setAlunos(sortedAlunos);
-            setAvaliacoes(sortedAlunos.map(aluno => ({
-                alunoId: parseInt(aluno.id),
+
+            const initialNotas = sortedAlunos.map((aluno) => ({
+                alunoId: aluno.id,
+                avaliacaoId: null,
                 nota: 0
-            })))
+            }))
+            setNotas(initialNotas)
+
             setWaiting(false)
         } catch (error) {
             console.error(error)
@@ -48,6 +56,12 @@ export default function NovaAvaliacaoForm() {
             setWaiting(true)
             const response = await myfetch.get(`/modulos/${id}`)
             setModulo(response)
+            if (response.professor) {
+                setAvaliacao(prevState => ({
+                    ...prevState,
+                    professorId: response.professor.id
+                }))
+            }
             setWaiting(false)
         } catch (error) {
             console.error(error)
@@ -56,22 +70,41 @@ export default function NovaAvaliacaoForm() {
         }
     }
 
-    const handleSubmit = async() => {
+    const handleNotaChange =(alunoId) => (event) => {
+        const nota = parseFloat(event.target.value)
+        const updatedNotas = notas.map((notaItem) => {
+            if (notaItem.alunoId === alunoId) {
+                return { ...notaItem, nota: nota }
+            }
+            return notaItem
+        })
+        setNotas(updatedNotas)
+    }
+
+    const handleSubmit = async(e) => {
+        e.preventDefault()
+
         try {
             setWaiting(true)
-            const avalData = new Date(data)
+            const avalData = new Date(avaliacao.data)
 
-            await Promise.all(avaliacoes.map(avaliacao =>
-                myfetch.post('/avaliacoes', {
-                    nota: avaliacao.nota,
-                    titulo: titulo,
-                    data: avalData,
-                    peso: parseInt(peso),
-                    modulo: { connect: { id: parseInt(id) } },
-                    professor: { connect: { id: parseInt(modulo.professor.id) } },
-                    aluno: { connect: { id: parseInt(avaliacao.alunoId) } }
+            const newAval = await myfetch.post('/avaliacoes', {
+                titulo: avaliacao.titulo,
+                data: avalData,
+                peso: parseInt(avaliacao.peso),
+                professor: { connect: { id: parseInt(avaliacao.professorId) } },
+                modulo: { connect: { id: parseInt(avaliacao.moduloId) } }
+            })
+
+            await Promise.all(alunos.map(async (aluno) => {
+                const nota = notas.find((nota) => nota.alunoId === aluno.id)?.nota || 0
+                const response = await myfetch.post('/notas', {
+                    nota,
+                    aluno: { connect: { id: aluno.id } },
+                    avaliacao: { connect: { id: newAval.id } }
                 })
-            ))
+            }))
+            
             setWaiting(false)
             navigate(`/modulo/${id}`);
         } catch (error) {
@@ -79,20 +112,6 @@ export default function NovaAvaliacaoForm() {
             alert('Erro ao registrar avaliações: ', error.message)
             setWaiting(false)
         }
-    }
-
-    const handleNotaChange =(alunoId, value) => {
-        setAvaliacoes(prevState => {
-            const newAvaliacoes = [...prevState]
-            const index = newAvaliacoes.findIndex(avaliacao => avaliacao.alunoId === alunoId)
-            if (index !== -1) {
-                newAvaliacoes[index] = {
-                    ...newAvaliacoes[index],
-                    nota: parseFloat(value)
-                }
-            }
-            return newAvaliacoes
-        })
     }
 
     return (
@@ -112,62 +131,65 @@ export default function NovaAvaliacaoForm() {
                         <Typography variant='h6' sx={{ mb: 2 }}>Professor: {modulo.professor.user.nome}</Typography>
                     }
                     <Divider />
-                    <Typography sx={{ mt: 2 }}>Título da Avaliação:</Typography>
-                    <TextField 
-                        variant="filled"
-                        sx={{backgroundColor: "white", color: "black"}}
-                        value={titulo}
-                        onChange={(e) => setTitulo(e.target.value)}
-                    />
-                    <Grid container spacing={2} sx={{ margin: 2 }}>
-                        <Grid item xs={2}>
-                        <Typography>Peso:</Typography>
-                        <TextField
-                            type="number"
+                    <form onSubmit={handleSubmit}>
+                        <Typography sx={{ mt: 2 }}>Título da Avaliação:</Typography>
+                        <TextField 
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black"}}
-                            inputProps={{ min: 1, max: 5 }}
-                            value={peso}
-                            onChange={(e) => setPeso(e.target.value)}
+                            value={avaliacao.titulo}
+                            onChange={(e) => setAvaliacao(prevState => ({ ...prevState, titulo: e.target.value }))}
                         />
+                        <Grid container spacing={2} sx={{ margin: 2 }}>
+                            <Grid item xs={2}>
+                            <Typography>Peso:</Typography>
+                            <TextField
+                                type="number"
+                                variant="filled"
+                                sx={{backgroundColor: "white", color: "black"}}
+                                inputProps={{ min: 1, max: 5 }}
+                                value={avaliacao.peso}
+                                onChange={(e) => setAvaliacao(prevState => ({ ...prevState, peso: e.target.value }))}
+                            />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography>Data de Aplicação:</Typography>
+                                <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                                    <DatePicker
+                                        variant="filled"
+                                        sx={{backgroundColor: "white", color: "black"}}
+                                        fullWidth
+                                        value={avaliacao.data}
+                                        onChange={(newValue) => setAvaliacao(prevState => ({ ...prevState, data: newValue }))}
+                                    />
+                                </LocalizationProvider>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={4}>
-                            <Typography>Data de Aplicação:</Typography>
-                            <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
-                                <DatePicker
-                                    variant="filled"
-                                    sx={{backgroundColor: "white", color: "black"}}
-                                    fullWidth
-                                    value={data}
-                                    onChange={(newValue) => setData(newValue)}
-                                />
-                            </LocalizationProvider>
-                        </Grid>
-                    </Grid>
-                    <Divider />
-                    <Typography variant='h6' sx={{ margin:2 }}>Registrar Notas:</Typography>
-                    <FormGroup>
-                        {alunos.map(aluno => (
-                            <div key={aluno.id}>
-                                <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
-                                    <FormControl>
-                                        <TextField
-                                            type="number"
-                                            sx={{backgroundColor: "white", color: "black", width: 100}}
-                                            size="small"
-                                            inputProps={{ step: "0.05", min: 0, max: 10 }}
-                                            value={avaliacoes.find(avaliacao => avaliacao.alunoId === aluno.id)?.nota || ''}
-                                            onChange={(e) => handleNotaChange(aluno.id, e.target.value)}
-                                        />
-                                    </FormControl>
-                                <Typography>{aluno.user.nome}</Typography>
-                                </Stack>
-                            </div>
-                        ))}
-                    </FormGroup>
-                    <Divider />
-                    <Button variant="contained" sx={{margin: 2}} onClick={handleSubmit}>Registrar Avaliações</Button>
-                   <Button type="button" variant="outlined" sx={{margin: 2}} onClick={() => navigate(`/modulo/${id}`)}>Cancelar</Button>
+                        <Divider />
+                        <Typography variant='h6' sx={{ margin:2 }}>Registrar Notas:</Typography>
+                        <FormGroup>
+                            {alunos.map(aluno => (
+                                <div key={aluno.id}>
+                                    <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                                        <FormControl>
+                                            <TextField
+                                                type="number"
+                                                sx={{backgroundColor: "white", color: "black", width: 100}}
+                                                size="small"
+                                                inputProps={{ step: "0.05", min: 0, max: 10 }}
+                                                value={notas.find(notas => notas.alunoId === aluno.id)?.nota || 0}
+                                                onChange={handleNotaChange(aluno.id)}
+                                            />
+                                        </FormControl>
+                                    <Typography>{aluno.user.nome}</Typography>
+                                    </Stack>
+                                </div>
+                            ))}
+                        </FormGroup>
+                        <Box>
+                            <Button type="submit" variant="contained" sx={{margin: 2}} >Registrar Avaliação</Button>
+                            <Button type="button" variant="outlined" sx={{margin: 2}} onClick={() => navigate(`/modulo/${id}`)}>Cancelar</Button>
+                        </Box>
+                    </form>
                 </>
             )}
         </Container>

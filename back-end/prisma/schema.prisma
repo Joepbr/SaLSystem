@@ -96,7 +96,7 @@ model aluno {
   resp_parent     String?
   matricula       matricula[]
   presenca        presenca[]
-  avaliacao       avaliacao[]
+  notas           notas[]
 }
 
 model aula {
@@ -142,14 +142,21 @@ model avaliacao {
   profId           Int
   modulo           modulo            @relation(fields: [moduloId], references: [id])
   moduloId         Int
-  aluno            aluno             @relation(fields: [alunoId], references: [id])
-  alunoId          Int
+  notas            notas[]
   data             DateTime
   titulo           String
-  nota             Float?
   peso             Int               @default(1)
 
   //@@id(name: "Id", [profId, moduloId, alunoId, data])
+}
+
+model notas {
+  id               Int               @id@default(autoincrement())
+  aluno            aluno             @relation(fields: [alunoId], references: [id])
+  alunoId          Int
+  avaliacao        avaliacao         @relation(fields: [avaliacaoId], references: [id])
+  avaliacaoId      Int
+  nota             Float
 }
 
 model disponibilidade {

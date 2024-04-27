@@ -15,8 +15,10 @@ export default function AulasModulo() {
     const [modulo, setModulo] = React.useState(null);
     const [aulas, setAulas] = React.useState([]);
     const [avaliacoes, setAvaliacoes] = React.useState([])
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+    const [openDeleteAulaDialog, setOpenDeleteAulaDialog] = React.useState(false);
     const [aulaToDelete, setAulaToDelete] = React.useState(null);
+    const [openDeleteAvaliacaoDialog, setOpenDeleteAvaliacaoDialog] = React.useState(false);
+    const [avaliacaoToDelete, setAvaliacaoToDelete] = React.useState(null);
     const [openDeactivateDialog, setOpenDeactivateDialog] = React.useState(false);
     const [waiting, setWaiting] = React.useState(false)
 
@@ -78,7 +80,7 @@ export default function AulasModulo() {
     const handleDeleteConfirmation = (aula, event) => {
         event.preventDefault();
         setAulaToDelete(aula);
-        setOpenDeleteDialog(true);
+        setOpenDeleteAulaDialog(true);
     }
 
     const handleDeleteAula = async () => {
@@ -87,7 +89,7 @@ export default function AulasModulo() {
                 setWaiting(true)
                 await myfetch.delete(`/presencas/aula/${aulaToDelete.id}`)
                 await myfetch.delete(`/aulas/${aulaToDelete.id}`);
-                setOpenDeleteDialog(false);
+                setOpenDeleteAulaDialog(false);
                 setWaiting(false)
                 fetchAulas();
             } catch (error) {
@@ -98,8 +100,35 @@ export default function AulasModulo() {
         }
     }
 
-    const handleCloseDeleteDialog = () => {
-        setOpenDeleteDialog(false);
+    const handleCloseDeleteAulaDialog = () => {
+        setOpenDeleteAulaDialog(false);
+    }
+
+    const handleDeleteAvaliacaoConfirmation = (avaliacao, event) => {
+        event.preventDefault();
+        setAvaliacaoToDelete(avaliacao);
+        setOpenDeleteAvaliacaoDialog(true);
+    }
+
+    const handleDeleteAvaliacao = async () => {
+        if (avaliacaoToDelete) {
+            try {
+                setWaiting(true)
+                await myfetch.delete(`/notas/avaliacao/${avaliacaoToDelete.id}`)
+                await myfetch.delete(`/avaliacoes/${avaliacaoToDelete.id}`);
+                setOpenDeleteAvaliacaoDialog(false);
+                fetchAvaliacoes();
+                setWaiting(false)
+            } catch (error) {
+                console.error(error);
+                alert('ERRO: ' + error.message);
+                setWaiting(false)
+            }
+        }
+    }
+
+    const handleCloseDeleteAvaliacaoDialog = () => {
+        setOpenDeleteAvaliacaoDialog(false);
     }
 
     const openDeactivationDialog = () => {
@@ -182,9 +211,37 @@ export default function AulasModulo() {
             <Divider />
             <Box display="flex" sx={{ margin: 2 }}>
                 <Button component={Link} to={`/modulo/${id}/aula/new`} variant="contained" sx={{ backgroundColor: "#9d2f2e", margin: 2 }}> Registrar Nova Aula </Button>
+                <Button component={Link} to={`/modulo/${id}/avaliacao/new`} variant="contained" sx={{ backgroundColor: "#25254b", margin: 2 }}>Registrar Nova Avaliação</Button>
             </Box>
-            <Typography variant='h6'>Aulas Registradas no Sistema:</Typography>
-            <List>
+            {avaliacoes.length > 0 && (
+                <>
+                    <Typography variant='h6' sx={{ mt: 2, fontWeight: 'bold' }}>Lista de Avaliações:</Typography>
+                    <List>
+                        {avaliacoes.map((avaliacao, index) => (
+                            <React.Fragment key={avaliacao.id}>
+                                <ListItem
+                                    button
+                                    component={Link}
+                                    to={`/avaliacao/${avaliacao.id}`}
+                                    sx={{ borderBottom: index < aulas.length - 1 ? '1px solid #ccc' : 'none' }}
+                                >
+                                    <ListItemText
+                                        primary={moment(avaliacao.data).format('L') + ' - ' + avaliacao.titulo}
+                                        primaryTypographyProps={{
+                                            fontSize: 20,
+                                            fontWeight: 'medium'
+                                        }}
+                                    />
+                                    <Button onClick={(event) => handleDeleteAvaliacaoConfirmation(avaliacao, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir Avaliação</Button>
+                                </ListItem>
+                            </React.Fragment>
+                        ))}
+                    </List>
+                    <Divider />
+                </>
+            )}
+            <Typography variant='h6' sx={{ mt: 2, fontWeight: 'bold' }}>Lista de Aulas:</Typography>
+            <List dense>
                 {aulas.map((aula, index) => (
                     <React.Fragment key={aula.id}>
                         <ListItem
@@ -201,37 +258,12 @@ export default function AulasModulo() {
                                 }}
                                 secondary={aula.conteudo}
                             />
-                            <Button onClick={(event) => handleDeleteConfirmation(aula, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar Registro de Aula</Button>
+                            <Button onClick={(event) => handleDeleteConfirmation(aula, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir Aula</Button>
                         </ListItem>
                     </React.Fragment>
                 ))}
             </List>
-            <Divider />
-            <Box display="flex" sx={{ margin: 2 }}>
-                <Button component={Link} to={`/modulo/${id}/avaliacao/new`} variant="contained" sx={{ backgroundColor: "#25254b", margin: 2 }}>Registrar Nova Avaliação</Button>
-            </Box>
-            <Typography variant='h6' sx={{ mt: 2 }}>Avaliações Registradas no Sistema:</Typography>
-            <List>
-                {avaliacoes.map((avaliacao, index) => (
-                    <React.Fragment key={avaliacao.id}>
-                        <ListItem
-                            button
-                            component={Link}
-                            to={`/avaliacao/${avaliacao.id}`}
-                            sx={{ borderBottom: index < aulas.length - 1 ? '1px solid #ccc' : 'none' }}
-                        >
-                            <ListItemText
-                                primary={moment(avaliacao.data).format('L') + ' - ' + avaliacao.titulo}
-                                primaryTypographyProps={{
-                                    fontSize: 20,
-                                    fontWeight: 'medium'
-                                }}
-                            />
-                        </ListItem>
-                    </React.Fragment>
-                ))}
-            </List>
-            <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+            <Dialog open={openDeleteAulaDialog} onClose={handleCloseDeleteAulaDialog}>
                 <DialogTitle>Remover Registro de Aula</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -242,7 +274,23 @@ export default function AulasModulo() {
                     <Button onClick={handleDeleteAula} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
                         Deletar
                     </Button>
-                    <Button onClick={handleCloseDeleteDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>
+                    <Button onClick={handleCloseDeleteAulaDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>
+                        Cancelar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openDeleteAvaliacaoDialog} onClose={handleCloseDeleteAvaliacaoDialog}>
+                <DialogTitle>Remover Registro de Avaliação</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Tem certeza que você deseja remover o registro da avaliação "{avaliacaoToDelete ? avaliacaoToDelete.titulo : ''}"?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteAvaliacao} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
+                        Deletar
+                    </Button>
+                    <Button onClick={handleCloseDeleteAvaliacaoDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>
                         Cancelar
                     </Button>
                 </DialogActions>
