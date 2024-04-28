@@ -121,31 +121,19 @@ export default function AlunoProfile() {
         }
     }
 
-    const showPresencas = (presencas, matricula) => {
-        let total = matricula.modulo.aula.length
-        let num = 0
-        let perc = 0
+    const showNotas = (presencas, notas, matricula) => {
+        let totalAulas = matricula.modulo.aula.length
+        let numPres = 0
+        let percPres = 0
         for (let i=0; i<presencas.length; i++){
             if(presencas[i].aula.modulo.id === matricula.modulo.id){
                 if(presencas[i].presente){
-                    num++
+                    numPres++
                 }
             }
         }
-        perc = (num / total) * 100
+        percPres = (numPres / totalAulas) * 100
 
-        return (
-            <>
-                <Stack direction="column" spacing={1} alignItems="Left" sx={{ ml: 2, paddingRight: 2 }}>
-                    <Typography>Aulas: {total}</Typography>
-                    <Typography>Presenças: {num} ({perc}%)</Typography>
-                </Stack>
-                <Divider orientation="vertical" variant="middle" flexItem />
-            </>
-        )
-    }
-
-    const showNotas = (notas, matricula) => {
         const notasModulo = notas.filter(nota => nota.avaliacao.modulo.id === matricula.modulo.id)
 
         const notasByAvaliacao = {}
@@ -156,36 +144,65 @@ export default function AlunoProfile() {
             }
             notasByAvaliacao[titulo].notas.push(nota.nota)
         })
+
+        const calcularFinal = (notasModulo) => {
+            let soma = 0
+            let pesos = 0
+
+            notasModulo.forEach(({ nota, avaliacao }) => {
+                soma += nota * avaliacao.peso
+                pesos += avaliacao.peso
+            })
+
+            const final = (soma + (percPres/10)) / (pesos + 1)
+            
+            return parseFloat(final).toFixed(2)
+        }
+        
         return (
             <>
-                <table style={{ borderCollapse: 'collapse', width: '30%' }}>
-                    <thead>
-                        <tr style={{ borderBottom: '1px solid #ccc' }}>
-                            <th style={{ textAlign: 'center', padding: '8px' }}>Avaliação</th>
-                            <th style={{ textAlign: 'center', padding: '8px' }}>Peso</th>
-                            <th style={{ textAlign: 'center', padding: '8px' }}>Nota</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.entries(notasByAvaliacao).map(([titulo, { notas, peso }]) => (
-                            <tr key={titulo} style={{ borderBottom: '1px solid #ccc' }}>
-                                <td style={{ textAlign: 'center', padding: '8px' }}>{titulo}</td>
-                                <td style={{ textAlign: 'center', padding: '8px' }}>{peso}</td>
-                                <td style={{ textAlign: 'center', padding: '8px', fontWeight: 'bold', fontSize: 'larger'}}>
-                                    {notas.map((nota, index) => (
-                                        <React.Fragment key={index}>
-                                            <span style={{ color: nota < 6 ? 'red' : 'blue' }}>
-                                                {nota}
-                                            </span>
-                                            {index !== notas.length -1 && ', '}
-                                        </React.Fragment>
-                                    ))}
-                                </td>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 2 }}>
+                    <Stack direction="column" spacing={1} alignItems="Left" sx={{ ml: 2, paddingRight: 2 }}>
+                        <Typography>Aulas: {totalAulas}</Typography>
+                        <Typography>Presenças: {numPres} ({percPres}%)</Typography>
+                    </Stack>
+                    <Divider orientation="vertical" variant="middle" flexItem />
+                    <table style={{ borderCollapse: 'collapse', width: '30%' }}>
+                        <thead>
+                            <tr style={{ borderBottom: '1px solid #ccc' }}>
+                                <th style={{ textAlign: 'center', padding: '8px' }}>Avaliação</th>
+                                <th style={{ textAlign: 'center', padding: '8px' }}>Peso</th>
+                                <th style={{ textAlign: 'center', padding: '8px' }}>Nota</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <Divider orientation="vertical" variant="middle" flexItem />
+                        </thead>
+                        <tbody>
+                            {Object.entries(notasByAvaliacao).map(([titulo, { notas, peso }]) => (
+                                <tr key={titulo} style={{ borderBottom: '1px solid #ccc' }}>
+                                    <td style={{ textAlign: 'center', padding: '8px' }}>{titulo}</td>
+                                    <td style={{ textAlign: 'center', padding: '8px' }}>{peso}</td>
+                                    <td style={{ textAlign: 'center', padding: '8px', fontWeight: 'bold', fontSize: 'larger'}}>
+                                        {notas.map((nota, index) => (
+                                            <React.Fragment key={index}>
+                                                <span style={{ color: nota < 6 ? 'red' : 'blue' }}>
+                                                    {nota}
+                                                </span>
+                                                {index !== notas.length -1 && ', '}
+                                            </React.Fragment>
+                                        ))}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <Divider orientation="vertical" variant="middle" flexItem />
+                    <Stack direction="column" spacing={1} alignItems="Center" sx={{ ml: 2, paddingLeft: 2 }}>
+                        <Typography sx={{ fontWeight: 'bold' }}>Nota Final:</Typography>
+                        {matricula.modulo.active && (
+                            <Typography>(Parcial)</Typography>
+                        )}
+                        <Typography sx={{ fontWeight: 'bold', fontSize: '20px', color: calcularFinal(notasModulo) < 6 ? 'red' : 'blue' }}>{calcularFinal(notasModulo)}</Typography>
+                    </Stack>
+                </Stack>
             </>
         )
     }
@@ -282,8 +299,7 @@ export default function AlunoProfile() {
                                         </AccordionSummary>
                                         <AccordionDetails>
                                             <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 2 }}>
-                                                {showPresencas(aluno.presenca, matricula)}
-                                                {showNotas(aluno.notas, matricula)}
+                                                {showNotas(aluno.presenca, aluno.notas, matricula)}
                                             </Stack>
                                         </AccordionDetails>
                                         <AccordionActions>

@@ -27,6 +27,7 @@ export default function AulaRecord(){
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
+            setWaiting(false)
         }
     };
 

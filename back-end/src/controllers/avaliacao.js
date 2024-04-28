@@ -31,7 +31,28 @@ controller.retrieveAll = async function (req, res) {
 controller.retrieveOne = async function (req, res) {
     try {
         const result = await prisma.avaliacao.findUnique({
-            where: { id: Number(req.params.id) }
+            where: { id: Number(req.params.id) },
+            include: {
+                notas: {
+                    include: {
+                        aluno: {
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
+                },
+                modulo: {
+                    include: {
+                        curso: true
+                    }
+                },
+                professor: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
         })
 
         if(result) res.send(result)
