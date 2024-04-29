@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { MdEmail } from "react-icons/md";
 import { FaWhatsapp } from "react-icons/fa";
+import { FaGraduationCap } from "react-icons/fa6";
 
 import theme from '../utils/theme';
 import moment from 'moment';
@@ -244,7 +245,16 @@ export default function AlunoProfile() {
                             <Divider />
                             </>
                         )}
-                        <Button onClick={handleEnrollClick} variant="contained" color="secondary" sx={{margin: '25px'}}>Matricular Aluno</Button>
+                        <Button 
+                            onClick={handleEnrollClick} 
+                            variant="contained" 
+                            color="secondary" 
+                            size="large"
+                            sx={{margin: '25px'}}
+                            startIcon={<FaGraduationCap />}
+                        >
+                            Matricular
+                        </Button>
                         <Dialog open={openEnrollDialog} onClose={() => setOpenEnrollDialog(false)}>
                             <DialogTitle>Matricular em um módulo</DialogTitle>
                             <DialogContent>

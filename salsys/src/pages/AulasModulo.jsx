@@ -2,9 +2,12 @@ import React from 'react';
 import myfetch from '../utils/myfetch';
 import { Link, useParams } from 'react-router-dom';
 import { Container, Typography, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Box, List, ListItem, ListItemText, Stack, Switch, FormControlLabel } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { FaBook } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
+import { GiTeacher } from "react-icons/gi";
+import { MdAssignment } from "react-icons/md";
+
 import moment from 'moment';
 import Waiting from '../ui/Waiting';
 
@@ -210,8 +213,26 @@ export default function AulasModulo() {
             </Box>
             <Divider />
             <Box display="flex" sx={{ margin: 2 }}>
-                <Button component={Link} to={`/modulo/${id}/aula/new`} variant="contained" sx={{ backgroundColor: "#9d2f2e", margin: 2 }}> Registrar Nova Aula </Button>
-                <Button component={Link} to={`/modulo/${id}/avaliacao/new`} variant="contained" sx={{ backgroundColor: "#25254b", margin: 2 }}>Registrar Nova Avaliação</Button>
+                <Button 
+                    component={Link} 
+                    to={`/modulo/${id}/aula/new`} 
+                    variant="contained" 
+                    size="large"
+                    sx={{ backgroundColor: "#9d2f2e", margin: 2 }}
+                    startIcon={<GiTeacher/>}
+                > 
+                    Nova Aula 
+                </Button>
+                <Button 
+                    component={Link} 
+                    to={`/modulo/${id}/avaliacao/new`} 
+                    variant="contained" 
+                    size="large"
+                    sx={{ backgroundColor: "#25254b", margin: 2 }}
+                    startIcon={<MdAssignment/>}
+                >
+                    Nova Avaliação
+                </Button>
             </Box>
             {avaliacoes.length > 0 && (
                 <>
@@ -232,7 +253,8 @@ export default function AulasModulo() {
                                             fontWeight: 'medium'
                                         }}
                                     />
-                                    <Button onClick={(event) => handleDeleteAvaliacaoConfirmation(avaliacao, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir Avaliação</Button>
+                                    <Button component={Link} to={`/avaliacao/${avaliacao.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
+                                    <Button onClick={(event) => handleDeleteAvaliacaoConfirmation(avaliacao, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir</Button>
                                 </ListItem>
                             </React.Fragment>
                         ))}
@@ -258,7 +280,8 @@ export default function AulasModulo() {
                                 }}
                                 secondary={aula.conteudo}
                             />
-                            <Button onClick={(event) => handleDeleteConfirmation(aula, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir Aula</Button>
+                            <Button component={Link} to={`/aula/${aula.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
+                            <Button onClick={(event) => handleDeleteConfirmation(aula, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir</Button>
                         </ListItem>
                     </React.Fragment>
                 ))}

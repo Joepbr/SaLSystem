@@ -29,8 +29,10 @@ import NovoAlunoForm from './pages/NovoAlunoForm'
 import EditarAlunoForm from './pages/EditarAlunoForm'
 import Aulas from './pages/AulaList'
 import NovaAulaForm from './pages/NovaAulaForm'
+import EditarAulaForm from './pages/EditarAulaForm'
 import AulaRecord from './pages/AulaRecord'
 import NovaAvaliacaoForm from './pages/NovaAvaliacaoForm'
+import EditarAvaliacaoForm from './pages/EditarAvaliacaoForm'
 import AvaliacaoRecord from './pages/AvaliacaoRecord'
 
 import LoginForm from './pages/LoginForm'
@@ -89,9 +91,11 @@ function App() {
                 <Route path="/aulas" element={ <Aulas /> } />
                 <Route path="/modulo/:id/aula/new" element={ <NovaAulaForm /> } />
                 <Route path="/aula/:id" element={ <AulaRecord /> }/>
+                <Route path="/aula/:id/edit" element={ <EditarAulaForm /> } />
 
                 <Route path="/modulo/:id/avaliacao/new" element={ <NovaAvaliacaoForm /> } />
                 <Route path="/avaliacao/:id" element={ <AvaliacaoRecord /> } />
+                <Route path="/avaliacao/:id/edit" element={ <EditarAvaliacaoForm /> } />
 
               </Route>
             </Routes>

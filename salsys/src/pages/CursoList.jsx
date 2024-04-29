@@ -4,6 +4,8 @@ import myfetch from '../utils/myfetch'
 import { Button, CssBaseline, Box, Typography, Container, ThemeProvider, Divider, Card, CardContent, CardActionArea, CardMedia, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { IoChatbubblesSharp } from "react-icons/io5";
+
 import { Link } from 'react-router-dom'
 import theme from '../utils/theme';
 import Waiting from '../ui/Waiting';
@@ -98,7 +100,16 @@ export default function Cursos(){
                     <Divider />
                     </Box>
                     <Box display="flex">
-                        <Button component={Link} to="/cursos/new" variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Criar Novo Curso </Button>
+                        <Button 
+                            component={Link} 
+                            to="/cursos/new" 
+                            variant="contained"
+                            size="large"
+                            sx={{ backgroundColor: "#9d2f2e" }}
+                            startIcon={<IoChatbubblesSharp/>}
+                        > 
+                            Novo Curso
+                        </Button>
                     </Box>
                     <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                         <DialogTitle>Deletar Curso</DialogTitle>

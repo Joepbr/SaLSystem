@@ -125,6 +125,38 @@ controller.retrieveByProfId = async function (req, res) {
     }
 }
 
+controller.retrieveByAvaliacaoId = async function (req, res) {
+    try {
+        const avaliacaoId = Number(req.params.avaliacaoId);
+        const result = await prisma.modulo.findMany({
+            where: {
+                avaliacao: {
+                    some: {
+                        id: avaliacaoId
+                    }
+                }
+            },
+            include: {
+                dias_sem: true,
+                curso: true,
+                professor: {
+                    include: {
+                        user: true
+                    }
+                },
+            }
+        });
+
+        if(result) res.send(result)
+        else res.status(404).end()
+    }
+    catch (error) {
+        console.log(error);
+
+        res.status(500).end();
+    }
+}
+
 controller.update = async function (req, res) {
     try {
         const moduloId = Number(req.params.id)

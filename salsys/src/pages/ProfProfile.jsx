@@ -6,6 +6,7 @@ import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box
 import { MdEmail } from "react-icons/md";
 import { FaWhatsapp } from "react-icons/fa";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { FaCalendarDay } from "react-icons/fa6";
 
 import theme from '../utils/theme';
 import moment from 'moment';
@@ -75,8 +76,7 @@ export default function ProfProfile() {
                                 <Avatar alt={prof.user.nome} src={prof.imageUrl} sx={{ width: 56, height: 56 }} />
                                 <Typography variant="h4">{prof.user.nome}</Typography>
                             </Stack>
-                            <Typography variant="h6">{prof.especialidade} </Typography>
-                            {/*<Typography variant="body1">{prof.data_nasc}</Typography>*/}
+                            <Typography variant="h6" sx={{ mb: 2 }}>{prof.especialidade} </Typography>
                             <Divider />
                             <Box sx={{ margin: "25px" }}>
                                 <Typography variant="body1" >
@@ -89,13 +89,22 @@ export default function ProfProfile() {
                                     </Box>
                                 </Typography>
                             </Box>
-                            <Box display="flex" sx={{ margin: "10px" }}>
-                                <Button component={Link} to={`/prof/${prof.id}/disponib`} variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Ajustar Disponibilidade </Button>
+                            <Box display="flex" sx={{ margin: 2 }}>
+                                <Button 
+                                    component={Link} 
+                                    to={`/prof/${prof.id}/disponib`} 
+                                    variant="contained"
+                                    size="large" 
+                                    sx={{ backgroundColor: "#9d2f2e" }}
+                                    startIcon={<FaCalendarDay/>}
+                                > 
+                                    Ajustar Disponibilidade 
+                                </Button>
                             </Box>
                         </>
                     )}
                     <Divider />
-                    <Box sx={{ mb: 2 }}>
+                    <Box sx={{ mb: 2, mt: 2 }}>
                         <Typography variant="h5">Módulos</Typography>
                     </Box>
                     {modulos.map((modulo, index) => (

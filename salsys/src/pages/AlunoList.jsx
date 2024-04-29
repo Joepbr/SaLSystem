@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemText } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { PiStudentFill } from "react-icons/pi";
 import theme from '../utils/theme';
 import myfetch from '../utils/myfetch';
 import Waiting from '../ui/Waiting';
@@ -90,7 +91,16 @@ export default function Alunos() {
                         </List>
                     </Box>
                     <Box display="flex">
-                        <Button component={Link} to="/alunos/new" variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Cadastrar Novo Aluno </Button>
+                        <Button 
+                            component={Link} 
+                            to="/alunos/new" 
+                            variant="contained" 
+                            size="large"
+                            sx={{ backgroundColor: "#9d2f2e" }}
+                            startIcon={<PiStudentFill />}
+                        > 
+                            Novo Aluno 
+                        </Button>
                     </Box>
                     <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                         <DialogTitle>Remover Aluno</DialogTitle>

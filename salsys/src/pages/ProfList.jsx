@@ -4,6 +4,7 @@ import myfetch from '../utils/myfetch'
 import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Accordion, AccordionSummary, AccordionDetails, Avatar, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, AccordionActions, Stack, Link as MuiLink } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { FaChalkboardTeacher } from "react-icons/fa";
 
 import { Link } from 'react-router-dom'
 import theme from '../utils/theme';
@@ -107,7 +108,16 @@ export default function Profs(){
                     <Divider />
                     </Box>
                     <Box display="flex">
-                        <Button component={Link} to="/profs/new" variant="contained" sx={{ backgroundColor: "#9d2f2e" }}> Cadastrar Novo Professor </Button>
+                        <Button 
+                            component={Link} 
+                            to="/profs/new" 
+                            variant="contained" 
+                            size="large"
+                            sx={{ backgroundColor: "#9d2f2e" }}
+                            startIcon={<FaChalkboardTeacher/>}
+                        > 
+                            Novo Professor 
+                        </Button>
                     </Box>
                     <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                         <DialogTitle>Remover Professor</DialogTitle>

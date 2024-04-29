@@ -1,7 +1,7 @@
 import React from 'react'
 import myfetch from '../utils/myfetch';
 import { Link } from 'react-router-dom';
-import { Container, Box, Typography, Divider, Avatar, List, ListItem, ListItemText, ListItemAvatar } from '@mui/material';
+import { Container, Box, Typography, Divider, Avatar, List, ListItem, ListItemText, ListItemAvatar, Pagination, PaginationItem } from '@mui/material';
 import moment from 'moment';
 import Waiting from '../ui/Waiting';
 
@@ -20,8 +20,8 @@ export default function Aulas(){
         try {
             setWaiting(true)
             const result = await myfetch.get('/aulas')
-            result.sort((a, b) => new Date(b.data) - new Date(a.data))
-            setAulas(result)
+            const sortedResult = result.sort((a, b) => new Date(b.data) - new Date(a.data))
+            setAulas(sortedResult)
             setWaiting(false)
         } catch (error) {
             console.error(error);
@@ -29,11 +29,13 @@ export default function Aulas(){
         }
     }
 
-    const lastIndex = currentPage * aulasPerPage
-    const firstIndex = lastIndex - aulasPerPage
-    const currentAula = aulas.slice(firstIndex, lastIndex)
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value)
+    }
 
-    const paginate = pageNumber => setCurrentPage(pageNumber)
+    const lastIndex = Math.min(currentPage * aulasPerPage, aulas.length)
+    const firstIndex = Math.max(lastIndex - aulasPerPage, 0)
+    const currentAula = aulas.slice(firstIndex, lastIndex)
 
     return (
         <Container>
@@ -43,13 +45,13 @@ export default function Aulas(){
             </Typography>
             <Divider />
             <List dense>
-                {aulas.map((aula, index) => (
+                {currentAula.map((aula, index) => (
                     <React.Fragment key={aula.id}>
                         <ListItem
                             button
                             component={Link}
                             to={`/aula/${aula.id}`}
-                            sx={{ borderBottom: index < aulas.length - 1 ? '1px solid #ccc' : 'none' }}
+                            sx={{ borderBottom: index < currentAula.length - 1 ? '1px solid #ccc' : 'none' }}
                         >
                             <ListItemAvatar>
                                 <Avatar
@@ -68,16 +70,21 @@ export default function Aulas(){
                         </ListItem>
                     </React.Fragment>
                 ))}
-                <Box sx={{ margin: 2 }}>
-                    <ul>
-                        {Array.from({ length: Math.ceil(aulas.length / aulasPerPage) }, (_, i) => (
-                            <li key={i}>
-                                <button onClick={() => paginate(i + 1)}>{i + 1}</button>
-                            </li>
-                        ))}
-                    </ul> 
-                </Box>
             </List>
+            <Box sx={{ display: 'flex', justifyContent:'center', margin: 2 }}>
+                <Pagination
+                    count={Math.ceil(aulas.length / aulasPerPage)}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    color="primary"
+                    size="large"
+                    showFirstButton
+                    showLastButton
+                    renderItem={(item) => (
+                        <PaginationItem {...item} />
+                    )}
+                /> 
+            </Box>
         </Container>
     )
 }

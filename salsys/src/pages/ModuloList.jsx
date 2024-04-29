@@ -4,6 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 import { Box, Container, Typography, Divider, Button, Accordion, AccordionSummary, AccordionDetails, AccordionActions, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Link as MuiLink, Stack } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { FaGraduationCap } from "react-icons/fa6";
+
 import moment from 'moment';
 import Waiting from '../ui/Waiting';
 
@@ -33,6 +35,7 @@ export default function Modulos() {
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
+            setWaiting(false)
         }
     };
 
@@ -47,6 +50,7 @@ export default function Modulos() {
         } catch (error) {
             console.error(error);
             alert('ERRO: ' + error.message);
+            setWaiting(false)
         }
     };
 
@@ -79,6 +83,7 @@ export default function Modulos() {
             } catch (error) {
                 console.error(error);
                 alert('ERRO: ' + error.message);
+                setWaiting(false)
             }
         }
     };
@@ -126,7 +131,16 @@ export default function Modulos() {
                 </Accordion>
             ))}
             </Box>
-            <Button component={Link} to={`/curso/${id}/modulos/new`} variant="contained" color="primary">Criar Novo Módulo</Button>
+            <Button 
+                component={Link} 
+                to={`/curso/${id}/modulos/new`} 
+                variant="contained" 
+                color="primary"
+                size="large"
+                startIcon={<FaGraduationCap/>}
+            >
+                Novo Módulo
+            </Button>
             <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                 <DialogTitle>Delete modulo</DialogTitle>
                 <DialogContent>
@@ -135,10 +149,10 @@ export default function Modulos() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDeleteDialog} color="primary">
+                    <Button onClick={handleCloseDeleteDialog} variant="contained" color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleDelete} color="secondary" autoFocus>
+                    <Button onClick={handleDelete} variant="contained" color="secondary" autoFocus>
                         Delete
                     </Button>
                 </DialogActions>
