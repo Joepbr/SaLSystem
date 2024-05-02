@@ -1,7 +1,7 @@
 import React from 'react';
 import myfetch from '../utils/myfetch';
 import { Link, useParams } from 'react-router-dom';
-import { Container, Typography, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Box, List, ListItem, ListItemText, Stack, Switch, FormControlLabel } from '@mui/material';
+import { Container, Typography, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Box, List, ListItem, ListItemText, Stack, Switch, FormControlLabel, Link as MuiLink } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { FaBook } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
@@ -201,6 +201,9 @@ export default function AulasModulo() {
                 : 'Carregando...'}
             </Typography>
             <Divider />
+            {modulo && (
+                <Typography variant="h6" sx={{ margin: 2 }}>Professor: <MuiLink component={Link} to={`/prof/${modulo.professor.id}`} underline="none" >{modulo.professor.user.nome}</MuiLink></Typography>
+            )}
             <Box sx={{ margin: "25px" }}>
                 <Typography>
                     <Box>

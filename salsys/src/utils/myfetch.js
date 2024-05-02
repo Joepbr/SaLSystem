@@ -14,18 +14,24 @@ class HttpError extends Error {
   function defaultOptions(body = null, method = 'GET') {
     const options = {
       method,
-      headers: {"Content-type": "application/json; charset=UTF-8"},
+      headers: {},
       credentials: 'include'
     }
+
+    if (body instanceof FormData) {
+      options.body = body
+    } else {
+      options.headers["Content-type"] = "application/json; charset=UTF-8"
+    
+      if(body) options.body = JSON.stringify(body)
   
-    if(body) options.body = JSON.stringify(body)
+      // Verifica se existe um token gravado no localStorage e o inclui
+      // nos headers, nesse caso
+      const token = window.localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_NAME)
   
-    // Verifica se existe um token gravado no localStorage e o inclui
-    // nos headers, nesse caso
-    const token = window.localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_NAME)
-  
-    if(token) options.headers.Authentication = `Bearer ${token}`
-  
+      if(token) options.headers.Authentication = `Bearer ${token}`
+    }
+    
     return options
   }
   

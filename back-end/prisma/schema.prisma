@@ -110,6 +110,7 @@ model aula {
   conteudo        String?
   detalhes        String?
   presenca        presenca[]
+  arquivo         arquivo[]
 
   //@@id(name: "aulaId", [moduloId, data])
 }
@@ -166,4 +167,13 @@ model disponibilidade {
   dia              Int
   start            DateTime
   end              DateTime
+}
+
+model arquivo {
+  id               Int               @id@default(autoincrement())
+  nome             String
+  type             String
+  url              String
+  aula             aula              @relation(fields:[aulaId], references:[id])
+  aulaId           Int
 }

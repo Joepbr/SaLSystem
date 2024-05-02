@@ -24,3 +24,6 @@ yarn-error.log*
 
 # dotenv
 .env
+
+# Google ServiceAccount secrets
+repositorio-salsys-422000-862b81ccf1bd.json

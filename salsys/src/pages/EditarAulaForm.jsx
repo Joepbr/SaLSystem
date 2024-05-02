@@ -2,7 +2,10 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import myfetch from '../utils/myfetch';
 import moment from 'moment';
-import { Container, Typography, Box, TextField, Button, Divider, FormControl, FormGroup, FormControlLabel, MenuItem, Grid, Avatar, Stack, Select, Checkbox } from '@mui/material';
+import { Container, Typography, Box, TextField, Button, Divider, FormControl, FormGroup, FormControlLabel, MenuItem, Grid, Avatar, Stack, Select, Checkbox, IconButton, CircularProgress } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Delete as DeleteIcon } from '@mui/icons-material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -16,7 +19,10 @@ export default function EditarAulaForm() {
     const [alunos, setAlunos] = React.useState([]);
     const [profs, setProfs] = React.useState([])
     const [presencas, setPresencas] = React.useState([]);
+    const [selectedFile, setselectedFile] = React.useState(null)
+    const [fileUploaded, setFileUploaded] = React.useState(false)
     const [waiting, setWaiting] = React.useState(false);
+    const [uploading, setUploading] = React.useState(false);
 
     React.useEffect(() => {
         fetchProfs();
@@ -101,6 +107,90 @@ export default function EditarAulaForm() {
         }
     };
 
+    
+    const MAX_FILE_SIZE_MB = 30
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0]
+
+        if (file && file.size / (1024 * 1024) > MAX_FILE_SIZE_MB) {
+            alert(`O tamanho do arquivo excede o limite de ${MAX_FILE_SIZE_MB}MB.`)
+            setselectedFile(null)
+        } else {
+            setselectedFile(file)
+            setFileUploaded(false)
+        }
+    }
+
+    const handleFileUpload = async () => {
+        try {
+            setUploading(true)
+
+            console.log('Selected File: ', selectedFile)
+
+            const formData = new FormData()
+            formData.append('file', selectedFile)
+            
+            formData.forEach((value, key) => {
+                console.log(`${key}: ${value}`);
+            });              
+
+            const response = await myfetch.post(`/drive/${aula.id}/upload`, formData)
+            console.log(response)
+            
+            setFileUploaded(true)
+        } catch(error) {
+            console.error(error);
+            alert('Erro no upload do arquivo: ' + error.message);
+        } finally {
+            setUploading(false);
+        }
+    }
+
+    const handleFileDelete = async (filename) => {
+        try {
+            setWaiting(true)
+
+            const fileId = await fetchFileId(filename)
+
+            if(fileId) {
+                const response = await myfetch.delete(`/drive/${fileId}/delete`)
+
+                if (response.status === 204) {
+                    alert('Arquivo excluído com sucesso')
+                } else {
+                    alert('Arquivo não foi excluído com sucesso')
+                }
+            } else {
+                alert('Arquivo não encontrado')
+            }
+
+            
+
+            setWaiting(false)
+        } catch(error) {
+            console.error(error);
+            alert('Erro ao excluir arquivo: ' + error.message);
+            setWaiting(false)
+        }
+    }
+
+    const fetchFileId = async (filename) => {
+        try {
+            const response = await myfetch.get(`/drive/${aula.id}/arquivos?filename=${filename}`);
+            if (response.data && response.data.length > 0) {
+                // Return the first file ID if found
+                return response.data[0].id;
+            } else {
+                // Handle case when file is not found
+                return null;
+            }
+        } catch(error) {
+            console.error(error);
+            return null;
+        }
+    }    
+
     return (
         <Container>
             <Waiting show={waiting} />
@@ -147,7 +237,7 @@ export default function EditarAulaForm() {
                                     <Select 
                                         variant="filled"
                                         sx={{backgroundColor: "white", color: "black"}}
-                                        value={aula.professorId || ''} 
+                                        value={aula.professor.id || ''} 
                                         onChange={(e) => setAula(prevState => ({
                                             ...prevState,
                                             professorId: e.target.value
@@ -177,12 +267,33 @@ export default function EditarAulaForm() {
                             multiline
                             rows={2}
                             variant="filled"
-                            sx={{backgroundColor: "white", color: "black"}}
+                            sx={{backgroundColor: "white", color: "black", mb: 2}}
                             value={aula.detalhes}
                             onChange={(e) => setAula(prevState => ({ ...prevState, detalhes: e.target.value }))}
                             fullWidth
                             margin="normal"
                         />
+                        <Divider />
+                        <Typography sx={{ margin: 2, fontWeight: 'bold' }}>Upload de Arquivos:</Typography>
+                        <input type="file" onChange={handleFileChange} />
+                        {selectedFile && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', margin: 2 }}>
+                                <Typography sx={{ margin: 1 }}>{selectedFile.name}</Typography>
+                                {uploading ? (
+                                    <CircularProgress size={20} />
+                                ) : fileUploaded ? (
+                                    <CheckCircleIcon color="success" />
+                                ) : null}
+                                <IconButton aria-label="Excluir" onClick={() => handleFileDelete(selectedFile.name)}>
+                                    <DeleteIcon color="error" />
+                                </IconButton>
+                            </Box>
+                        )}
+                        <Button onClick={handleFileUpload} variant="contained" color="primary" sx={{ mb: 2 }} disabled={!selectedFile || uploading}>
+                            <CloudUploadIcon sx={{ mr: 1 }} />
+                            Upload
+                        </Button>
+                        <Divider />
                         <Typography sx={{ mt:2 }}>Registrar Presenças:</Typography>
                         <FormGroup>
                             {alunos.map(aluno => (

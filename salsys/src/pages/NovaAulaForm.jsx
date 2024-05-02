@@ -132,7 +132,7 @@ export default function NovaAulaForm() {
             setWaiting(false)
         }
     }
-    
+
     return (
         <Container>
             <Waiting show={waiting} />
@@ -209,12 +209,13 @@ export default function NovaAulaForm() {
                             multiline
                             rows={2}
                             variant="filled"
-                            sx={{backgroundColor: "white", color: "black"}}
+                            sx={{backgroundColor: "white", color: "black", mb: 2}}
                             value={aula.detalhes}
                             onChange={(e) => setAula(prevState => ({ ...prevState, detalhes: e.target.value }))}
                             fullWidth
                             margin="normal"
                         />
+                        <Divider />
                         <Typography sx={{ mt:2 }}>Registrar Presenças:</Typography>
                         <FormGroup>
                             {alunos.map(aluno => (

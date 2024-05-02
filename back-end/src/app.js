@@ -18,6 +18,17 @@ app.use(cors({
   }));
 /******CORS******/
 
+/**Session Middleware**/
+import session from "express-session";
+import crypto from 'crypto';
+
+app.use(session({
+  secret: crypto.randomBytes(32).toString('hex'),
+  resave: false,
+  saveUninitialized: false
+}));
+/*********************/
+
 app.use(logger("dev"));
 app.use(json());
 app.use(urlencoded({ extended: false }));
@@ -65,5 +76,9 @@ app.use('/notas', notasRoute)
 
 import disponibilidadeRoute from './routes/disponibilidade.js'
 app.use('/disponibilidade', disponibilidadeRoute)
+
+/**************************************/
+import driveRoute from './routes/drive.js'
+app.use('/drive', driveRoute)
 
 export default app;

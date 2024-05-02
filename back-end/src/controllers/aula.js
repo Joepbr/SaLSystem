@@ -129,4 +129,133 @@ controller.delete = async function (req, res) {
     }
 }
 
+//Upload e download de arquivos
+import { drive } from '../index.js';
+import { Readable } from 'stream'
+
+controller.upload = async function(req, res) {
+    try {
+        const { aulaId } = req.params
+        const { originalname, mimetype, buffer } = req.file
+
+        const uploadsFolderQuery = "name='uploads' and mimeType='application/vnd.google-apps.folder'";
+        const uploadsFolderResponse = await drive.files.list({
+            q: uploadsFolderQuery,
+            fields: 'files(id)'
+        });
+
+        if (uploadsFolderResponse.data.files.length === 0) {
+            // If the 'uploads' folder doesn't exist, handle the error
+            return res.status(500).json({ error: "The 'uploads' folder doesn't exist in Google Drive." });
+        }
+
+        // Retrieve the ID of the 'uploads' folder
+        const uploadsFolderId = uploadsFolderResponse.data.files[0].id;
+
+        const fileMetadata = {
+            name: originalname,
+            mimeType: mimetype,
+            parents: [uploadsFolderId]
+        }
+
+        const fileStream = Readable.from(buffer)
+
+        const response = await drive.files.create({
+            requestBody: fileMetadata,
+            media: {
+                mimeType: mimetype,
+                body: fileStream
+            }
+        })
+
+        const fileId = response.data.id;
+        const fileUrl = `https://drive.google.com/uc?id=${fileId}`
+        
+        const newFile = await prisma.arquivo.create({
+            data: {
+                nome: originalname,
+                type: mimetype,
+                url: fileUrl,
+                aula: {
+                    connect: { id: parseInt(aulaId) }
+                }
+            }
+        })
+
+        res.status(201).json(newFile)
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
+controller.retrieveFileByAulaId = async function(req, res) {
+    try {
+        const { aulaId } = req.params
+        const { filename } = req.query
+
+        const whereClause = {
+            aulaId: parseInt(aulaId)
+        }
+
+        if (filename) {
+            whereClause.nome = filename
+        }
+
+        const result = await prisma.arquivo.findMany({
+            where: whereClause
+        })
+
+        if(result) res.send(result)
+        else res.status(404).end()
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
+controller.download = async function(req, res) {
+    try {
+        const { arquivoId } = req.params
+
+        const response = await drive.files.get({
+            fileId: arquivoId,
+            alt: 'media'
+        }, { responseType: 'stream' })
+
+        response.data.pipe(res)
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
+controller.deleteFile = async function(req, res) {
+    try {
+        const { arquivoId } = req.params
+
+        await drive.files.delete({
+            file: arquivoId
+        })
+
+        const result = await prisma.arquivo.delete({
+            where: { id: Number(arquivoId) }
+        })
+
+        if(result) res.status(204).end()
+        else res.status(404).end()
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
 export default controller
