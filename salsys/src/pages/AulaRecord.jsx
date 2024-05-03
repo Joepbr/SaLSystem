@@ -2,6 +2,8 @@ import React from 'react';
 import myfetch from '../utils/myfetch'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { Container, Typography, Divider, Box, Avatar, Checkbox, Stack, Button, Link as MuiLink } from '@mui/material';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import CloudCircleIcon from '@mui/icons-material/CloudCircle';
 import moment from 'moment';
 import Waiting from '../ui/Waiting';
 
@@ -11,6 +13,7 @@ export default function AulaRecord(){
     const navigate = useNavigate()
     const {id} = useParams()
     const [aula, setAula] = React.useState(null)
+    const [arquivos, setArquivos] = React.useState([])
     const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
@@ -23,6 +26,10 @@ export default function AulaRecord(){
             const aulaId = id;
             const result = await myfetch.get(`/aulas/${aulaId}`);
             setAula(result);
+                        
+            const filesResponse = await myfetch.get(`/drive/${id}/arquivos`)
+            setArquivos(filesResponse)
+
             setWaiting(false)
         } catch (error) {
             console.error(error);
@@ -45,6 +52,28 @@ export default function AulaRecord(){
         )
     }
 
+    const handleFileDownload = async (arquivoId, fileName) => {
+        try {
+            setWaiting(true)
+
+            const response = await myfetch.get(`/drive/${arquivoId}/download`, 'blob')
+
+            const blob = new Blob([response])
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = fileName
+            a.click()
+            window.URL.revokeObjectURL(url)
+
+            setWaiting(false)
+        } catch (error) {
+            console.error(error);
+            alert('ERRO: ' + error.message);
+            setWaiting(false)
+        }
+    }
+
     return (
         <Container>
             <Waiting show={waiting} />
@@ -65,6 +94,28 @@ export default function AulaRecord(){
                     </Stack>
                     <Typography variant="body2" sx={{ margin: 2 }}>{aula.detalhes}</Typography>
                     <Divider />
+                    {arquivos.length > 0 && (
+                        <>
+                            <Typography sx={{ margin: 2, fontWeight: 'bold' }}>Arquivos Para Download:</Typography>
+                            {arquivos.map(arquivo => (
+                                <Box sx={{ display: 'flex', alignItems: 'center', margin: 2 }} key={arquivo.id}>
+                                    <CloudCircleIcon sx={{ mr: 1}}/>
+                                    <Typography>{arquivo.nome}</Typography>
+                                    <Button 
+                                        variant="contained" 
+                                        size="small" 
+                                        color="secondary" 
+                                        sx={{ ml: 2 }} 
+                                        startIcon={<CloudDownloadIcon/>}
+                                        onClick={() => handleFileDownload(arquivo.id, arquivo.nome)}
+                                    >
+                                        Download
+                                    </Button>
+                                </Box>
+                            ))}
+                            <Divider />
+                        </>
+                    )}
                     <Typography variant="h6" sx={{ margin: 2 }}>Registro de presenças:</Typography>
                     <Box sx={{ ml: 2 }}>
                         {alunos.map(renderAluno)}

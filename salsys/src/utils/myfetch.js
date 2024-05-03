@@ -64,10 +64,24 @@ class HttpError extends Error {
     else throw new HttpError(response.status, getErrorDescription(response))
   }
   
-  myfetch.get = async function(path) {
-    const response = await fetch(baseUrl + path, defaultOptions())
-    if(response.ok) return response.json()
-    else throw new HttpError(response.status, getErrorDescription(response))
+  myfetch.get = async function(path, responseType = 'json') {
+    const options = defaultOptions()
+    options.method = 'GET'
+    options.responseType = responseType
+
+    const response = await fetch(baseUrl + path, options)
+
+    if(response.ok) {
+      if (responseType === 'json') {
+        return response.json()
+      } else if (responseType === 'blob') {
+        return response.blob()
+      } else {
+        throw new Error(`Unsupported responseType: ${responseType}`)
+      }
+    } else {
+      throw new HttpError(response.status, getErrorDescription(response))
+    }
   }
   
   myfetch.delete = async function(path) {

@@ -19,6 +19,7 @@ export default function EditarAulaForm() {
     const [alunos, setAlunos] = React.useState([]);
     const [profs, setProfs] = React.useState([])
     const [presencas, setPresencas] = React.useState([]);
+    const [arquivos, setArquivos] = React.useState([])
     const [selectedFile, setselectedFile] = React.useState(null)
     const [fileUploaded, setFileUploaded] = React.useState(false)
     const [waiting, setWaiting] = React.useState(false);
@@ -57,6 +58,9 @@ export default function EditarAulaForm() {
             setAlunos(response.presenca.map(presenca => presenca.aluno).sort((a, b) => a.user.nome.localeCompare(b.user.nome)));
             setPresencas(response.presenca);
             
+            const filesResponse = await myfetch.get(`/drive/${id}/arquivos`)
+            setArquivos(filesResponse)
+
             setWaiting(false);
         } catch (error) {
             console.error(error);
@@ -138,6 +142,7 @@ export default function EditarAulaForm() {
             const response = await myfetch.post(`/drive/${aula.id}/upload`, formData)
             console.log(response)
             
+            fetchAula()
             setFileUploaded(true)
         } catch(error) {
             console.error(error);
@@ -147,49 +152,26 @@ export default function EditarAulaForm() {
         }
     }
 
-    const handleFileDelete = async (filename) => {
-        try {
-            setWaiting(true)
+    const handleFileDelete = async (fileid) => {
+        if (confirm('Deseja realmente excluir este arquivo?')) {
+            try {
+                setWaiting(true)
 
-            const fileId = await fetchFileId(filename)
-
-            if(fileId) {
-                const response = await myfetch.delete(`/drive/${fileId}/delete`)
+                const response = await myfetch.delete(`/drive/${fileid}/deleteFile`)
 
                 if (response.status === 204) {
                     alert('Arquivo excluído com sucesso')
-                } else {
-                    alert('Arquivo não foi excluído com sucesso')
                 }
-            } else {
-                alert('Arquivo não encontrado')
+                
+                fetchAula()
+                setWaiting(false)
+            } catch(error) {
+                console.error(error);
+                alert('Erro ao excluir arquivo: ' + error.message);
+                setWaiting(false)
             }
-
-            
-
-            setWaiting(false)
-        } catch(error) {
-            console.error(error);
-            alert('Erro ao excluir arquivo: ' + error.message);
-            setWaiting(false)
         }
     }
-
-    const fetchFileId = async (filename) => {
-        try {
-            const response = await myfetch.get(`/drive/${aula.id}/arquivos?filename=${filename}`);
-            if (response.data && response.data.length > 0) {
-                // Return the first file ID if found
-                return response.data[0].id;
-            } else {
-                // Handle case when file is not found
-                return null;
-            }
-        } catch(error) {
-            console.error(error);
-            return null;
-        }
-    }    
 
     return (
         <Container>
@@ -283,16 +265,26 @@ export default function EditarAulaForm() {
                                     <CircularProgress size={20} />
                                 ) : fileUploaded ? (
                                     <CheckCircleIcon color="success" />
-                                ) : null}
-                                <IconButton aria-label="Excluir" onClick={() => handleFileDelete(selectedFile.name)}>
-                                    <DeleteIcon color="error" />
-                                </IconButton>
+                                ) : null}    
                             </Box>
                         )}
                         <Button onClick={handleFileUpload} variant="contained" color="primary" sx={{ mb: 2 }} disabled={!selectedFile || uploading}>
                             <CloudUploadIcon sx={{ mr: 1 }} />
                             Upload
                         </Button>
+                        {arquivos.length > 0 && (
+                            <>
+                                <Typography sx={{ margin: 2, fontWeight: 'bold' }}>Arquivos Associados:</Typography>
+                                {arquivos.map(arquivo => (
+                                    <Box sx={{ display: 'flex', alignItems: 'center', margin: 2 }} key={arquivo.id}>
+                                        <Typography>{arquivo.nome}</Typography>
+                                        <IconButton aria-label="Excluir" onClick={() => handleFileDelete(arquivo.id)}>
+                                            <DeleteIcon color="error" />
+                                        </IconButton>
+                                    </Box>
+                                ))}
+                            </>
+                        )}
                         <Divider />
                         <Typography sx={{ mt:2 }}>Registrar Presenças:</Typography>
                         <FormGroup>

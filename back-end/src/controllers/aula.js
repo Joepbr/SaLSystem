@@ -176,6 +176,7 @@ controller.upload = async function(req, res) {
                 nome: originalname,
                 type: mimetype,
                 url: fileUrl,
+                fileId: fileId,
                 aula: {
                     connect: { id: parseInt(aulaId) }
                 }
@@ -222,12 +223,34 @@ controller.download = async function(req, res) {
     try {
         const { arquivoId } = req.params
 
-        const response = await drive.files.get({
-            fileId: arquivoId,
-            alt: 'media'
-        }, { responseType: 'stream' })
+        const file = await prisma.arquivo.findUnique({
+            where: { id: Number(arquivoId) }
+        })
 
-        response.data.pipe(res)
+        if (!file) {
+            return res.status(404).end("Arquivo não encontrado")
+        }
+
+        const fileId = file.fileId
+
+        if(fileId) {
+            const fileMetadata = await drive.files.get({
+                fileId: fileId,
+                fields: 'name'
+            })
+
+            res.setHeader('Content-Disposition', `attachment; filename="${fileMetadata.name}"`);
+            res.setHeader('Content-Type', 'application/octet-stream');
+
+            if(fileMetadata) {
+                const response = await drive.files.get({
+                    fileId: fileId,
+                    alt: 'media'
+                }, { responseType: 'stream' })
+
+                response.data.pipe(res)
+            }
+        }
     }
     catch(error) {
         console.log(error)
@@ -240,16 +263,30 @@ controller.deleteFile = async function(req, res) {
     try {
         const { arquivoId } = req.params
 
-        await drive.files.delete({
-            file: arquivoId
-        })
-
-        const result = await prisma.arquivo.delete({
+        const file = await prisma.arquivo.findUnique({
             where: { id: Number(arquivoId) }
         })
 
-        if(result) res.status(204).end()
-        else res.status(404).end()
+        if (!file) {
+            return res.status(404).end("Arquivo não encontrado")
+        }
+
+        const fileId = file.fileId
+
+        if(fileId) {
+            const result1 = await drive.files.delete({
+                fileId: fileId
+            })
+
+            if(result1) {
+                const result2 = await prisma.arquivo.delete({
+                    where: { id: Number(arquivoId) }
+                })
+
+                if(result2) res.status(204).end()
+                else res.status(404).end()
+            } else {console.log("Arquivo não deletado")}
+        } else {console.log("FileId não encontrado")}
     }
     catch(error) {
         console.log(error)
