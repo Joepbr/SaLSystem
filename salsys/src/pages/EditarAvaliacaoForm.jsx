@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import myfetch from '../utils/myfetch';
 import moment from 'moment';
-import { Container, Typography, Box, TextField, Button, Divider, FormControl, FormGroup, Grid, Avatar, Stack } from '@mui/material';
+import { Container, Typography, Box, TextField, Button, Divider, FormControl, FormGroup, Grid, Avatar, Stack, IconButton, CircularProgress } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Delete as DeleteIcon } from '@mui/icons-material'
+import CloudCircleIcon from '@mui/icons-material/CloudCircle';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -12,14 +16,24 @@ import Waiting from '../ui/Waiting';
 export default function EditarAvaliacaoForm() {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [avaliacao, setAvaliacao] = useState(null);
-    const [alunos, setAlunos] = useState([]);
-    const [notas, setNotas] = useState([]);
-    const [waiting, setWaiting] = useState(false);
+    const [avaliacao, setAvaliacao] = React.useState(null);
+    const [alunos, setAlunos] = React.useState([]);
+    const [notas, setNotas] = React.useState([]);
+    const [arquivos, setArquivos] = React.useState({})
+    const [fileInputs, setFileInputs] = React.useState({})
+    const [fileUploaded, setFileUploaded] = React.useState(false)
+    const [waiting, setWaiting] = React.useState(false);
+    const [uploading, setUploading] = React.useState(false);
 
-    useEffect(() => {
+    React.useEffect(() => {
         fetchAvaliacao();
     }, []);
+
+    React.useEffect(() => {
+        if (avaliacao, notas) {
+            fetchArquivos()
+        }
+    }, [avaliacao])
 
     const fetchAvaliacao = async () => {
         try {
@@ -32,7 +46,7 @@ export default function EditarAvaliacaoForm() {
             setWaiting(false);
         } catch (error) {
             console.error(error);
-            alert('Erro ao carregar avaliação: ', error.message);
+            alert(`Erro ao carregar avaliação: ${error.message}`);
             setWaiting(false);
         }
     };
@@ -73,10 +87,116 @@ export default function EditarAvaliacaoForm() {
             navigate(`/modulo/${avaliacao.moduloId}`);
         } catch (error) {
             console.error(error);
-            alert('Erro ao atualizar avaliação: ', error.message);
+            alert(`Erro ao atualizar avaliação: ${error.message}`);
             setWaiting(false);
         }
     };
+
+    const fetchArquivos = async () => {
+        try {
+            setWaiting(true)
+            const files = {}
+            console.log(`All notas before fetching files:`, notas)
+            
+            for (const nota of notas) {
+                try{ 
+                    console.log(`Current nota being processed:`, nota)
+                    const alunoId = nota.aluno.id
+                    const notaId = nota.id
+
+                    console.log(`Fetching files for notaId: ${notaId}, alunoId: ${alunoId}`)
+
+                    const filesResponse = await myfetch.get(`/drive/${notaId}/prova`)
+                    
+                    if (filesResponse === 404) {
+                        console.log(`Arquivo não encontrado para estudante ${alunoId}`)
+                        files[alunoId] = null
+                    } else {
+                        files[alunoId] = filesResponse
+                    }
+                } catch (error) {
+                    console.error(`Error fetching files for notaId: ${nota.id}, alunoId: ${nota.aluno.id}`, error)
+                }
+            }
+            setArquivos(files)
+            setWaiting(false)
+        } catch (error) {
+            console.error(error);
+            console.log(`Erro ao carregar arquivos de provas: ${error.message}`);
+            setWaiting(false);
+        }
+    }
+    
+    const MAX_FILE_SIZE_MB = 30
+
+    const handleFileChange = (event, alunoId) => {
+        const file = event.target.files[0]
+
+        if (file && file.size / (1024 * 1024) > MAX_FILE_SIZE_MB) {
+            alert(`O tamanho do arquivo excede o limite de ${MAX_FILE_SIZE_MB}MB.`)
+            setFileInputs(prevState => ({
+                ...prevState,
+                [alunoId]: null
+            }))
+        } else {
+            setFileInputs(prevState => ({
+                ...prevState,
+                [alunoId]: file
+            }))
+            setFileUploaded(false)
+        }
+    }
+
+    const handleFileUpload = async (alunoId, notaId) => {
+        try {
+            setUploading(true)
+
+            console.log('Selected File: ', fileInputs[alunoId])
+
+            const formData = new FormData()
+            formData.append('file', fileInputs[alunoId])
+            
+            formData.forEach((value, key) => {
+                console.log(`${key}: ${value}`);
+            });              
+
+            const response = await myfetch.post(`/drive/${notaId}/uploadProva`, formData)
+            console.log(response)
+            
+            await fetchArquivos()
+            setFileUploaded(true)
+            setFileInputs(prevState => ({
+                ...prevState,
+                [alunoId]: null
+            }))
+        } catch(error) {
+            console.error(error);
+            alert(`Erro no upload do arquivo: ${error.message}`);
+        } finally {
+            setUploading(false);
+        }
+    }
+
+    const handleFileDelete = async (fileid) => {
+        if (confirm('Deseja realmente excluir este arquivo?')) {
+            try {
+                setWaiting(true)
+
+                const response = await myfetch.delete(`/drive/${fileid}/deleteProva`)
+
+                if (response.status === 204) {
+                    alert('Arquivo excluído com sucesso')
+                }
+                
+                await fetchArquivos()
+                setWaiting(false)
+            } catch(error) {
+                console.error(error);
+                alert(`Erro ao excluir arquivo: ${error.message}`);
+                setWaiting(false)
+            }
+        }
+    }
 
     return (
         <Container>
@@ -131,23 +251,68 @@ export default function EditarAvaliacaoForm() {
                         <Divider />
                         <Typography variant='h6' sx={{ margin: 2 }}>Registrar Notas:</Typography>
                         <FormGroup>
-                            {alunos.map(aluno => (
-                                <div key={aluno.id}>
-                                    <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
-                                        <FormControl>
-                                            <TextField
-                                                type="number"
-                                                sx={{ backgroundColor: "white", color: "black", width: 100 }}
-                                                size="small"
-                                                inputProps={{ step: "0.05", min: 0, max: 10 }}
-                                                value={notas.find(nota => nota.aluno.id === aluno.id)?.nota || 0}
-                                                onChange={handleNotaChange(aluno.id)}
-                                            />
-                                        </FormControl>
-                                        <Typography>{aluno.user.nome}</Typography>
-                                    </Stack>
-                                </div>
-                            ))}
+                            {alunos.map(aluno => {
+                                const notaId = notas.find(nota => nota.aluno.id === aluno.id)?.id
+                                const alunoId = aluno.id
+                                const uploadedFile = arquivos[alunoId]
+
+                                return (
+                                    <div key={aluno.id}>
+                                        <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                                            <FormControl>
+                                                <TextField
+                                                    type="number"
+                                                    sx={{ backgroundColor: "white", color: "black", width: 100 }}
+                                                    size="small"
+                                                    inputProps={{ step: "0.05", min: 0, max: 10 }}
+                                                    value={notas.find(nota => nota.aluno.id === aluno.id)?.nota || 0}
+                                                    onChange={handleNotaChange(aluno.id)}
+                                                />
+                                            </FormControl>
+                                            <Typography>{aluno.user.nome}</Typography>
+                                            {uploadedFile ? (
+                                                <>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', mr: 1, ml: 2 }}>
+                                                        <CloudCircleIcon />
+                                                        <Typography sx={{ ml: 1, fontSize: 'small'}}>{uploadedFile.nome}</Typography>
+                                                            <IconButton aria-label="Excluir" onClick={() => handleFileDelete(uploadedFile.id)}>
+                                                                <DeleteIcon color="error" />
+                                                            </IconButton>
+                                                    </Box>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <input type="file" onChange={(event) => handleFileChange(event, aluno.id)} />
+                                                    {fileInputs[alunoId] && (
+                                                        <>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', margin: 2 }}>
+                                                                <Typography sx={{ margin: 1 }}>{fileInputs[alunoId].name}</Typography>
+                                                                {uploading ? (
+                                                                    <CircularProgress size={20} />
+                                                                ) : fileUploaded ? (
+                                                                    <CheckCircleIcon color="success" />
+                                                                ) : null}
+                                                            </Box>
+                                                        </>
+                                                    )}
+                                                    <IconButton 
+                                                        aria-label="upload" 
+                                                        onClick={() => handleFileUpload(aluno.id, notaId)} 
+                                                        disabled={!fileInputs[alunoId] || uploading}
+                                                        sx={{
+                                                            '&.Mui-disabled': {
+                                                                opacity: 0.5
+                                                            }
+                                                        }}
+                                                    >
+                                                        <CloudUploadIcon color="primary" />
+                                                    </IconButton>
+                                                </>
+                                            )}
+                                        </Stack>
+                                    </div>
+                                )
+                            })}
                         </FormGroup>
                         <Box>
                             <Button type="submit" variant="contained" sx={{ margin: 2 }}>Salvar Alterações</Button>

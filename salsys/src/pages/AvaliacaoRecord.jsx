@@ -1,7 +1,8 @@
 import React from 'react';
 import myfetch from '../utils/myfetch'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { Container, Typography, Divider, Box, Avatar, Checkbox, Stack, Button, Link as MuiLink } from '@mui/material';
+import { Container, Typography, Divider, Box, Avatar, Stack, Button, IconButton, Link as MuiLink } from '@mui/material';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
 import Waiting from '../ui/Waiting';
 
@@ -11,11 +12,20 @@ export default function AvaliacaoRecord() {
     const navigate = useNavigate()
     const {id} = useParams()
     const [avaliacao, setAvaliacao] = React.useState(null)
+    const [arquivos, setArquivos] = React.useState({})
     const [waiting, setWaiting] = React.useState(false)
 
     React.useEffect(() => {
         fetchAvaliacao();
     }, []);
+
+    React.useEffect(() => {
+        if (!avaliacao) {
+            return
+        } else {
+            fetchArquivos()
+        }
+    }, [avaliacao])
 
     const fetchAvaliacao = async () => {
         try {
@@ -31,18 +41,91 @@ export default function AvaliacaoRecord() {
         }
     }
 
+    const fetchArquivos = async () => {
+        try {
+            setWaiting(true)
+
+            const filesPromises = avaliacao.notas.map(async (nota) => {
+                const alunoId = nota.aluno.id
+                const notaId = nota.id
+
+                try {
+                    const filesResponse = await myfetch.get(`/drive/${notaId}/prova`)
+
+                    console.log(`FilesResponse value for aluno ${alunoId}: `, filesResponse)
+                    return { alunoId, data: filesResponse }
+                } catch (error) {
+                    console.error(`Error fetching files for notaId: ${notaId}, alunoId: ${alunoId}`, error)
+                    return { alunoId, data: null }
+                }
+            })
+
+            const files = await Promise.all(filesPromises)
+            const arquivosObject = files.reduce((acc, curr) => {
+                console.log(`Current data being reduced: `, curr)
+                if (curr.data !== undefined) {
+                    acc[curr.alunoId] = curr.data
+                }
+                return acc
+            }, {})
+            
+            setArquivos(arquivosObject)
+            setWaiting(false)
+        } catch (error) {
+            console.error(error);
+            console.log(`Erro ao carregar arquivos de provas: ${error.message}`);
+            setWaiting(false);
+        }
+    }
+
+    const handleFileDownload = async (arquivoId, fileName) => {
+        try {
+            setWaiting(true)
+
+            const response = await myfetch.get(`/drive/${arquivoId}/downloadProva`, 'blob')
+
+            const blob = new Blob([response])
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = fileName
+            a.click()
+            window.URL.revokeObjectURL(url)
+
+            setWaiting(false)
+        } catch (error) {
+            console.error(error);
+            alert('ERRO: ' + error.message);
+            setWaiting(false)
+        }
+    }
+
     const alunos = avaliacao ? avaliacao.notas.map(notas => notas?.aluno?.user?.nome).sort() : []
     
     const renderAluno = aluno => {
         const nota = avaliacao.notas.find(notas => notas?.aluno?.user?.nome === aluno);
         const alunoNota = nota?.nota || 0;
         const alunoId = nota?.aluno?.id;
+        const arquivo = arquivos[alunoId]
+
+        console.log(`arquivo pertencente a aluno ${alunoId}:`, arquivo);
+
         return (
             <Stack key={aluno} direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
                 <Box sx={{ backgroundColor: 'white' }}>
                     <Typography sx={{ ml: 2, mr: 2, fontWeight: 'bold', color: alunoNota < 6 ? 'red' : 'blue' }} >{parseFloat(alunoNota).toFixed(2)}</Typography>
                 </Box>
                 <MuiLink component={Link} to={`/aluno/${alunoId}`} underline="none" >{aluno}</MuiLink>
+                {arquivo && arquivo !== null ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', mr: 1, ml: 2 }}>
+                        <IconButton aria-label='Download arquivo' onClick={() => handleFileDownload(arquivo.id, arquivo.nome)}>
+                            <CloudDownloadIcon color="secondary"/>
+                        </IconButton>
+                        <Typography sx={{fontSize: 'small'}}>{arquivo.nome}</Typography>
+                    </Box>
+                ) : (
+                    <Typography sx={{fontSize: 'small'}}>Nenhum arquivo disponível</Typography>
+                )}
             </Stack>
         )
     }

@@ -44,8 +44,6 @@ model modulo {
   aula            aula[]
   matricula       matricula[]
   avaliacao       avaliacao[]
-
-  //@@id(name: "codigo", [cursoId, id])
 }
 
 model dias_sem {
@@ -111,8 +109,6 @@ model aula {
   detalhes        String?
   presenca        presenca[]
   arquivo         arquivo[]
-
-  //@@id(name: "aulaId", [moduloId, data])
 }
 
 model matricula {
@@ -122,8 +118,6 @@ model matricula {
   modulo           modulo           @relation(fields:[moduloId], references:[id])
   moduloId         Int
   notaFinal        Float?
-
-  //@@id(name: "Id", [alunoId, moduloId])
 }
 
 model presenca {
@@ -133,8 +127,6 @@ model presenca {
   aula             aula              @relation(fields:[aulaId], references:[id])
   aulaId           Int
   presente         Boolean           @default(false)
-
-  //@@id(name: "Id", [alunoId, aulaId])
 }
 
 model avaliacao {
@@ -147,8 +139,6 @@ model avaliacao {
   data             DateTime
   titulo           String
   peso             Int               @default(1)
-
-  //@@id(name: "Id", [profId, moduloId, alunoId, data])
 }
 
 model notas {
@@ -158,6 +148,7 @@ model notas {
   avaliacao        avaliacao         @relation(fields: [avaliacaoId], references: [id])
   avaliacaoId      Int
   nota             Float
+  arquivo2         arquivo2?
 }
 
 model disponibilidade {
@@ -177,4 +168,13 @@ model arquivo {
   fileId           String
   aula             aula              @relation(fields:[aulaId], references:[id])
   aulaId           Int
+}
+
+model arquivo2 {
+  nome             String
+  type             String
+  url              String
+  fileId           String
+  notas            notas             @relation(fields:[id], references:[id])
+  id               Int               @id
 }

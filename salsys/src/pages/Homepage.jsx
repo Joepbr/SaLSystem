@@ -1,11 +1,21 @@
 import React from 'react'
+import myfetch from '../utils/myfetch';
+import moment from 'moment';
+import { Calendar, momentLocalizer } from 'react-big-calendar'
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Container, Paper, Typography } from '@mui/material';
+
+const localizer = momentLocalizer(moment);
 
 export default function Homepage(){
     return (
-        <>
-            <h1>Bem-vindo(a) à escola Stop and Learn!</h1>
-            <p>Use o menu à esquerda para 
-                acessar as funcionalidades do sistema.</p>
-        </>
+        <Container>
+            <Typography sx={{ fontSize: 30, fontWeight: 'bold' }}>
+                Notícias e Eventos
+            </Typography>
+            <Paper elevation={3}>
+                
+            </Paper>
+        </Container>
     )
 }

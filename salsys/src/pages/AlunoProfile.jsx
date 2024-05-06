@@ -2,9 +2,11 @@ import React from 'react';
 import myfetch from '../utils/myfetch'
 import { Link, useParams } from 'react-router-dom'
 
-import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Select, FormControl, MenuItem, ListItemIcon, ListItemText, Accordion, AccordionSummary, AccordionDetails, AccordionActions, Stack, Link as MuiLink } from '@mui/material';
+import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Select, FormControl, MenuItem, ListItemIcon, ListItemText, Accordion, AccordionSummary, AccordionDetails, AccordionActions, Stack, IconButton, Link as MuiLink } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Delete as DeleteIcon } from '@mui/icons-material';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import CloudOffIcon from '@mui/icons-material/CloudOff';
 import { MdEmail } from "react-icons/md";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaGraduationCap } from "react-icons/fa6";
@@ -19,6 +21,7 @@ export default function AlunoProfile() {
     const { id } = useParams()
     const [aluno, setAluno] = React.useState(null)
     const [idade, setIdade] = React.useState(null)
+    const [arquivos, setArquivos] = React.useState({})
     const [openEnrollDialog, setOpenEnrollDialog] = React.useState(false)
     const [selectedModulo, setSelectedModulo] = React.useState(null)
     const [availableModulos, setAvailableModulos] = React.useState([])
@@ -31,6 +34,7 @@ export default function AlunoProfile() {
             const today = moment()
             const alunoIdade = today.diff(aluno.data_nasc, 'years')
             setIdade(parseInt(alunoIdade))
+            fetchArquivos()
         }
     }, [aluno])
 
@@ -122,6 +126,58 @@ export default function AlunoProfile() {
         }
     }
 
+    const fetchArquivos = async () => {
+        try {
+            setWaiting(true)
+            const files = {}
+
+            for (const nota of aluno.notas) {
+                const notaId = nota.id
+                try{ 
+                    const filesResponse = await myfetch.get(`/drive/${notaId}/prova`)
+                    
+                    if (filesResponse) {
+                        files[notaId] = filesResponse
+                    } else {
+                        console.log(`Arquivo não encontrado para notaId ${notaId}`)
+                        files[notaId] = null
+                    }
+                } catch (error) {
+                    console.error(`Error fetching files for notaId: ${nota.id}, alunoId: ${aluno.id}`, error)
+                    files[notaId] = null
+                }
+            }
+            setArquivos(files)
+            setWaiting(false)
+        } catch (error) {
+            console.error(error);
+            console.log(`Erro ao carregar arquivos de provas: ${error.message}`);
+            setWaiting(false);
+        }
+    }
+
+    const handleFileDownload = async (arquivoId, fileName) => {
+        try {
+            setWaiting(true)
+
+            const response = await myfetch.get(`/drive/${arquivoId}/downloadProva`, 'blob')
+
+            const blob = new Blob([response])
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = fileName
+            a.click()
+            window.URL.revokeObjectURL(url)
+
+            setWaiting(false)
+        } catch (error) {
+            console.error(error);
+            alert('ERRO: ' + error.message);
+            setWaiting(false)
+        }
+    }
+
     const showNotas = (presencas, notas, matricula) => {
         let totalAulas = matricula.modulo.aula.length
         let numPres = 0
@@ -141,7 +197,7 @@ export default function AlunoProfile() {
         notasModulo.forEach(nota => {
             const titulo = nota.avaliacao.titulo
             if (!notasByAvaliacao[titulo]) {
-                notasByAvaliacao[titulo] = {notas: [], peso: nota.avaliacao.peso}
+                notasByAvaliacao[titulo] = {notas: [], peso: nota.avaliacao.peso, id: nota.id}
             }
             notasByAvaliacao[titulo].notas.push(nota.nota)
         })
@@ -174,11 +230,13 @@ export default function AlunoProfile() {
                                 <th style={{ textAlign: 'center', padding: '8px' }}>Avaliação</th>
                                 <th style={{ textAlign: 'center', padding: '8px' }}>Peso</th>
                                 <th style={{ textAlign: 'center', padding: '8px' }}>Nota</th>
+                                <th style={{ textAlign: 'center', padding: '8px' }}>Download</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {Object.entries(notasByAvaliacao).map(([titulo, { notas, peso }]) => (
+                            {Object.entries(notasByAvaliacao).map(([titulo, { notas, peso, id }]) => (
                                 <tr key={titulo} style={{ borderBottom: '1px solid #ccc' }}>
+                                    {console.log('notas: ', notas)}
                                     <td style={{ textAlign: 'center', padding: '8px' }}>{titulo}</td>
                                     <td style={{ textAlign: 'center', padding: '8px' }}>{peso}</td>
                                     <td style={{ textAlign: 'center', padding: '8px', fontWeight: 'bold', fontSize: 'larger'}}>
@@ -190,6 +248,15 @@ export default function AlunoProfile() {
                                                 {index !== notas.length -1 && ', '}
                                             </React.Fragment>
                                         ))}
+                                    </td>
+                                    <td style={{ textAlign: 'center', padding: '8px' }}>
+                                        {arquivos[id] ? (
+                                            <IconButton aria-label='Download arquivo' onClick={() => handleFileDownload(arquivos[id].id, arquivos[id].nome)}>
+                                                <CloudDownloadIcon color='secondary' />
+                                            </IconButton>
+                                        ) : (
+                                            <CloudOffIcon color='disabled'/>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
@@ -289,7 +356,16 @@ export default function AlunoProfile() {
                             <>
                                 <Typography variant="h5">Módulos Matriculados:</Typography>
                                 {matriculas.map((matricula, index) => (
-                                    <Accordion key={index} expanded={expandedAccordion === index} onChange={() => handleAccordionChange(index)} sx={{ width: '100%' }}>
+                                    <Accordion 
+                                        key={index} 
+                                        expanded={expandedAccordion === index} 
+                                        onChange={() => handleAccordionChange(index)} 
+                                        sx={{ 
+                                            width: '100%',
+                                            opacity: matricula.modulo.active ? 1 : 0.5,
+                                            backgroundColor: matricula.modulo.active ? 'white' : '#f0f0f0'
+                                        }}
+                                    >
                                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                             {expandedAccordion === index ? (
                                                 <MuiLink component={Link} to={`/modulo/${matricula.modulo.id}`} underline="none" color="inherit" style={{ width: '100%' }}>

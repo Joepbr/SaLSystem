@@ -215,28 +215,30 @@ export default function AulasModulo() {
                 </Typography>
             </Box>
             <Divider />
-            <Box display="flex" sx={{ margin: 2 }}>
-                <Button 
-                    component={Link} 
-                    to={`/modulo/${id}/aula/new`} 
-                    variant="contained" 
-                    size="large"
-                    sx={{ backgroundColor: "#9d2f2e", margin: 2 }}
-                    startIcon={<GiTeacher/>}
-                > 
-                    Nova Aula 
-                </Button>
-                <Button 
-                    component={Link} 
-                    to={`/modulo/${id}/avaliacao/new`} 
-                    variant="contained" 
-                    size="large"
-                    sx={{ backgroundColor: "#25254b", margin: 2 }}
-                    startIcon={<MdAssignment/>}
-                >
-                    Nova Avaliação
-                </Button>
-            </Box>
+            {modulo && modulo.active &&(
+                <Box display="flex" sx={{ margin: 2 }}>
+                    <Button 
+                        component={Link} 
+                        to={`/modulo/${id}/aula/new`} 
+                        variant="contained" 
+                        size="large"
+                        sx={{ backgroundColor: "#9d2f2e", margin: 2 }}
+                        startIcon={<GiTeacher/>}
+                    > 
+                        Nova Aula 
+                    </Button>
+                    <Button 
+                        component={Link} 
+                        to={`/modulo/${id}/avaliacao/new`} 
+                        variant="contained" 
+                        size="large"
+                        sx={{ backgroundColor: "#25254b", margin: 2 }}
+                        startIcon={<MdAssignment/>}
+                    >
+                        Nova Avaliação
+                    </Button>
+                </Box>
+            )}
             {avaliacoes.length > 0 && (
                 <>
                     <Typography variant='h6' sx={{ mt: 2, fontWeight: 'bold' }}>Lista de Avaliações:</Typography>
@@ -297,10 +299,10 @@ export default function AulasModulo() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDeleteAula} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
-                        Deletar
+                    <Button onClick={handleDeleteAula} variant="contained" color="secondary">
+                        Exclir
                     </Button>
-                    <Button onClick={handleCloseDeleteAulaDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>
+                    <Button onClick={handleCloseDeleteAulaDialog} variant="contained" color="primary">
                         Cancelar
                     </Button>
                 </DialogActions>
@@ -313,10 +315,10 @@ export default function AulasModulo() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDeleteAvaliacao} sx={{ backgroundColor: "#9d2f2e", color: "white" }}>
-                        Deletar
+                    <Button onClick={handleDeleteAvaliacao} variant="contained" color="secondary">
+                        Excluir
                     </Button>
-                    <Button onClick={handleCloseDeleteAvaliacaoDialog} sx={{ backgroundColor: "#25254b", color: "white" }}>
+                    <Button onClick={handleCloseDeleteAvaliacaoDialog} variant="contained" color="primary">
                         Cancelar
                     </Button>
                 </DialogActions>
@@ -325,15 +327,15 @@ export default function AulasModulo() {
                 <DialogTitle>Desativar Módulo</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Tem certeza que deseja desativar este módulo?
+                        Tem certeza que deseja {modulo ? (modulo.active ? 'desativar' : 'reativar') : ''} este módulo?
                     </DialogContentText>
                 </DialogContent>
                     <DialogActions>
-                        <Button onClick={closeDeactivationDialog} color="primary">
-                            Cancelar
+                        <Button onClick={handleModuloDeactivation} variant="contained" color="secondary">
+                            {modulo ? (modulo.active ? 'Desativar' : 'Reativar') : ''}
                         </Button>
-                        <Button onClick={handleModuloDeactivation} color="secondary">
-                            Desativar
+                        <Button onClick={closeDeactivationDialog} variant="contained" color="primary">
+                            Cancelar
                         </Button>
                     </DialogActions>
             </Dialog>
