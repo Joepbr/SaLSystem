@@ -10,7 +10,7 @@ dotenv.config();
 const scopes = ['https://www.googleapis.com/auth/drive'];
 import serviceAccountKey from '../repositorio-salsys-422000-862b81ccf1bd.json' assert { type: "json" }
 
-// Create an OAuth2 client
+// Create an Auth client
 const auth = new google.auth.GoogleAuth({
   credentials: serviceAccountKey,
   scopes: scopes

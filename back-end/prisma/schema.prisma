@@ -178,3 +178,10 @@ model arquivo2 {
   notas            notas             @relation(fields:[id], references:[id])
   id               Int               @id
 }
+
+model news {
+  id               Int               @id@default(autoincrement())
+  texto            String
+  imageUrl         String?
+  createdAt        DateTime          @default(now())
+}

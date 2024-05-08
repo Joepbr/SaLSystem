@@ -24,6 +24,8 @@ npx create-react-app salsys
     npm install moment
 -> instalar MUI Base
     npm install @mui/base
+-> instalar react dropzone
+    npm install react-dropzone
 
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma
