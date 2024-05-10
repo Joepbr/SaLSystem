@@ -1,6 +1,6 @@
 import prisma from '../database/client.js'
 import { drive } from '../index.js';
-import fs from 'fs'
+import { Readable } from 'stream'
 
 const controller = {}
 
@@ -9,10 +9,8 @@ controller.post = async function(req, res) {
         const {texto} = req.body
         let imageUrl = null
 
-        console.log(req.file)
-
         if (req.file) {
-            const imageFile = req.file
+            const { originalname, mimetype, buffer } = req.file
 
             const FolderQuery = "name='imagens' and mimeType='application/vnd.google-apps.folder'";
             const FolderResponse = await drive.files.list({
@@ -28,19 +26,22 @@ controller.post = async function(req, res) {
             // Retrieve the ID of the 'imagens' folder
             const FolderId = FolderResponse.data.files[0].id;
 
+            const fileStream = Readable.from(buffer)
+
             const response = await drive.files.create({
                 requestBody: {
-                    name: imageFile.originalname,
-                    mimeType: imageFile.mimeType,
+                    name: originalname,
+                    mimeType: mimetype,
                     parents: [FolderId]
                 },
                 media: {
-                    mimeType: imageFile.mimetype,
-                    body: imageFile.buffer
+                    mimeType: mimetype,
+                    body: fileStream
                 }
             })
 
-            imageUrl = response.data.webViewLink
+            const fileId = response.data.id
+            imageUrl = fileId
         }
         
         const newsItem = await prisma.news.create({
@@ -59,12 +60,64 @@ controller.post = async function(req, res) {
     }
 }
 
+const fetchImages = async (fileId) => {
+    try {
+        const response = await drive.files.get({
+            fileId: fileId,
+            alt: 'media'
+        }, { responseType: 'stream' })
+
+        const chunks = []
+
+        return new Promise((resolve, reject) => {
+            response.data.on('data', (chunk) => chunks.push(chunk))
+            response.data.on('end', () => {
+                const imageBuffer = Buffer.concat(chunks)
+                resolve(imageBuffer)
+            })
+            response.data.on('error', (error) => reject(error))
+        })
+    } catch (error) {
+        console.error('Error fetching image from Google Drive:', error);
+        throw new Error('Failed to fetch image from Google Drive');
+    }
+}
+
+const streamToBuffer = async (stream) => {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('error', reject);
+        stream.on('end', () => resolve(chunks));
+    });
+};
+
 controller.retrieveAll = async function(req, res) {
     try {
 
-        const result = await prisma.news.findMany()
+        const result = await prisma.news.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            }
+        })
 
-        res.send(result)
+        const newWimages = await Promise.all(result.map(async (newsItem) => {
+            if(newsItem.imageUrl) {
+                try {
+                    const imageBuffer = await fetchImages(newsItem.imageUrl);
+                    const base64Image = imageBuffer.toString('base64');
+
+                    return { ...newsItem, image: base64Image }
+                } catch (error) {
+                    console.error(`Error fetching image for news item ${newsItem.id}:`, error);
+                    return { ...newsItem, image: null };
+                }
+            } else {
+                return { ...newsItem, image: null }
+            }
+        }))
+
+        res.send(newWimages)
     }
     catch(error) {
         console.log(error)
@@ -75,10 +128,10 @@ controller.retrieveAll = async function(req, res) {
 
 controller.delete = async function(req, res) {
     try {
-        const { id } = req.params
+        const id = parseInt(req.params.newsId)
 
         const news = await prisma.news.findUnique({
-            where: { id: Number(id) }
+            where: { id: id }
         })
 
         if (!news) {
@@ -88,15 +141,19 @@ controller.delete = async function(req, res) {
         const fileId = news.imageUrl
 
         if(fileId) {
-            const result1 = await drive.files.delete({
-                fileId: fileId
-            })
+            try {
+                await drive.files.delete({
+                    fileId: fileId
+                })
+                console.log('Imagem deletada', fileId)
 
-            if (result2.status !== 204) {
-                console.error('Imagem não deletada: ', result1.statusText)
+            } catch (error) {
+                console.error('Imagem não deletada: ', error)
             }
 
-        } else {console.log("Imagem não encontrada")}
+        } else {
+            console.log("Imagem não encontrada")
+        }
         
         const result2 = await prisma.news.delete({
             where: { id: Number(id) }

@@ -20,6 +20,7 @@ model curso {
   detalhes        String?
   imageUrl        String?
   modulo          modulo[]
+  tip             tip[]
 }
 
 model modulo {
@@ -81,6 +82,7 @@ model professor {
   aula            aula[]
   avaliacao       avaliacao[]
   disponibilidade disponibilidade[]
+  tip             tip[]
 }
 
 model aluno {
@@ -184,4 +186,15 @@ model news {
   texto            String
   imageUrl         String?
   createdAt        DateTime          @default(now())
+}
+
+model tip {
+  id               Int               @id@default(autoincrement())
+  texto            String
+  linkUrl          String
+  createdAt        DateTime          @default(now())
+  curso            curso             @relation(fields: [cursoId], references: [id])
+  cursoId          Int
+  professor        professor         @relation(fields: [profId], references:[id])
+  profId           Int
 }

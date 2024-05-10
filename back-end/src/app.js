@@ -84,4 +84,7 @@ app.use('/drive', driveRoute)
 import newsRoute from './routes/news.js'
 app.use('/news', newsRoute)
 
+import tipsRoute from './routes/tips.js'
+app.use('/tips', tipsRoute)
+
 export default app;
