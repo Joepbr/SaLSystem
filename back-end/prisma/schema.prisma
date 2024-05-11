@@ -198,3 +198,11 @@ model tip {
   professor        professor         @relation(fields: [profId], references:[id])
   profId           Int
 }
+
+model evento {
+  id               Int               @id@default(autoincrement())
+  title            String
+  start            DateTime
+  end              DateTime
+  type             String
+}

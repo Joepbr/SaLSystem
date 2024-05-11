@@ -87,4 +87,7 @@ app.use('/news', newsRoute)
 import tipsRoute from './routes/tips.js'
 app.use('/tips', tipsRoute)
 
+import eventoRoute from './routes/evento.js'
+app.use('/eventos', eventoRoute)
+
 export default app;

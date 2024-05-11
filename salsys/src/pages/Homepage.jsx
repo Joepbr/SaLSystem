@@ -7,9 +7,14 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import logo from '../assets/Sallogo.png';
 import { Container, Paper, Typography, Button, IconButton, Box, Divider, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Stack, List, ListItem, ListItemAvatar, ListItemText, Avatar, Pagination, PaginationItem, Grid, FormControl, Select, InputLabel, MenuItem, ListItemIcon, Link as MuiLink } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material'
+import EventIcon from '@mui/icons-material/Event';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import { useDropzone } from 'react-dropzone'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import 'moment/locale/pt-br';
 import Waiting from '../ui/Waiting';
 
 moment.locale('pt-br');
@@ -20,12 +25,13 @@ const newsPerPage = 5;
 const tipsPerPage = 7
 
 export default function Homepage(){
-    const [openNewsDialog, setOpenNewsDialog] = React.useState(false)
     const [news, setNews] = React.useState([])
     const [tips, setTips] = React.useState([])
     const [cursos, setCursos] = React.useState([])
     const [professores, setProfessores] = React.useState([])
+    const [openNewsDialog, setOpenNewsDialog] = React.useState(false)
     const [openTipsDialog, setOpenTipsDialog] = React.useState(false)
+    const [openEventDialog, setOpenEventDialog] = React.useState(false)
     const [currentPage, setCurrentPage] = React.useState(1)
     const [currentPage2, setCurrentPage2] = React.useState(1)
     const [waiting, setWaiting] = React.useState(false)
@@ -151,7 +157,8 @@ export default function Homepage(){
 
         const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
-        const handleAddNews = async () => {
+        const handleAddNews = async (e) => {
+            e.preventDefault()
 
             const formData = new FormData()
             formData.append('texto', newsText)
@@ -227,7 +234,8 @@ export default function Homepage(){
         const [curso, setCurso] = React.useState('')
         const [prof, setProf] = React.useState('')
 
-        const handleAddTips = async () => {
+        const handleAddTips = async (e) => {
+            e.preventDefault()
 
             try {
                 setWaiting(true)
@@ -239,6 +247,7 @@ export default function Homepage(){
                     professor: { connect: { id: parseInt(prof) } }
                 })
                 console.log('Dica postada: ', response)
+                
                 fetchTips()
                 setWaiting(false)
                 handleCloseTipsDialog()
@@ -318,19 +327,17 @@ export default function Homepage(){
     const [events, setEvents] = React.useState([])
 
     React.useEffect(() => {
-        fetchAniversarios()
         fetchEventos()
     }, [])
 
-    const fetchAniversarios = async () => {
+    const fetchEventos = async () => {
         try {
             setWaiting(true)
-            const [profsResponse, alunosResponse] = await Promise.all([
+            const [profsResponse, alunosResponse, eventosResponse] = await Promise.all([
                 myfetch.get('/professores'),
-                myfetch.get('/alunos')
+                myfetch.get('/alunos'),
+                myfetch.get('/eventos')
             ])
-
-            console.log(profsResponse)
 
             const profsAniver = profsResponse.map(prof => ({
                 nome: prof.user.nome,
@@ -352,25 +359,23 @@ export default function Homepage(){
 
             const aniversarios = [...profsAniver, ...alunoAniver, ...respAniver]
 
-
-            const uniqueAniverMap =new Map()
-            aniversarios.forEach(aniversario => {
-                const key = aniversario.nome + aniversario.data.format('YYYY-MM-DD')
-                if (!uniqueAniverMap.has(key)) {
-                    uniqueAniverMap.set(key, aniversario)
-                }
-            })
-
-            const uniqueAniver = Array.from(uniqueAniverMap.values())
-
-            const aniverEvents = uniqueAniver.map(aniversario => ({
-                title: aniversario.nome,
+            const aniverEvents = aniversarios.map(aniversario => ({
+                title: `🎂 ${aniversario.nome}`,
                 start: aniversario.data.toDate(),
                 end: aniversario.data.toDate(),
                 type: 'aniversario'
             }))
 
-            setEvents(prevEvents => [...prevEvents, ...aniverEvents])
+            const otherEvents = eventosResponse.map(evento => ({
+                title: evento.title,
+                start: new Date(evento.start),
+                end: new Date(evento.end),
+                type: evento.type
+            }))
+
+            const allEvents = [...aniverEvents, ...otherEvents]
+
+            setEvents(allEvents)
 
             setWaiting(false)
         } catch (error) {
@@ -379,7 +384,118 @@ export default function Homepage(){
         }
     }
 
-    const fetchEventos = async () => {}
+    const handleOpenEventDialog = () => {
+        setOpenEventDialog(true)
+    }
+
+    const handleCloseEventsDialog = () => {
+        setOpenEventDialog(false);
+    };
+
+    const AddEvents = ({ open, handleClose }) => {
+        const [newEvent, setNewEvent] = React.useState({
+            title: '',
+            start: moment(),
+            end: moment(),
+            type: ''
+        })
+
+        const handleAddEvent = async (e) => {
+            e.preventDefault()
+
+            try {
+                setWaiting(true)
+
+                const response = await myfetch.post('/eventos', {
+                    title: newEvent.title,
+                    start: newEvent.start,
+                    end: newEvent.end,
+                    type: newEvent.type
+                })
+                console.log('Evento registrado: ', response)
+                
+                fetchEventos()
+                setWaiting(false)
+                handleCloseEventsDialog()
+            } catch (error) {
+                console.error('Erro registrando evento: ', error)
+                setWaiting(false)
+                handleCloseEventsDialog()
+            }
+        }
+
+        return (
+            <Dialog open={open} onClose={handleCloseEventsDialog}>
+                <DialogTitle>Registrar um Evento</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        label="Nome do Evento"
+                        type="text"
+                        fullWidth
+                        sx={{ mb: 2 }}
+                        value={newEvent.title}
+                        onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                    />
+                    <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
+                        <DateTimePicker
+                            label="Data e Horário de Início"
+                            sx={{ mr: 1 }}
+                            value={newEvent.start}
+                            onChange={(newValue) => setNewEvent(prevState => ({ ...prevState, start: newValue }))}
+                        />
+                        <DateTimePicker
+                            label="Data e Horário de Término"
+                            sx={{ ml: 1 }}
+                            value={newEvent.end}
+                            onChange={(newValue) => setNewEvent(prevState => ({ ...prevState, end: newValue }))}
+                        />
+                    </LocalizationProvider>
+                    <FormControl fullWidth sx={{ my: 1 }}>
+                        <InputLabel>Tipo de Evento</InputLabel>
+                        <Select
+                            sx={{ mt: 1 }}
+                            value={newEvent.type}
+                            onChange={(e) => setNewEvent({ ...newEvent, type: e.target.value })}
+                        >
+                            <MenuItem value="provas">Semana de Provas</MenuItem>
+                            <MenuItem value="importante">Evento Importante</MenuItem>
+                            <MenuItem value="comum">Evento Comum</MenuItem>
+                        </Select>
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant='contained' onClick={handleAddEvent}>Registrar</Button>
+                    <Button variant='contained' color='secondary' onClick={handleCloseEventsDialog}>Cancelar</Button>
+                </DialogActions>
+            </Dialog>
+        )
+    }
+
+    const eventStyle = (evento, start, end, isSelected) => {
+        let backgroundColor = ''
+
+        switch (evento.type) {
+            case 'aniversario':
+                backgroundColor = 'green'
+                break
+            case 'provas':
+                backgroundColor = 'red'
+                break
+            case 'importante':
+                backgroundColor = 'blue'
+                break
+            default:
+                backgroundColor = 'gray'
+        }
+
+        return {
+            style: {
+                backgroundColor
+            }
+        }
+    }
 
     return (
         <Container>
@@ -522,14 +638,16 @@ export default function Homepage(){
                         startAccessor="start"
                         endAccessor="end"
                         style={{ height: 500 }}
+                        eventPropGetter={eventStyle}
                     />
                     <Box textAlign='center' mt={2}>
-                        <Button variant='contained' size='large' color='secondary'>Novo Evento</Button>
+                        <Button variant='contained' size='large' color='secondary' onClick={handleOpenEventDialog} startIcon={<EventIcon />}>Novo Evento</Button>
                     </Box>
                 </Paper>
             </Grid>
             <AddNews open={openNewsDialog} handleClose={handleCloseNewsDialog} />
             <AddTips open={openTipsDialog} handleClode={handleCloseTipsDialog} />
+            <AddEvents open={openEventDialog} handleClose={handleCloseEventsDialog} />
         </Container>
     )
 }
