@@ -77,6 +77,9 @@ export default function ProfProfile() {
                                 <Typography variant="h4">{prof.user.nome}</Typography>
                             </Stack>
                             <Typography variant="h6" sx={{ mb: 2 }}>{prof.especialidade} </Typography>
+                            {moment().startOf('day').isSame(moment(prof.data_nasc).startOf('day'), 'day') && (
+                                <Typography variant="h6">🎉 Feliz Aniversário! 🎉</Typography>
+                            )}
                             <Divider />
                             <Box sx={{ margin: "25px" }}>
                                 <Typography variant="body1" >

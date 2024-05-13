@@ -284,6 +284,9 @@ export default function AlunoProfile() {
                     <>
                         <Typography variant="h4">{aluno.user.nome}</Typography>
                         <Typography variant="h6">{moment(aluno.data_nasc).format('LL')} ({idade} anos)</Typography>
+                        {moment().startOf('day').isSame(moment(aluno.data_nasc).startOf('day'), 'day') && (
+                            <Typography variant="h6">🎉 Feliz Aniversário! 🎉</Typography>
+                        )}
                         <Divider />
                             <Box sx={{ margin: "25px" }}>
                                 <Typography variant="body1" >
@@ -300,6 +303,9 @@ export default function AlunoProfile() {
                         {aluno.resp_nome && (
                             <>
                             <Typography variant="h5">{aluno.resp_parent}: {aluno.resp_nome}</Typography>
+                            {moment().startOf('day').isSame(moment(aluno.resp_data_nasc).startOf('day'), 'day') && (
+                                <Typography variant="h6">🎉 Feliz Aniversário! 🎉</Typography>
+                            )}
                             <Typography variant="body1" >
                                 Contatos:
                                 <Box sx={{ mt: 1 }}>

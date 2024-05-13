@@ -1,6 +1,6 @@
 import React from 'react'
 import myfetch from '../utils/myfetch';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -25,6 +25,7 @@ const newsPerPage = 5;
 const tipsPerPage = 7
 
 export default function Homepage(){
+    const navigate = useNavigate()
     const [news, setNews] = React.useState([])
     const [tips, setTips] = React.useState([])
     const [cursos, setCursos] = React.useState([])
@@ -341,20 +342,23 @@ export default function Homepage(){
 
             const profsAniver = profsResponse.map(prof => ({
                 nome: prof.user.nome,
-                data: moment(prof.data_nasc, 'YYYY-MM-DD').year(moment().year())
+                data: moment(prof.data_nasc, 'YYYY-MM-DD').year(moment().year()),
+                profId: prof.id
             }))
 
 
             const alunoAniver = alunosResponse.map(aluno => ({
                 nome: aluno.user.nome,
-                data: moment(aluno.data_nasc, 'YYYY-MM-DD').year(moment().year())
+                data: moment(aluno.data_nasc, 'YYYY-MM-DD').year(moment().year()),
+                alunoId: aluno.id
             }))
 
             const respAniver = alunosResponse
                 .filter(aluno => aluno.resp_nome && aluno.resp_data_nasc)
                 .map(aluno => ({
                     nome: aluno.resp_nome,
-                    data: moment(aluno.resp_data_nasc, 'YYYY-MM-DD').year(moment().year())
+                    data: moment(aluno.resp_data_nasc, 'YYYY-MM-DD').year(moment().year()),
+                    alunoId: aluno.id
                 }))
 
             const aniversarios = [...profsAniver, ...alunoAniver, ...respAniver]
@@ -363,10 +367,13 @@ export default function Homepage(){
                 title: `🎂 ${aniversario.nome}`,
                 start: aniversario.data.toDate(),
                 end: aniversario.data.toDate(),
-                type: 'aniversario'
+                type: 'aniversario',
+                profId: aniversario.profId,
+                alunoId: aniversario.alunoId
             }))
 
             const otherEvents = eventosResponse.map(evento => ({
+                id: evento.id,
                 title: evento.title,
                 start: new Date(evento.start),
                 end: new Date(evento.end),
@@ -462,6 +469,7 @@ export default function Homepage(){
                             <MenuItem value="provas">Semana de Provas</MenuItem>
                             <MenuItem value="importante">Evento Importante</MenuItem>
                             <MenuItem value="comum">Evento Comum</MenuItem>
+                            <MenuItem value="feriado">Escola Fechada (Férias/Feriado)</MenuItem>
                         </Select>
                     </FormControl>
                 </DialogContent>
@@ -473,27 +481,79 @@ export default function Homepage(){
         )
     }
 
+    const [currentView, setCurrentView] = React.useState('month')
+
+    const handleViewChange = (view) => {
+        setCurrentView(view);
+    }
+      
+
     const eventStyle = (evento, start, end, isSelected) => {
         let backgroundColor = ''
 
         switch (evento.type) {
             case 'aniversario':
-                backgroundColor = 'green'
+                backgroundColor = 'mediumseagreen'
                 break
             case 'provas':
-                backgroundColor = 'red'
+                backgroundColor = 'crimson'
                 break
             case 'importante':
-                backgroundColor = 'blue'
+                backgroundColor = 'royalblue'
+                break
+            case 'feriado':
+                backgroundColor = 'grey'
                 break
             default:
-                backgroundColor = 'gray'
+                backgroundColor = 'orange'
         }
 
         return {
             style: {
                 backgroundColor
             }
+        }
+    }
+
+    const CustomEvent = ({ event, onClickDelete, view }) => {
+        const canDelete = event.type !== 'aniversario' && view === 'agenda'
+
+        const handleDeleteClick = () => {
+            onClickDelete(event.id)
+        }
+
+        return (
+            <div>
+                <strong>{event.title}</strong>
+                {canDelete && (
+                    <IconButton onClick={handleDeleteClick}>
+                        <DeleteIcon />
+                    </IconButton>
+                )}
+            </div>
+        )
+    }
+
+    const deleteEvent = async (eventId) => {
+        if (confirm('Deseja realmente excluir este evento?')){
+            try {
+                setWaiting(true)
+                await myfetch.delete(`/eventos/${eventId}`)
+
+                fetchEventos()
+                setWaiting(false)
+            } catch (error) {
+                console.error('Erro excluindo evento: ', error)
+                setWaiting(false)
+            }
+        }
+    }
+
+    const selectEvent = (event) => {
+        if(event.profId) {
+            navigate(`/prof/${event.profId}`)
+        } else if (event.alunoId) {
+            navigate(`/aluno/${event.alunoId}`)
         }
     }
 
@@ -639,6 +699,14 @@ export default function Homepage(){
                         endAccessor="end"
                         style={{ height: 500 }}
                         eventPropGetter={eventStyle}
+                        onSelectEvent={selectEvent}
+                        view={currentView}
+                        onView={handleViewChange}
+                        components={{
+                            event: (props) => (
+                                <CustomEvent {...props} onClickDelete={deleteEvent} view={currentView} />
+                            )
+                        }}
                     />
                     <Box textAlign='center' mt={2}>
                         <Button variant='contained' size='large' color='secondary' onClick={handleOpenEventDialog} startIcon={<EventIcon />}>Novo Evento</Button>
