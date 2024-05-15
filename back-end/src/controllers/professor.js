@@ -1,5 +1,14 @@
 import prisma from '../database/client.js'
 import bcrypt from 'bcrypt'
+import { drive } from '../index.js'
+import { transformImageUrl } from '../utils/helpers.js'
+
+const transformProfData = (prof) => {
+    return {
+        ...prof,
+        imageUrl: transformImageUrl(prof.imageUrl)
+    }
+}
 
 const controller = {}
 
@@ -35,7 +44,7 @@ controller.create = async function (req, res) {
             }
         })
 
-        res.status(201).json(professor)
+        res.status(201).json(transformProfData(professor))
     }
     catch(error) {
         console.error('Erro ao cadastrar professor', error)
@@ -55,7 +64,10 @@ controller.retrieveAll = async function (req, res) {
             if(user.user.password) delete user.user.password
         }
 
-        res.send(result)
+        //Transform imageUrl for each professor
+        const transformedResult = result.map(transformProfData)
+
+        res.send(transformedResult)
     }
     catch(error) {
         console.log(error)
@@ -74,7 +86,7 @@ controller.retrieveOne = async function (req, res) {
         })
         if(result.user.password) delete result.user.password
 
-        if(result) res.send(result)
+        if(result) res.send(transformProfData(result))
         else res.status(404).end()
     }
     catch(error) {
@@ -91,7 +103,7 @@ controller.update = async function (req, res) {
             data: req.body
         })
 
-        if(result) res.status(204).end()
+        if(result) res.status(204).json(transformProfData(result))
         else res.status(404).end()
     }
     catch(error) {

@@ -9,25 +9,26 @@ export default function AuthControl() {
 
     if (authUser) {
         return (
-            <>
+              <>
                 <AccountCircleIcon color="secondary" fontSize="small" sx={{ mr: 1 }} />
                 <Typography variant="caption">
                     {authUser.nome}
                 </Typography>
                 <Button
-              component={Link}
-              to="/login"
-              sx={{
-                backgroundColor: '#9d2f2e',
-              }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "Impact",
-                  color: "white",
-                  textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
-                }}
-              >
+                  component={Link}
+                  to="/login"
+                  sx={{
+                    backgroundColor: '#9d2f2e',
+                    ml: 2
+                  }}
+                >
+                <Typography
+                  sx={{
+                    fontFamily: "Impact",
+                    color: "white",
+                    textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                  }}
+                >
                 Sair
               </Typography>
             </Button>

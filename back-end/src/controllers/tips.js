@@ -1,4 +1,5 @@
 import prisma from '../database/client.js'
+import { transformImageUrlsInObject } from '../utils/helpers.js'
 
 const controller = {}
 
@@ -28,7 +29,9 @@ controller.retrieveAll = async function (req, res) {
             }
         })
 
-        res.send(result)
+        const transformedResult = transformImageUrlsInObject(result)
+
+        res.send(transformedResult)
     }
     catch(error) {
         console.log(error)

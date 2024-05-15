@@ -13,59 +13,75 @@ import Waiting from '../ui/Waiting';
 
 export default function CreateTeacherForm() {
     const navigate = useNavigate();
-    const [nome, setNome] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [telefone, setTelefone] = React.useState('');
-    const [end_logr, setEnd_logr] = React.useState('');
-    const [end_num, setEnd_num] = React.useState('');
-    const [end_compl, setEnd_compl] = React.useState('');
-    const [end_cid, setEnd_cid] = React.useState('');
-    const [end_estado, setEnd_estado] = React.useState('');
-    const [username, setUsername] = React.useState('')
-    const [password, setPassword] = React.useState('')
-    const [data_nasc, setData_nasc] = React.useState(moment())
-    const [especialidade, setEspecialidade] = React.useState('');
-    const [imageUrl, setImageUrl] = React.useState('');
+    const [teacherData, setTeacherData] = React.useState({
+        nome: '',
+        email: '',
+        telefone: '',
+        end_logr: '',
+        end_num: '',
+        end_compl: '',
+        end_cid: '',
+        end_estado: '',
+        username: '',
+        password: '',
+        data_nasc: moment(),
+        especialidade: '',
+        imageUrl: ''
+    });
 
+    const [imageFile, setImageFile] = React.useState(null)
     const [showPassword, setShowPassword] = React.useState(false)
     const [waiting, setWaiting] = React.useState(false)
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setTeacherData({ ...teacherData, [name]: value });
+    }
 
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
     };
 
+    const handleFileChange = async (e) => {
+        setImageFile(e.target.files[0])
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!nome || !email || !telefone || !end_logr || !end_num || !end_cid || !end_estado || !username || !password || !data_nasc || !especialidade) {
-            alert('Por favor, preencha todos os campos obrigatórios.');
-            return;
-        }
     
         try {
             setWaiting(true)
-            const dateOfBirth = new Date(data_nasc)
+            const dateOfBirth = new Date(teacherData.data_nasc)
 
             const formattedDateOfBirth = dateOfBirth.toISOString()
 
-            const endNumInteger = parseInt(end_num, 10);
+            const endNumInteger = parseInt(teacherData.end_num, 10);
 
-            const rawTelefone = telefone.replace(/\D/g, '')
+            const rawTelefone = teacherData.telefone.replace(/\D/g, '')
+
+            let imageUrl = teacherData.imageUrl
+            if (imageFile) {
+                const formData = new FormData()
+                formData.append('image', imageFile)
+
+                const response = await myfetch.post('/api/upload', formData)
+                imageUrl = response.imageUrl
+            }
 
             const response = await myfetch.post('/professores', {
-                nome,
-                email,
+                nome: teacherData.nome,
+                email: teacherData.email,
                 telefone: rawTelefone,
-                end_logr,
+                end_logr: teacherData.end_logr,
                 end_num: endNumInteger,
-                end_compl,
-                end_cid,
-                end_estado,
-                username,
-                password,
+                end_compl: teacherData.end_compl,
+                end_cid: teacherData.end_cid,
+                end_estado: teacherData.end_estado,
+                username: teacherData.username,
+                password: teacherData.password,
                 data_nasc: formattedDateOfBirth,
-                especialidade,
-                imageUrl
+                especialidade: teacherData.especialidade,
+                imageUrl: imageUrl
             });
             
             console.log('Professor cadastrado:', response);
@@ -95,8 +111,8 @@ export default function CreateTeacherForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
+                    value={teacherData.nome}
+                    onChange={handleChange}
                     required
                 />
                 <Divider />
@@ -107,16 +123,16 @@ export default function CreateTeacherForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={teacherData.email}
+                    onChange={handleChange}
                     required
                 />
                 <Divider />
                 <Typography>Telefone de Contato*: </Typography>
                 <InputMask
                     mask="+55 (99) 99999 9999"
-                    value={telefone}
-                    onChange={(e) => setTelefone(e.target.value)}
+                    value={teacherData.telefone}
+                    onChange={handleChange}
                 >
                     { () => <TextField
                         name="telefone"
@@ -133,64 +149,64 @@ export default function CreateTeacherForm() {
                 <Grid container spacing={2}>
                     <Grid item xs={8}>
                         <TextField
-                            name="logradouro"
+                            name="end_logr"
                             label="Logradouro"
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black", margin: "10px", flexGrow: 3}}
                             margin="normal"
                             fullWidth
-                            value={end_logr}
-                            onChange={(e) => setEnd_logr(e.target.value)}
+                            value={teacherData.end_logr}
+                            onChange={handleChange}
                             required
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            name="número"
+                            name="end_num"
                             label="Número"
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black", margin: "10px"}}
                             margin="normal"
                             fullWidth
-                            value={end_num}
-                            onChange={(e) => setEnd_num(e.target.value)}
+                            value={teacherData.end_num}
+                            onChange={handleChange}
                             required
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            name="complemento"
+                            name="end_compl"
                             label="Complemento"
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black", margin: "10px"}}
                             margin="normal"
                             fullWidth
-                            value={end_compl}
-                            onChange={(e) => setEnd_compl(e.target.value)}
+                            value={teacherData.end_compl}
+                            onChange={handleChange}
                         />
                     </Grid>
                 </Grid>
                 <Box>
                     <TextField
-                        name="cidade"
+                        name="end_cid"
                         label="Cidade"
                         variant="filled"
                         sx={{backgroundColor: "white", color: "black", margin: "10px"}}
                         margin="normal"
-                        value={end_cid}
-                        onChange={(e) => setEnd_cid(e.target.value)}
+                        value={teacherData.end_cid}
+                        onChange={handleChange}
                         required
                     />
                     <FormControl>
                         <InputLabel>Estado</InputLabel>
                         <Select
-                            name="estado"
+                            name="end_estado"
                             label="Estado"
                             variant="filled"
                             sx={{backgroundColor: "white", color: "black", margin: "10px"}}
                             margin="normal"
-                            value={end_estado}
-                            onChange={(e) => setEnd_estado(e.target.value)}
+                            value={teacherData.end_estado}
+                            onChange={handleChange}
                             required
                         >
                             {estados.map((estado) => (
@@ -207,8 +223,8 @@ export default function CreateTeacherForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={teacherData.username}
+                    onChange={handleChange}
                     required
                 />
                 <Divider />
@@ -220,8 +236,8 @@ export default function CreateTeacherForm() {
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={teacherData.password}
+                    onChange={handleChange}
                     required
                     InputProps={{
                         endAdornment: 
@@ -239,14 +255,14 @@ export default function CreateTeacherForm() {
                 <Divider />
                 <Typography>Data de Nascimento: </Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="pt-br">
-                        {moment.isMoment(data_nasc) ? (
+                        {moment.isMoment(teacherData.data_nasc) ? (
                             <DatePicker
                                 variant="filled"
                                 sx={{backgroundColor: "white", color: "black"}}
                                 margin="normal"
                                 fullWidth
-                                value={data_nasc}
-                                onChange={(newValue) => setData_nasc(newValue)}
+                                value={teacherData.data_nasc}
+                                onChange={(newValue) => setTeacherData({...teacherData, data_nasc: newValue})}
                             >
                                 <TextField
                                     variant="filled"
@@ -259,26 +275,25 @@ export default function CreateTeacherForm() {
                 <Divider />
                 <Typography>Idiomas e Matérias que Leciona*: </Typography>
                 <TextField
-                    name="idiomas e matérias"
+                    name="especialidade"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={especialidade}
-                    onChange={(e) => setEspecialidade(e.target.value)}
+                    value={teacherData.especialidade}
+                    onChange={handleChange}
                     required
                 />
                 <Divider />
                 <Typography>Foto: </Typography>
                 <TextField
+                    type="file"
                     name="imagem"
-                    label="URL da imagem"
                     variant="filled"
                     sx={{backgroundColor: "white", color: "black"}}
                     margin="normal"
                     fullWidth
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
+                    onChange={handleFileChange}
                 />
                 <Box sx={{ padding: '10px' }}>
                     <Button type="submit" variant="contained" color="primary">Cadastrar Professor</Button>

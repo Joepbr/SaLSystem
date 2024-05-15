@@ -77,7 +77,6 @@ app.use('/notas', notasRoute)
 import disponibilidadeRoute from './routes/disponibilidade.js'
 app.use('/disponibilidade', disponibilidadeRoute)
 
-/**************************************/
 import driveRoute from './routes/drive.js'
 app.use('/drive', driveRoute)
 
@@ -89,5 +88,12 @@ app.use('/tips', tipsRoute)
 
 import eventoRoute from './routes/evento.js'
 app.use('/eventos', eventoRoute)
+
+/***************************/
+import { router as uploadImageRouter } from "./index.js";
+app.use('/api', uploadImageRouter)
+
+import imageProxyRouter from './routes/image.js'
+app.use('/api', imageProxyRouter)
 
 export default app;

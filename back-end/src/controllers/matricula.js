@@ -1,4 +1,5 @@
 import prisma from '../database/client.js'
+import { transformImageUrlsInObject } from '../utils/helpers.js'
 
 const controller = {}
 
@@ -66,7 +67,9 @@ controller.retrieveByAlunoId = async function (req, res) {
             }
         });
 
-        if(result) res.send(result)
+        const transformedResult = transformImageUrlsInObject(result)
+
+        if(transformedResult) res.send(transformedResult)
         else res.status(404).end()
     }
     catch (error) {

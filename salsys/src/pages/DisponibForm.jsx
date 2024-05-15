@@ -3,92 +3,72 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
+import { Container, Button, Box } from '@mui/material'
 import myfetch from '../utils/myfetch';
+import Waiting from '../ui/Waiting';
 
 const localizer = momentLocalizer(moment);
 
-class ErrorBoundary extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { hasError: false };
+export default function DisponibForm() {
+  const [events, setEvents] = React.useState([]);
+  const [newEvent, setNewEvent] = React.useState(null);
+  const [waiting, setWaiting] = React.useState(false)
+
+  const handleSelectSlot = ({ start, end }) => {
+    const newAvailability ={
+      start: new Date(start),
+      end: new Date(end),
+      title: 'Disponível'
     }
-  
-    static getDerivedStateFromError(error) {
-      return { hasError: true };
-    }
-  
-    componentDidCatch(error, errorInfo) {
-      console.error('Error caught by error boundary:', error, errorInfo);
-    }
-  
-    render() {
-      if (this.state.hasError) {
-        return <h1>Something went wrong.</h1>;
-      }
-  
-      return this.props.children;
+    setNewEvent(newAvailability)
+    setEvents((prevEvents) => [...prevEvents, newAvailability])
+  };
+
+  const handleRemoveEvent = (eventToRemove) => {
+    setEvents(events.filter(event => event !== eventToRemove))
+  }
+
+  const handleSaveAvailability = async () => {
+    try {
+      setWaiting(true)
+
+      const response = await myfetch.post('/disponibilidade', { events })
+      console.log('Disponibilidade salva: ', response)
+      alert('Disponibilidade salva com sucesso')
+      setWaiting(false)
+    } catch (error) {
+      console.error('Erro salvando disponibilidade: ', error)
+      alert('Falha em salvar a disponibilidade')
+      setWaiting(false)
     }
   }
-  
 
-export default function Disponibilidade() {
-    const [disponibilidade, setDisponibilidade] = React.useState({})
-    const [selectedSlot, setSelectedSlot] = React.useState(null);
-
-    const handleSelectSlot = ({ start, end }) => {
-        const dayOfWeek = moment(start).day();
-        setSelectedSlot({ dayOfWeek, start, end });
-    };
-
-    const handleSaveDisponibilidade = async () => {
-        try {
-            if (!selectedSlot) {
-                alert('Favor selecionar período de disponibilidade')
-                return
-            }
-
-            const { dayOfWeek } = selectedSlot
-            const novaDisponibilidade = { ...disponibilidade }
-
-            const startTime = moment().hour(8).minute(0)
-            const endTime = moment().hour(21).minute(0)
-            novaDisponibilidade[dayOfWeek] = { start: startTime, end: endTime }
-
-            await myfetch.put('/professores/disponibilidade', { disponibilidade: novaDisponibilidade });
-            setDisponibilidade(novaDisponibilidade)
-            setSelectedSlot(null)
-            alert('Disponibilidade salva com sucesso');
-        } catch (error) {
-            console.error(error);
-            alert('Erro salvando disponibilidade');
-        }
-    };
-
-    return (
-        <ErrorBoundary>
-        <div>
-            <h2>Selecionar Horários de Disponibilidade</h2>
-            <Calendar
-                localizer={localizer}
-                defaultView='week'
-                views={['week']}
-                selectable
-                onSelectSlot={handleSelectSlot}
-                startAccessor="start"
-                endAccessor="end"
-                events={[]}
-                style={{ height: 500 }}
-                min={new Date(2024, 0, 1, 8, 0)}
-                max={new Date(2024, 0, 1, 21, 0)}
-                formats={{
-                    dayFormat: 'dddd'
-                }}
-                culture={"pt-BR"}
-            />
-            <p>{JSON.stringify(selectedSlot)}</p>
-            <p>{JSON.stringify(disponibilidade)}</p>
-            <button onClick={handleSaveDisponibilidade}>Salvar Disponibilidade</button>
-        </div>
-        </ErrorBoundary>
-    );
+  return (
+      <Container>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Button 
+                variant="contained" 
+                color="secondary" 
+                onClick={handleSaveAvailability} 
+                disabled={events.length === 0}
+              >
+                Salvar Disponibilidade
+              </Button>
+          </Box>
+          <Calendar
+              localizer={localizer}
+              events={events}
+              selectable
+              defaultView="week"
+              views={['week']}
+              step={30}
+              timeslots={2}
+              defaultDate={new Date()}
+              onSelectSlot={handleSelectSlot}
+              onSelectEvent={handleRemoveEvent}
+              style={{ height: '80vh' }}
+          />
+          <p>{JSON.stringify(events)}</p>
+      </Container>
+  );
 }
