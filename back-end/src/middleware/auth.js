@@ -12,12 +12,21 @@ export default function(req, res, next) {
         }
     }
 
-    const authHeader = req.headers['authentication']
+    let token = null
 
-    if(! authHeader) return res.status(403).end()
+    token = req.cookies[process.env.AUTH_COOKIE_NAME]
 
-    const authHeaderParts = authHeader.split(' ')
-    const token = authHeaderParts[1]
+    if(! token) {
+        const authHeader = req.headers['authorization']
+
+        if(! authHeader) {
+            console.error('ERRO: Acesso negado por falta de token')
+            return res.status(403).end()
+        }
+
+        const authHeaderParts = authHeader.split(' ')
+        token = authHeaderParts[1]
+    }
 
     jwt.verify(token, process.env.TOKEN_SECRET, (error, user) => {
 

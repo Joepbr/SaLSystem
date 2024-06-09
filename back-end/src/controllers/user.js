@@ -112,13 +112,34 @@ controller.login = async function(req, res) {
             process.env.TOKEN_SECRET,
             { expiresIn: '730h' }
         )
-        res.send({token, user})
+
+        res.cookie(process.env.AUTH_COOKIE_NAME, token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+            path: '/',
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        })
+
+        res.send({ user})
     }
     catch(error) {
         console.log(error)
 
         res.status(500).end()
     }
+}
+
+controller.logout = function(req, res) {
+    res.cookie(process.env.AUTH_COOKIE_NAME, '', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        path: '/',
+        maxAge: 10
+    })
+
+    res.status(204).end()
 }
 
 controller.me = function(req, res) {

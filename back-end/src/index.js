@@ -19,7 +19,6 @@ const __dirname = path.dirname(__filename)
 
 const serviceAccountKey = JSON.parse(fs.readFileSync(path.join(__dirname, '../repositorio-salsys-422000-862b81ccf1bd.json'), 'utf8'));
 const scopes = ['https://www.googleapis.com/auth/drive'];
-// import serviceAccountKey from '../repositorio-salsys-422000-862b81ccf1bd.json' assert { type: "json" }
 
 // Create an Auth client
 const auth = new google.auth.GoogleAuth({

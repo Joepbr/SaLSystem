@@ -54,8 +54,12 @@ class HttpError extends Error {
   
   myfetch.post = async function(path, body) {
     const response = await fetch(baseUrl + path, defaultOptions(body, 'POST'))
-    if(response.ok) return response.json()
-    else throw new HttpError(response.status, getErrorDescription(response))
+    if(response.ok) {
+      const text = await response.text()
+      return text ? JSON.parse(text) : {}
+    } else {
+      throw new HttpError(response.status, getErrorDescription(response))
+    }
   }
   
   myfetch.put = async function(path, body) {

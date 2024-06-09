@@ -65,37 +65,37 @@ function App() {
 
               <Route path="/login" element={<LoginPage/>} />
 
-              <Route path="/" element={<ProtectedPage />} >
-                <Route index element={ <Homepage /> } />
+              <Route path="/" element={<AuthRoute> <ProtectedPage /> </AuthRoute>} >
+                <Route index element={<AuthRoute> <Homepage /> </AuthRoute>} />
 
-                <Route path="/cursos" element={ <Cursos /> } />
-                <Route path="/curso/:id" element={ <Modulos/> } />
-                <Route path="/cursos/new" element={ <NovoCursoForm/> } />
-                <Route path="/curso/:id/edit" element={ <EditarCursoForm/> } />
+                <Route path="/cursos" element={<AuthRoute> <Cursos /> </AuthRoute>} />
+                <Route path="/curso/:id" element={<AuthRoute><Modulos/></AuthRoute>} />
+                <Route path="/cursos/new" element={<AuthRoute><NovoCursoForm/></AuthRoute>} />
+                <Route path="/curso/:id/edit" element={<AuthRoute><EditarCursoForm/></AuthRoute>} />
                 
-                <Route path="/modulo/:id" element={ <AulasModulo/> } />
-                <Route path="/curso/:id/modulos/new" element={ <NovoModuloForm/> } />
-                <Route path="/modulo/:id/edit" element={ <EditarModuloForm/> } />
+                <Route path="/modulo/:id" element={<AuthRoute><AulasModulo/></AuthRoute>} />
+                <Route path="/curso/:id/modulos/new" element={<AuthRoute><NovoModuloForm/></AuthRoute>} />
+                <Route path="/modulo/:id/edit" element={<AuthRoute><EditarModuloForm/> </AuthRoute>} />
 
-                <Route path="/profs" element={ <Profs /> } />
-                <Route path="/prof/:id" element={ <ProfProfile/> } />
-                <Route path="/profs/new" element={ <NovoProfForm/> } />
-                <Route path="/prof/:id/edit" element={ <EditarProfForm/> } />
-                <Route path="/prof/:id/disponib" element={ <Disponibilidade/> } />
+                <Route path="/profs" element={<AuthRoute><Profs /></AuthRoute>} />
+                <Route path="/prof/:id" element={<AuthRoute><ProfProfile/></AuthRoute>} />
+                <Route path="/profs/new" element={<AuthRoute><NovoProfForm/></AuthRoute>} />
+                <Route path="/prof/:id/edit" element={<AuthRoute><EditarProfForm/></AuthRoute>} />
+                <Route path="/prof/:id/disponib" element={<AuthRoute><Disponibilidade/></AuthRoute>} />
 
-                <Route path="/alunos" element={ <Alunos /> } />
-                <Route path="/aluno/:id" element={ <AlunoProfile/> } />
-                <Route path="/alunos/new" element={ <NovoAlunoForm/> } />
-                <Route path="/aluno/:id/edit" element={ <EditarAlunoForm/> } />
+                <Route path="/alunos" element={<AuthRoute><Alunos /></AuthRoute>} />
+                <Route path="/aluno/:id" element={<AuthRoute><AlunoProfile/></AuthRoute>} />
+                <Route path="/alunos/new" element={<AuthRoute><NovoAlunoForm/></AuthRoute>} />
+                <Route path="/aluno/:id/edit" element={<AuthRoute><EditarAlunoForm/></AuthRoute>} />
 
-                <Route path="/aulas" element={ <Aulas /> } />
-                <Route path="/modulo/:id/aula/new" element={ <NovaAulaForm /> } />
-                <Route path="/aula/:id" element={ <AulaRecord /> }/>
-                <Route path="/aula/:id/edit" element={ <EditarAulaForm /> } />
+                <Route path="/aulas" element={<AuthRoute><Aulas /></AuthRoute>} />
+                <Route path="/modulo/:id/aula/new" element={<AuthRoute><NovaAulaForm /></AuthRoute>} />
+                <Route path="/aula/:id" element={<AuthRoute><AulaRecord /></AuthRoute>}/>
+                <Route path="/aula/:id/edit" element={<AuthRoute><EditarAulaForm /></AuthRoute>} />
 
-                <Route path="/modulo/:id/avaliacao/new" element={ <NovaAvaliacaoForm /> } />
-                <Route path="/avaliacao/:id" element={ <AvaliacaoRecord /> } />
-                <Route path="/avaliacao/:id/edit" element={ <EditarAvaliacaoForm /> } />
+                <Route path="/modulo/:id/avaliacao/new" element={<AuthRoute><NovaAvaliacaoForm /></AuthRoute>} />
+                <Route path="/avaliacao/:id" element={<AuthRoute><AvaliacaoRecord /></AuthRoute>} />
+                <Route path="/avaliacao/:id/edit" element={<AuthRoute><EditarAvaliacaoForm /></AuthRoute>} />
 
               </Route>
             </Routes>

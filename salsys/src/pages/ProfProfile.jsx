@@ -92,7 +92,7 @@ export default function ProfProfile() {
                                     </Box>
                                 </Typography>
                             </Box>
-                            <Box display="flex" sx={{ margin: 2 }}>
+                            {/*<Box display="flex" sx={{ margin: 2 }}>
                                 <Button 
                                     component={Link} 
                                     to={`/prof/${prof.id}/disponib`} 
@@ -103,7 +103,7 @@ export default function ProfProfile() {
                                 > 
                                     Ajustar Disponibilidade 
                                 </Button>
-                            </Box>
+                            </Box>*/}
                         </>
                     )}
                     <Divider />
