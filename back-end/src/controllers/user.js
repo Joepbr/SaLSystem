@@ -142,8 +142,34 @@ controller.logout = function(req, res) {
     res.status(204).end()
 }
 
-controller.me = function(req, res) {
-    res.send(req.authUser)
+controller.me = async function(req, res) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.authUser.id },
+            include: {
+                professor: true,
+                aluno: true
+            }
+        })
+        if (!user) {
+            return res.status(404).end()
+        }
+
+        if (user.password) delete user.password
+
+        const isProfessor = !!user.professor
+        const isAluno = !!user.aluno
+
+        res.send({
+            ...user,
+            professor: isProfessor,
+            aluno: isAluno
+        })
+    }
+    catch (error) {
+        console.log(error)
+        res.status(500).end
+    }
 }
 
 export default controller

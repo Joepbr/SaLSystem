@@ -36,6 +36,7 @@ import EditarAvaliacaoForm from './pages/EditarAvaliacaoForm'
 import AvaliacaoRecord from './pages/AvaliacaoRecord'
 
 import LoginForm from './pages/LoginForm'
+import Forbidden from './pages/Forbidden'
 
 function App() {
 
@@ -43,10 +44,10 @@ function App() {
 
   async function fetchAuthUser() {
     try {
-      const authUser = await myfetch.get('users/me')
+      const authUser = await myfetch.get('/users/me')
       if(authUser) setAuthUser(authUser)
     }
-    catch {
+    catch (error) {
       console.error(error)
     }
   }
@@ -65,37 +66,39 @@ function App() {
 
               <Route path="/login" element={<LoginPage/>} />
 
-              <Route path="/" element={<AuthRoute> <ProtectedPage /> </AuthRoute>} >
-                <Route index element={<AuthRoute> <Homepage /> </AuthRoute>} />
+              <Route path="/" element={<AuthRoute level={1}> <ProtectedPage /> </AuthRoute>} >
+                <Route index element={<AuthRoute level={1}> <Homepage /> </AuthRoute>} />
 
-                <Route path="/cursos" element={<AuthRoute> <Cursos /> </AuthRoute>} />
-                <Route path="/curso/:id" element={<AuthRoute><Modulos/></AuthRoute>} />
-                <Route path="/cursos/new" element={<AuthRoute><NovoCursoForm/></AuthRoute>} />
-                <Route path="/curso/:id/edit" element={<AuthRoute><EditarCursoForm/></AuthRoute>} />
+                <Route path="/forbidden" element={<AuthRoute level={0}> <Forbidden /> </AuthRoute>} />
+
+                <Route path="/cursos" element={<AuthRoute level={1}> <Cursos /> </AuthRoute>} />
+                <Route path="/curso/:id" element={<AuthRoute level={1}><Modulos/></AuthRoute>} />
+                <Route path="/cursos/new" element={<AuthRoute level={3}><NovoCursoForm/></AuthRoute>} />
+                <Route path="/curso/:id/edit" element={<AuthRoute level={3}><EditarCursoForm/></AuthRoute>} />
                 
-                <Route path="/modulo/:id" element={<AuthRoute><AulasModulo/></AuthRoute>} />
-                <Route path="/curso/:id/modulos/new" element={<AuthRoute><NovoModuloForm/></AuthRoute>} />
-                <Route path="/modulo/:id/edit" element={<AuthRoute><EditarModuloForm/> </AuthRoute>} />
+                <Route path="/modulo/:id" element={<AuthRoute level={1}><AulasModulo/></AuthRoute>} />
+                <Route path="/curso/:id/modulos/new" element={<AuthRoute level={3}><NovoModuloForm/></AuthRoute>} />
+                <Route path="/modulo/:id/edit" element={<AuthRoute level={3}><EditarModuloForm/> </AuthRoute>} />
 
-                <Route path="/profs" element={<AuthRoute><Profs /></AuthRoute>} />
-                <Route path="/prof/:id" element={<AuthRoute><ProfProfile/></AuthRoute>} />
-                <Route path="/profs/new" element={<AuthRoute><NovoProfForm/></AuthRoute>} />
-                <Route path="/prof/:id/edit" element={<AuthRoute><EditarProfForm/></AuthRoute>} />
-                <Route path="/prof/:id/disponib" element={<AuthRoute><Disponibilidade/></AuthRoute>} />
+                <Route path="/profs" element={<AuthRoute level={1}><Profs /></AuthRoute>} />
+                <Route path="/prof/:id" element={<AuthRoute level={1}><ProfProfile/></AuthRoute>} />
+                <Route path="/profs/new" element={<AuthRoute level={3}><NovoProfForm/></AuthRoute>} />
+                <Route path="/prof/:id/edit" element={<AuthRoute level={3}><EditarProfForm/></AuthRoute>} />
+                <Route path="/prof/:id/disponib" element={<AuthRoute level={2}><Disponibilidade/></AuthRoute>} />
 
-                <Route path="/alunos" element={<AuthRoute><Alunos /></AuthRoute>} />
-                <Route path="/aluno/:id" element={<AuthRoute><AlunoProfile/></AuthRoute>} />
-                <Route path="/alunos/new" element={<AuthRoute><NovoAlunoForm/></AuthRoute>} />
-                <Route path="/aluno/:id/edit" element={<AuthRoute><EditarAlunoForm/></AuthRoute>} />
+                <Route path="/alunos" element={<AuthRoute level={1}><Alunos /></AuthRoute>} />
+                <Route path="/aluno/:id" element={<AuthRoute level={1}><AlunoProfile/></AuthRoute>} />
+                <Route path="/alunos/new" element={<AuthRoute level={3}><NovoAlunoForm/></AuthRoute>} />
+                <Route path="/aluno/:id/edit" element={<AuthRoute level={3}><EditarAlunoForm/></AuthRoute>} />
 
-                <Route path="/aulas" element={<AuthRoute><Aulas /></AuthRoute>} />
-                <Route path="/modulo/:id/aula/new" element={<AuthRoute><NovaAulaForm /></AuthRoute>} />
-                <Route path="/aula/:id" element={<AuthRoute><AulaRecord /></AuthRoute>}/>
-                <Route path="/aula/:id/edit" element={<AuthRoute><EditarAulaForm /></AuthRoute>} />
+                <Route path="/aulas" element={<AuthRoute level={1}><Aulas /></AuthRoute>} />
+                <Route path="/modulo/:id/aula/new" element={<AuthRoute level={2}><NovaAulaForm /></AuthRoute>} />
+                <Route path="/aula/:id" element={<AuthRoute level={1}><AulaRecord /></AuthRoute>}/>
+                <Route path="/aula/:id/edit" element={<AuthRoute level={2}><EditarAulaForm /></AuthRoute>} />
 
-                <Route path="/modulo/:id/avaliacao/new" element={<AuthRoute><NovaAvaliacaoForm /></AuthRoute>} />
-                <Route path="/avaliacao/:id" element={<AuthRoute><AvaliacaoRecord /></AuthRoute>} />
-                <Route path="/avaliacao/:id/edit" element={<AuthRoute><EditarAvaliacaoForm /></AuthRoute>} />
+                <Route path="/modulo/:id/avaliacao/new" element={<AuthRoute level={2}><NovaAvaliacaoForm /></AuthRoute>} />
+                <Route path="/avaliacao/:id" element={<AuthRoute level={1}><AvaliacaoRecord /></AuthRoute>} />
+                <Route path="/avaliacao/:id/edit" element={<AuthRoute level={2}><EditarAvaliacaoForm /></AuthRoute>} />
 
               </Route>
             </Routes>

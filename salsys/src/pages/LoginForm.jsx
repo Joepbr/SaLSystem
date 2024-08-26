@@ -162,7 +162,7 @@ export default function LoginForm() {
                           onMouseDown={handleMouseDownPassword}
                           edge="end"
                       >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                       </InputAdornment>
                   }}
