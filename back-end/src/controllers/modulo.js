@@ -62,6 +62,8 @@ controller.retrieveOne = async function (req, res) {
             }
         })
 
+        if (result.professor.user.password) delete result.professor.user.password
+
         const transformedResult = transformImageUrlsInObject(result)
 
         if(transformedResult) res.send(transformedResult)
@@ -92,6 +94,10 @@ controller.retrieveByCourseId = async function (req, res) {
             }
         });
 
+        for(let user of result) {
+            if(user.professor.user.password) delete user.professor.user.password
+        }
+
         const transformedResult = transformImageUrlsInObject(result)
 
         if(transformedResult) res.send(transformedResult)
@@ -121,6 +127,10 @@ controller.retrieveByProfId = async function (req, res) {
                 }
             }
         });
+
+        for(let user of result) {
+            if(user.professor.user.password) delete user.professor.user.password
+        }
 
         const transformedResult = transformImageUrlsInObject(result)
 
@@ -155,6 +165,10 @@ controller.retrieveByAvaliacaoId = async function (req, res) {
                 },
             }
         });
+
+        for(let user of result) {
+            if(user.professor.user.password) delete user.professor.user.password
+        }
 
         const transformedResult = transformImageUrlsInObject(result)
 
@@ -206,6 +220,49 @@ controller.delete = async function (req, res) {
 
         if(result) res.status(204).end()
         else res.status(404).end()
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
+    }
+}
+
+controller.checkAccess = async function (req, res) {
+    try {
+        const moduloId = Number(req.params.id)
+        const userId = req.authUser.id
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                professor: {
+                    include: {
+                        modulo: true
+                    }
+                },
+                aluno: {
+                    include: {
+                        matricula: {
+                            include: {
+                                modulo: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        if (!user) return res.status(404).end()
+        
+        const isProfessor = user.professor?.modulo.some(c => c.id === moduloId)
+        const isAluno = user.aluno?.matricula.modulo.some(c => c.id === moduloId)
+
+        if (isProfessor || isAluno || user.is_admin) {
+            return res.send({ hasAccess: true })
+        } else {
+            return res.send({ hasAccess: false })
+        }
     }
     catch(error) {
         console.log(error)

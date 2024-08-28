@@ -147,8 +147,20 @@ controller.me = async function(req, res) {
         const user = await prisma.user.findUnique({
             where: { id: req.authUser.id },
             include: {
-                professor: true,
-                aluno: true
+                professor: {
+                    include: {
+                        modulo: true
+                    }
+                },
+                aluno: {
+                    include: {
+                        matricula: {
+                            include: {
+                                modulo: true
+                            }
+                        }
+                    }
+                }
             }
         })
         if (!user) {
@@ -163,7 +175,8 @@ controller.me = async function(req, res) {
         res.send({
             ...user,
             professor: isProfessor,
-            aluno: isAluno
+            aluno: isAluno,
+            modulos: isProfessor ? user.professor.modulo : (isAluno ? user.aluno.matricula.modulo : [])
         })
     }
     catch (error) {

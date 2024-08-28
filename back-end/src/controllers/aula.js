@@ -33,6 +33,10 @@ controller.retrieveAll = async function (req, res) {
             }
         })
 
+        for(let user of result) {
+            if(user.professor.user.password) delete user.professor.user.password
+        }
+
         const transformedResult = transformImageUrlsInObject(result)
 
         res.send(transformedResult)
@@ -70,6 +74,9 @@ controller.retrieveOne = async function (req, res) {
                 }
             }
         })
+
+        //if (result.presenca.aluno.user.password) delete result.presenca.aluno.user.password
+        //if (result.professor.user.password) delete result.professor.user.password
 
         const transformedResult = transformImageUrlsInObject(result)
 

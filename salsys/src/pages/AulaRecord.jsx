@@ -1,6 +1,7 @@
 import React from 'react';
 import myfetch from '../utils/myfetch'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
+import { checkModuloAccess } from '../utils/CheckAccess';
 import { Container, Typography, Divider, Box, Avatar, Checkbox, Stack, Button, Link as MuiLink } from '@mui/material';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudCircleIcon from '@mui/icons-material/CloudCircle';
@@ -15,18 +16,33 @@ export default function AulaRecord(){
     const [aula, setAula] = React.useState(null)
     const [arquivos, setArquivos] = React.useState([])
     const [waiting, setWaiting] = React.useState(false)
+    const [moduloId, setModuloId] = React.useState(null)
+    const [hasAccess, setHasAccess] = React.useState(null)
 
     React.useEffect(() => {
         fetchAula();
     }, []);
+
+    React.useEffect(() => {
+        if (moduloId) {
+            async function fetchAccess() {
+                const access = await checkModuloAccess(moduloId)
+                setHasAccess(access)
+            }
+
+            fetchAccess()
+        }
+    }, [moduloId])
 
     const fetchAula = async () => {
         try {
             setWaiting(true)
             const aulaId = id;
             const result = await myfetch.get(`/aulas/${aulaId}`);
+            
             setAula(result);
-                        
+            setModuloId(result.modulo?.id)
+
             const filesResponse = await myfetch.get(`/drive/${id}/arquivos`)
             setArquivos(filesResponse)
 
@@ -73,6 +89,9 @@ export default function AulaRecord(){
             setWaiting(false)
         }
     }
+
+    if (hasAccess === null || waiting) return <Waiting show={true}/>
+    if (hasAccess === false) return <Navigate to="/forbidden" replace />
 
     return (
         <Container>

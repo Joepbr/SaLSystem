@@ -56,6 +56,9 @@ controller.retrieveOne = async function (req, res) {
             }
         })
 
+        //if (result.notas.aluno.user.password) delete result.notas.aluno.user.password
+        //if (result.professor.user.password) delete result.professor.user.password
+
         const transformedResult = transformImageUrlsInObject(result)
 
         if(transformedResult) res.send(transformedResult)

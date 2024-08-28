@@ -55,6 +55,10 @@ controller.retrieveAll = async function (req, res) {
             }
         })
 
+        for(let user of result) {
+            if(user.user.password) delete user.user.password
+        }
+
         res.send(result)
     }
     catch(error) {
@@ -95,6 +99,8 @@ controller.retrieveOne = async function (req, res) {
             }
         })
 
+        //if (result.user.password) delete result.user.password
+
         if(result) res.send(result)
         else res.status(404).end()
     }
@@ -120,6 +126,10 @@ controller.retrieveByModuloId = async function (req, res) {
                 user: true
             }
         });
+
+        for(let user of result) {
+            if(user.user.password) delete user.user.password
+        }
 
         if(result) res.send(result)
         else res.status(404).end()
@@ -147,6 +157,10 @@ controller.retrieveByAvaliacaoId = async function (req, res) {
                 notas: true
             }
         });
+
+        for(let user of result) {
+            if(user.user.password) delete user.user.password
+        }
 
         if(result) res.send(result)
         else res.status(404).end()
@@ -187,6 +201,60 @@ controller.delete = async function (req, res) {
     catch(error) {
         console.log(error)
 
+        res.status(500).end()
+    }
+}
+
+controller.checkAccess = async function (req, res) {
+    try {
+        const profileId = Number(req.params.id)
+        const userId = req.authUser.id
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                professor: {
+                    include: {
+                        modulo: {
+                            include: {
+                                matricula: {
+                                    include: {
+                                        aluno: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                aluno: true
+            }
+        })
+
+        if (!user) return res.status(404).end
+
+        if (user.password) delete user.password
+
+        const ownProfile = user.aluno?.id === profileId
+        
+        let isProfessor = false
+        if (user.professor?.modulo?.matricula) {
+            for (const matricula of user.professor.modulo.matricula) {
+                if (matricula.aluno?.id ===profileId) {
+                    isProfessor = true
+                    break
+                }
+            }
+        }
+        //const isProfessor = user.professor?.modulo.matricula.aluno.some(aluno => aluno.id === profileId)
+
+        if (ownProfile || isProfessor || user.is_admin) {
+            return res.send({ hasAccess: true })
+        } else {
+            return res.send({ hasAccess: false })
+        }
+    }
+    catch (error) {
+        console.log(error)
         res.status(500).end()
     }
 }

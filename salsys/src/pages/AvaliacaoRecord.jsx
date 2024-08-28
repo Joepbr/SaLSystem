@@ -1,6 +1,7 @@
 import React from 'react';
 import myfetch from '../utils/myfetch'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
+import { checkModuloAccess } from '../utils/CheckAccess';
 import { Container, Typography, Divider, Box, Avatar, Stack, Button, IconButton, Link as MuiLink } from '@mui/material';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
@@ -14,10 +15,23 @@ export default function AvaliacaoRecord() {
     const [avaliacao, setAvaliacao] = React.useState(null)
     const [arquivos, setArquivos] = React.useState({})
     const [waiting, setWaiting] = React.useState(false)
+    const [moduloId, setModuloId] = React.useState(null)
+    const [hasAccess, setHasAccess] = React.useState(null)
 
     React.useEffect(() => {
         fetchAvaliacao();
     }, []);
+
+    React.useEffect(() =>{
+        if (moduloId) {
+            async function fetchAccess() {
+                const access = await checkModuloAccess(moduloId)
+                setHasAccess(access)
+            }
+
+            fetchAccess()
+        }
+    }, [moduloId])
 
     React.useEffect(() => {
         if (!avaliacao) {
@@ -32,7 +46,9 @@ export default function AvaliacaoRecord() {
             setWaiting(true)
             const avaliacaoId = id
             const result = await myfetch.get(`/avaliacoes/${avaliacaoId}`)
+            
             setAvaliacao(result)
+            setModuloId(result.modulo?.id)
             setWaiting(false)
         } catch (error) {
             console.error(error);
@@ -129,6 +145,9 @@ export default function AvaliacaoRecord() {
             </Stack>
         )
     }
+
+    if (hasAccess === null || waiting) return <Waiting show={true}/>
+    if (hasAccess === false) return <Navigate to="/forbidden" replace />
 
     return(
         <Container>

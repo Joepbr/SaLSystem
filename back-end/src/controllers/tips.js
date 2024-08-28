@@ -29,6 +29,10 @@ controller.retrieveAll = async function (req, res) {
             }
         })
 
+        for(let user of result) {
+            if(user.professor.user.password) delete user.professor.user.password
+        }
+
         const transformedResult = transformImageUrlsInObject(result)
 
         res.send(transformedResult)

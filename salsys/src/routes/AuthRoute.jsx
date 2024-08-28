@@ -29,6 +29,10 @@ export default function AuthRoute({ level = 0, children }) {
   // While waiting for auth check to complete
   if (hasAuthUser === undefined) return <Waiting show={true} />;
 
+  if (!authUser) {
+    return <Navigate to="/login" replace />;
+  }
+
   if (authUser) {
     const { is_admin, professor, aluno } = authUser;
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import myfetch from '../utils/myfetch'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, Navigate } from 'react-router-dom'
+import { checkAlunoAccess } from '../utils/CheckAccess';
 
 import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Select, FormControl, MenuItem, ListItemIcon, ListItemText, Accordion, AccordionSummary, AccordionDetails, AccordionActions, Stack, IconButton, Link as MuiLink } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -28,9 +29,16 @@ export default function AlunoProfile() {
     const [matriculas, setMatriculas] = React.useState([])
     const [expandedAccordion, setExpandedAccordion] = React.useState(null)
     const [waiting, setWaiting] = React.useState(false)
+    const [hasAccess, setHasAccess] = React.useState(null)
 
     React.useEffect(() =>{
         if (aluno) {
+            async function fetchAccess() {
+                const access = await checkAlunoAccess(id)
+                setHasAccess(access)
+            }
+            fetchAccess()
+
             const today = moment()
             const alunoIdade = today.diff(aluno.data_nasc, 'years')
             setIdade(parseInt(alunoIdade))
@@ -274,6 +282,9 @@ export default function AlunoProfile() {
             </>
         )
     }
+
+    if (hasAccess === null || waiting) return <Waiting show={true}/>
+    if (hasAccess === false) return <Navigate to="/forbidden" replace />
 
     return (
         <ThemeProvider theme={theme}>

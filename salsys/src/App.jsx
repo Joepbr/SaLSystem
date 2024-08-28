@@ -66,7 +66,7 @@ function App() {
 
               <Route path="/login" element={<LoginPage/>} />
 
-              <Route path="/" element={<AuthRoute level={1}> <ProtectedPage /> </AuthRoute>} >
+              <Route path="/" element={<AuthRoute level={0}> <ProtectedPage /> </AuthRoute>} >
                 <Route index element={<AuthRoute level={1}> <Homepage /> </AuthRoute>} />
 
                 <Route path="/forbidden" element={<AuthRoute level={0}> <Forbidden /> </AuthRoute>} />
