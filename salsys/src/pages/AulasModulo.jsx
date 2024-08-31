@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import myfetch from '../utils/myfetch';
+import AuthUserContext from '../contexts/AuthUserContext';
 import { Link, useParams } from 'react-router-dom';
 import { Container, Typography, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Box, List, ListItem, ListItemText, Stack, Switch, FormControlLabel, Link as MuiLink } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
@@ -14,6 +15,7 @@ import Waiting from '../ui/Waiting';
 moment.locale('pt-br');
 
 export default function AulasModulo() {
+    const { authUser } = useContext(AuthUserContext)
     const { id } = useParams()
     const [modulo, setModulo] = React.useState(null);
     const [aulas, setAulas] = React.useState([]);
@@ -176,7 +178,7 @@ export default function AulasModulo() {
                 <Typography variant="h4">
                     {modulo ? modulo.titulo : 'Carregando...'}
                 </Typography>
-                    {modulo && (
+                    {modulo && authUser?.is_admin && (
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: '400px' }}>
                             <FormControlLabel
                                 control={<Switch checked={modulo.active} onChange={openDeactivationDialog} />}
@@ -215,7 +217,7 @@ export default function AulasModulo() {
                 </Typography>
             </Box>
             <Divider />
-            {modulo && modulo.active &&(
+            {modulo && modulo.active && authUser?.professor && (
                 <Box display="flex" sx={{ margin: 2 }}>
                     <Button 
                         component={Link} 
@@ -258,8 +260,12 @@ export default function AulasModulo() {
                                             fontWeight: 'medium'
                                         }}
                                     />
-                                    <Button component={Link} to={`/avaliacao/${avaliacao.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
-                                    <Button onClick={(event) => handleDeleteAvaliacaoConfirmation(avaliacao, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir</Button>
+                                    {authUser?.professor && (
+                                        <Box>
+                                            <Button component={Link} to={`/avaliacao/${avaliacao.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
+                                            <Button onClick={(event) => handleDeleteAvaliacaoConfirmation(avaliacao, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir</Button>
+                                        </Box>
+                                    )}
                                 </ListItem>
                             </React.Fragment>
                         ))}
@@ -285,8 +291,12 @@ export default function AulasModulo() {
                                 }}
                                 secondary={aula.conteudo}
                             />
-                            <Button component={Link} to={`/aula/${aula.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
-                            <Button onClick={(event) => handleDeleteConfirmation(aula, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir</Button>
+                            {authUser?.professor && (
+                                <Box>
+                                    <Button component={Link} to={`/aula/${aula.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
+                                    <Button onClick={(event) => handleDeleteConfirmation(aula, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Excluir</Button>
+                                </Box>
+                            )}
                         </ListItem>
                     </React.Fragment>
                 ))}

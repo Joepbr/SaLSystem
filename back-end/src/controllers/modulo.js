@@ -254,9 +254,11 @@ controller.checkAccess = async function (req, res) {
         })
 
         if (!user) return res.status(404).end()
-        
-        const isProfessor = user.professor?.modulo.some(c => c.id === moduloId)
-        const isAluno = user.aluno?.matricula.modulo.some(c => c.id === moduloId)
+
+        const isProfessor = user.professor?.modulo?.some(c => c.id === moduloId)
+        const isAluno = user.aluno?.matricula?.some(matricula =>
+            matricula.modulo?.id === moduloId
+        )
 
         if (isProfessor || isAluno || user.is_admin) {
             return res.send({ hasAccess: true })

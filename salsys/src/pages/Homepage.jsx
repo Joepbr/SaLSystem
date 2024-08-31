@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import myfetch from '../utils/myfetch';
+import AuthUserContext from '../contexts/AuthUserContext';
 import { Link, useNavigate } from 'react-router-dom'
+
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+
 import logo from '../assets/Sallogo.png';
 import { Container, Paper, Typography, Button, IconButton, Box, Divider, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Stack, List, ListItem, ListItemAvatar, ListItemText, Avatar, Pagination, PaginationItem, Grid, FormControl, Select, InputLabel, MenuItem, ListItemIcon, Link as MuiLink } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material'
@@ -11,6 +14,7 @@ import EventIcon from '@mui/icons-material/Event';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import { useDropzone } from 'react-dropzone'
+
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -26,6 +30,7 @@ const tipsPerPage = 7
 
 export default function Homepage(){
     const navigate = useNavigate()
+    const { authUser } = useContext(AuthUserContext)
     const [news, setNews] = React.useState([])
     const [tips, setTips] = React.useState([])
     const [cursos, setCursos] = React.useState([])
@@ -585,9 +590,11 @@ export default function Homepage(){
                                                 
                                             </Stack>
                                         </Box>
-                                        <IconButton color='error' onClick={() => deleteNews(news.id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        {authUser?.is_admin && (
+                                            <IconButton color='error' onClick={() => deleteNews(news.id)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        )}
                                     </ListItem>
                                 </React.Fragment>
                             ))}
@@ -606,9 +613,11 @@ export default function Homepage(){
                                 )}
                             /> 
                         </Box>
-                        <Box textAlign='center'>
-                            <Button variant='contained' size='large' color='secondary' onClick={handleOpenNewsDialog} startIcon={<NewspaperIcon />} sx={{ mt: 2 }}>Postar</Button>
-                        </Box>
+                        {authUser?.is_admin && (
+                            <Box textAlign='center'>
+                                <Button variant='contained' size='large' color='secondary' onClick={handleOpenNewsDialog} startIcon={<NewspaperIcon />} sx={{ mt: 2 }}>Postar</Button>
+                            </Box>
+                        )}
                     </Paper>
                 </Grid>
                 <Grid item xs={6}>
@@ -640,9 +649,11 @@ export default function Homepage(){
                                                 </MuiLink>
                                                 
                                             </Box>
-                                            <IconButton color='error' onClick={() => deleteTip(tip.id)}>
-                                                <DeleteIcon />
-                                            </IconButton>
+                                            {authUser?.professor && (
+                                                <IconButton color='error' onClick={() => deleteTip(tip.id)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            )}
                                         </ListItem>
                                     ) : (
                                         <ListItem>
@@ -658,9 +669,11 @@ export default function Homepage(){
                                                     secondary={'Professor: ' + tip.professor.user.nome}
                                                 />
                                             </Box>
-                                            <IconButton color='error' onClick={() => deleteTip(tip.id)}>
-                                                <DeleteIcon />
-                                            </IconButton>
+                                            {authUser?.professor && (
+                                                <IconButton color='error' onClick={() => deleteTip(tip.id)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            )}
                                         </ListItem>
                                     )}
                                     
@@ -681,9 +694,11 @@ export default function Homepage(){
                                 )}
                             /> 
                         </Box>
-                        <Box textAlign='center'>
-                            <Button variant='contained' size='large' color='secondary' onClick={handleOpenTipsDialog} startIcon={<TipsAndUpdatesIcon />} sx={{ mt: 2 }}>Postar</Button>
-                        </Box>
+                        {authUser?.professor && (
+                            <Box textAlign='center'>
+                                <Button variant='contained' size='large' color='secondary' onClick={handleOpenTipsDialog} startIcon={<TipsAndUpdatesIcon />} sx={{ mt: 2 }}>Postar</Button>
+                            </Box>
+                        )}
                     </Paper>
                 </Grid>
             </Grid>
@@ -708,9 +723,11 @@ export default function Homepage(){
                             )
                         }}
                     />
-                    <Box textAlign='center' mt={2}>
-                        <Button variant='contained' size='large' color='secondary' onClick={handleOpenEventDialog} startIcon={<EventIcon />}>Novo Evento</Button>
-                    </Box>
+                    {authUser?.is_admin && (
+                        <Box textAlign='center' mt={2}>
+                            <Button variant='contained' size='large' color='secondary' onClick={handleOpenEventDialog} startIcon={<EventIcon />}>Novo Evento</Button>
+                        </Box>
+                    )}
                 </Paper>
             </Grid>
             <AddNews open={openNewsDialog} handleClose={handleCloseNewsDialog} />

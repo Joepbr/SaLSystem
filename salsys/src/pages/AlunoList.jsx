@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import AuthUserContext from '../contexts/AuthUserContext';
 import { Link } from 'react-router-dom';
 import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemText } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
@@ -8,6 +9,7 @@ import myfetch from '../utils/myfetch';
 import Waiting from '../ui/Waiting';
 
 export default function Alunos() {
+    const { authUser } = useContext(AuthUserContext)
     const [alunos, setAlunos] = React.useState([]);
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [alunoToDelete, setAlunoToDelete] = React.useState(null);
@@ -82,8 +84,12 @@ export default function Alunos() {
                                                 fontWeight: 'medium'
                                             }}
                                         />
-                                        <Button component={Link} to={`/aluno/${aluno.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
-                                        <Button onClick={(event) => handleDeleteConfirmation(aluno, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                                        {authUser?.is_admin && (
+                                            <Box>
+                                                <Button component={Link} to={`/aluno/${aluno.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />} sx={{ mr: 2 }}>Editar</Button>
+                                                <Button onClick={(event) => handleDeleteConfirmation(aluno, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                                            </Box>
+                                        )}
                                         <Divider component="li" />
                                     </ListItem>
                                 </React.Fragment>
@@ -91,16 +97,18 @@ export default function Alunos() {
                         </List>
                     </Box>
                     <Box display="flex">
-                        <Button 
-                            component={Link} 
-                            to="/alunos/new" 
-                            variant="contained" 
-                            size="large"
-                            sx={{ backgroundColor: "#9d2f2e" }}
-                            startIcon={<PiStudentFill />}
-                        > 
-                            Novo Aluno 
-                        </Button>
+                        {authUser?.is_admin && (
+                            <Button 
+                                component={Link} 
+                                to="/alunos/new" 
+                                variant="contained" 
+                                size="large"
+                                sx={{ backgroundColor: "#9d2f2e" }}
+                                startIcon={<PiStudentFill />}
+                            > 
+                                Novo Aluno 
+                            </Button>
+                        )}
                     </Box>
                     <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                         <DialogTitle>Remover Aluno</DialogTitle>

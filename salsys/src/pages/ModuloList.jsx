@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import myfetch from '../utils/myfetch';
+import AuthUserContext from '../contexts/AuthUserContext';
 import { Link, useParams } from 'react-router-dom';
 import { Box, Container, Typography, Divider, Button, Accordion, AccordionSummary, AccordionDetails, AccordionActions, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Avatar, Link as MuiLink, Stack } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
@@ -12,6 +13,7 @@ import Waiting from '../ui/Waiting';
 moment.locale('pt-br');
 
 export default function Modulos() {
+    const { authUser } = useContext(AuthUserContext)
     const { id } = useParams()
     const [curso, setCurso] = React.useState(null);
     const [modulos, setModulos] = React.useState([]);
@@ -124,23 +126,27 @@ export default function Modulos() {
                         <Typography>{`Dias de aula: ${formatDiasSem(modulo.dias_sem)}, Horário: ${formatHorario(modulo.horario)}`}</Typography>
                         <Typography>{`Professor: ${modulo.professor && modulo.professor.user && modulo.professor.user.nome ? modulo.professor.user.nome : 'Nome do professor não disponível'}`}</Typography>
                     </AccordionDetails>
-                    <AccordionActions>
-                        <Button component={Link} to={`/modulo/${modulo.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
-                        <Button onClick={(event) => handleDeleteConfirmation(modulo, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
-                    </AccordionActions>
+                    {authUser?.is_admin && (
+                        <AccordionActions>
+                            <Button component={Link} to={`/modulo/${modulo.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
+                            <Button onClick={(event) => handleDeleteConfirmation(modulo, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                        </AccordionActions>
+                    )}
                 </Accordion>
             ))}
             </Box>
-            <Button 
-                component={Link} 
-                to={`/curso/${id}/modulos/new`} 
-                variant="contained" 
-                color="primary"
-                size="large"
-                startIcon={<FaGraduationCap/>}
-            >
-                Novo Módulo
-            </Button>
+            {authUser?.is_admin && (
+                <Button 
+                    component={Link} 
+                    to={`/curso/${id}/modulos/new`} 
+                    variant="contained" 
+                    color="primary"
+                    size="large"
+                    startIcon={<FaGraduationCap/>}
+                >
+                    Novo Módulo
+                </Button>
+            )}
             <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                 <DialogTitle>Delete modulo</DialogTitle>
                 <DialogContent>

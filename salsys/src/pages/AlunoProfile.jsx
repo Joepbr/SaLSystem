@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import myfetch from '../utils/myfetch'
+import AuthUserContext from '../contexts/AuthUserContext';
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { checkAlunoAccess } from '../utils/CheckAccess';
 
@@ -19,6 +20,7 @@ import Waiting from '../ui/Waiting';
 moment.locale('pt-br');
 
 export default function AlunoProfile() {
+    const { authUser } = useContext(AuthUserContext)
     const { id } = useParams()
     const [aluno, setAluno] = React.useState(null)
     const [idade, setIdade] = React.useState(null)
@@ -329,16 +331,18 @@ export default function AlunoProfile() {
                             <Divider />
                             </>
                         )}
-                        <Button 
-                            onClick={handleEnrollClick} 
-                            variant="contained" 
-                            color="secondary" 
-                            size="large"
-                            sx={{margin: '25px'}}
-                            startIcon={<FaGraduationCap />}
-                        >
-                            Matricular
-                        </Button>
+                        {authUser?.is_admin && (
+                            <Button 
+                                onClick={handleEnrollClick} 
+                                variant="contained" 
+                                color="secondary" 
+                                size="large"
+                                sx={{margin: '25px'}}
+                                startIcon={<FaGraduationCap />}
+                            >
+                                Matricular
+                            </Button>
+                        )}
                         <Dialog open={openEnrollDialog} onClose={() => setOpenEnrollDialog(false)}>
                             <DialogTitle>Matricular em um módulo</DialogTitle>
                             <DialogContent>
@@ -379,7 +383,7 @@ export default function AlunoProfile() {
                                         onChange={() => handleAccordionChange(index)} 
                                         sx={{ 
                                             width: '100%',
-                                            opacity: matricula.modulo.active ? 1 : 0.5,
+                                            opacity: matricula.modulo.active ? 1 : 0.75,
                                             backgroundColor: matricula.modulo.active ? 'white' : '#f0f0f0'
                                         }}
                                     >
@@ -405,9 +409,11 @@ export default function AlunoProfile() {
                                                 {showNotas(aluno.presenca, aluno.notas, matricula)}
                                             </Stack>
                                         </AccordionDetails>
-                                        <AccordionActions>
-                                            <Button onClick={() => handleDeleteConfirmation(matricula.id)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Desmatricular</Button>
-                                        </AccordionActions>
+                                        {authUser?.is_admin && (
+                                            <AccordionActions>
+                                                <Button onClick={() => handleDeleteConfirmation(matricula.id)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Desmatricular</Button>
+                                            </AccordionActions>
+                                        )}
                                     </Accordion>
                                 ))}
                                 <Divider />

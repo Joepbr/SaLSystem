@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import myfetch from '../utils/myfetch'
+import AuthUserContext from '../contexts/AuthUserContext';
 
 import { ThemeProvider, Container, CssBaseline, Typography, Divider, Button, Box, Accordion, AccordionSummary, AccordionDetails, Avatar, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, AccordionActions, Stack, Link as MuiLink } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
@@ -12,6 +13,7 @@ import Waiting from '../ui/Waiting';
 
 
 export default function Profs(){
+    const { authUser } = useContext(AuthUserContext)
     const [profs, setProfs] = React.useState([])
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
     const [profToDelete, setProfToDelete] = React.useState(null)
@@ -99,25 +101,29 @@ export default function Profs(){
                                 <AccordionDetails sx={{ flexDirection: 'column', padding: 1, marginLeft: 5 }}>
                                     <Typography>{prof.especialidade}</Typography>
                                 </AccordionDetails>
-                                <AccordionActions sx={{padding: 1}}>
-                                    <Button component={Link} to={`/prof/${prof.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
-                                    <Button onClick={(event) => handleDeleteConfirmation(prof, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
-                                </AccordionActions>
+                                {authUser?.is_admin && (
+                                    <AccordionActions sx={{padding: 1}}>
+                                        <Button component={Link} to={`/prof/${prof.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
+                                        <Button onClick={(event) => handleDeleteConfirmation(prof, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                                    </AccordionActions>
+                                )}
                             </Accordion>
                         ))}
                     <Divider />
                     </Box>
                     <Box display="flex">
-                        <Button 
-                            component={Link} 
-                            to="/profs/new" 
-                            variant="contained" 
-                            size="large"
-                            sx={{ backgroundColor: "#9d2f2e" }}
-                            startIcon={<FaChalkboardTeacher/>}
-                        > 
-                            Novo Professor 
-                        </Button>
+                        {authUser?.is_admin && (
+                            <Button 
+                                component={Link} 
+                                to="/profs/new" 
+                                variant="contained" 
+                                size="large"
+                                sx={{ backgroundColor: "#9d2f2e" }}
+                                startIcon={<FaChalkboardTeacher/>}
+                            > 
+                                Novo Professor 
+                            </Button>
+                        )} 
                     </Box>
                     <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                         <DialogTitle>Remover Professor</DialogTitle>

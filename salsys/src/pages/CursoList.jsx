@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import myfetch from '../utils/myfetch'
+import AuthUserContext from '../contexts/AuthUserContext';
 
 import { Button, CssBaseline, Box, Typography, Container, ThemeProvider, Divider, Card, CardContent, CardActionArea, CardMedia, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,6 +13,7 @@ import Waiting from '../ui/Waiting';
 
 
 export default function Cursos(){
+    const { authUser } = useContext(AuthUserContext)
     const [cursos, setCursos] = React.useState([])
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false)
     const [cursoToDelete, setCursoToDelete] = React.useState(null)
@@ -88,10 +90,12 @@ export default function Cursos(){
                                             <Typography variant="body2" sx={{ mb:1.5, color: "black" }} >
                                                 {curso.descricao}
                                             </Typography>
-                                            <Box display="flex" justifyContent="space-between">
-                                                <Button component={Link} to={`/curso/${curso.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
-                                                <Button onClick={(event) => handleDeleteConfirmation(curso, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
-                                            </Box>
+                                            {authUser?.is_admin && (
+                                                <Box display="flex" justifyContent="space-between">
+                                                    <Button component={Link} to={`/curso/${curso.id}/edit`} variant="outlined" size="small" startIcon={<EditIcon />}>Editar</Button>
+                                                    <Button onClick={(event) => handleDeleteConfirmation(curso, event)} variant="outlined" size="small" startIcon={<DeleteIcon />}>Deletar</Button>
+                                                </Box>
+                                            )}
                                         </CardContent>
                                     </CardActionArea>
                                 </Link>
@@ -99,18 +103,20 @@ export default function Cursos(){
                         ))}
                     <Divider />
                     </Box>
-                    <Box display="flex">
-                        <Button 
-                            component={Link} 
-                            to="/cursos/new" 
-                            variant="contained"
-                            size="large"
-                            sx={{ backgroundColor: "#9d2f2e" }}
-                            startIcon={<IoChatbubblesSharp/>}
-                        > 
-                            Novo Curso
-                        </Button>
-                    </Box>
+                    {authUser?.is_admin && (
+                        <Box display="flex">
+                            <Button 
+                                component={Link} 
+                                to="/cursos/new" 
+                                variant="contained"
+                                size="large"
+                                sx={{ backgroundColor: "#9d2f2e" }}
+                                startIcon={<IoChatbubblesSharp/>}
+                            > 
+                                Novo Curso
+                            </Button>
+                        </Box>
+                    )}
                     <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                         <DialogTitle>Deletar Curso</DialogTitle>
                         <DialogContent>
