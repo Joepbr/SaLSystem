@@ -10,6 +10,7 @@ controller.create = async function (req, res) {
         if(req.body.password) {
             req.body.password = await bcrypt.hash(req.body.password, 12)
         }
+        req.body.passwordReset = true
 
         await prisma.user.create({ data: req.body })
 
@@ -107,6 +108,28 @@ controller.login = async function(req, res) {
 
         if(user.password) delete user.password
 
+        if (user.passwordReset) {
+            const token = jwt.sign(
+                { id: user.id, username: user.username },
+                process.env.TOKEN_SECRET,
+                { expiresIn: '730h' }
+            );
+
+            res.cookie(process.env.AUTH_COOKIE_NAME, token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'None',
+                path: '/',
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
+
+            return res.status(202).send({
+                message: 'Mudança de senha necessária',
+                resetRequired: true,
+                token
+            });
+        }
+
         const token = jwt.sign(
             user,
             process.env.TOKEN_SECRET,
@@ -182,6 +205,27 @@ controller.me = async function(req, res) {
     catch (error) {
         console.log(error)
         res.status(500).end
+    }
+}
+
+controller.resetPassword = async function (req, res) {
+    try {
+        const newPassword = await bcrypt.hash(req.body.password, 12)
+
+        await prisma.user.update({
+            where: { id: req.authUser.id },
+            data: {
+                password: newPassword,
+                passwordReset: false
+            }
+        })
+
+        res.status(200).send({ message: 'Password reset successfully' })
+    }
+    catch(error) {
+        console.log(error)
+
+        res.status(500).end()
     }
 }
 

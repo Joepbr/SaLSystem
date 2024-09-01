@@ -62,6 +62,7 @@ model user {
   telefone        String
   password        String
   is_admin        Boolean           @default(false)
+  passwordReset   Boolean           @default(true)
   end_logr        String
   end_num         Int
   end_compl       String?
@@ -141,6 +142,7 @@ model avaliacao {
   data             DateTime
   titulo           String
   peso             Int               @default(1)
+  recup            Boolean           @default(false)
 }
 
 model notas {

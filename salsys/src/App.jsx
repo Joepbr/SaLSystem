@@ -37,6 +37,7 @@ import AvaliacaoRecord from './pages/AvaliacaoRecord'
 
 import LoginForm from './pages/LoginForm'
 import Forbidden from './pages/Forbidden'
+import ResetPassword from './pages/ResetPassword'
 
 function App() {
 
@@ -64,7 +65,10 @@ function App() {
           <AuthUserContext.Provider value={{authUser, setAuthUser}}>
             <Routes>
 
-              <Route path="/login" element={<LoginPage/>} />
+              <Route path="/login" element={<LoginPage/>} >
+                <Route index element={<LoginForm/>} />
+                <Route path="/login/reset-password" element={<AuthRoute level={1}><ResetPassword/></AuthRoute>} />
+              </Route>
 
               <Route path="/" element={<AuthRoute level={0}> <ProtectedPage /> </AuthRoute>} >
                 <Route index element={<AuthRoute level={1}> <Homepage /> </AuthRoute>} />
@@ -135,7 +139,7 @@ function ProtectedPage({ children }) {
   );
 }
 
-function LoginPage() {
+function LoginPage({ children }) {
   return (
     <Box
       sx={{
@@ -147,7 +151,9 @@ function LoginPage() {
       }}
     >
       <Container component="main" maxWidth="xs">
-        <LoginForm />
+        <Outlet>
+          { children }
+        </Outlet>
       </Container>
     </Box>
   );

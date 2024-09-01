@@ -51,21 +51,31 @@ export default function LoginForm() {
       setState({...state, showWaiting: true})
 
       const response = await myfetch.post('/users/login', { username, password });
-      
-      window.localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_NAME, response.token);
-      
-      setAuthUser(response.user)
 
-      setState({...state,
-        showWaiting:false,
-        notif:{
-          show: true,
-          message: 'Autenticação realizada com sucesso',
-          severity: 'success',
-          timeout: 1500
-        }})
-    } 
-    catch (error) {
+      //window.localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_NAME, response.token);
+      
+      if (response.resetRequired) {
+        setState({...state,
+          showWaiting:false,
+          notif:{
+            show: true,
+            message: 'Mudança de senha necessária',
+            severity: 'warning',
+            timeout: 2000
+          }})
+      } else {
+        setAuthUser(response.user)
+        
+        setState({...state,
+          showWaiting:false,
+          notif:{
+            show: true,
+            message: 'Autenticação realizada com sucesso',
+            severity: 'success',
+            timeout: 1500
+          }})
+      }
+    } catch (error) {
       console.error(error);
 
       setState({...state,
@@ -90,6 +100,7 @@ export default function LoginForm() {
     }})
 
     if(status ==='success') navigate('/')
+    else if(status === 'warning') navigate('/login/reset-password')
   }
 
   return (
