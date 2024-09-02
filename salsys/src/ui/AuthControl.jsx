@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Button } from '@mui/material'
+import { Typography, Button, Link as MuiLink, Stack, Divider } from '@mui/material'
 import AuthUserContext from "../contexts/AuthUserContext";
 import { Link, useNavigate } from 'react-router-dom'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -32,29 +32,36 @@ export default function AuthControl() {
         return (
               <>
                 <ConfirmDialog />
-                
-                <AccountCircleIcon color="secondary" fontSize="small" sx={{ mr: 1 }} />
-                <Typography variant="caption">
-                    {authUser.nome}
-                </Typography>
-                <Button
-                  size="small"
-                  onClick={handleLogoutButtonClick}
-                  sx={{
-                    backgroundColor: '#9d2f2e',
-                    ml: 2
-                  }}
-                >
-                  <Typography
+                <Stack direction="row">
+                  <AccountCircleIcon color="secondary" fontSize="small" sx={{ mr: 1 }} />
+                  <Stack divider={<Divider color="white"/>}>
+                    <Typography variant="caption">
+                      <MuiLink component={Link} underline="none" color="white" fontWeight="bold" to={authUser.professor ? `/prof/${authUser.id}` : `/aluno/${authUser.id}`}>{authUser.nome}</MuiLink>
+                    </Typography>
+                    <Typography variant="caption" >
+                      <MuiLink component={Link} underline="none" color="white" to={'/login/reset-password'}>Mudar Senha</MuiLink>
+                    </Typography>
+                  </Stack>
+                  <Button
+                    size="small"
+                    onClick={handleLogoutButtonClick}
                     sx={{
-                      fontFamily: "Impact",
-                      color: "white",
-                      textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                      backgroundColor: '#9d2f2e',
+                      ml: 2
                     }}
                   >
-                  Sair
-                </Typography>
-              </Button>
+                    <Typography
+                      sx={{
+                        fontFamily: "Impact",
+                        color: "white",
+                        textShadow: '-2px 2px 0 #104978, 2px 2px 0 #104978, 2px -2px 0 #104978, -2px -2px 0 #104978',
+                      }}
+                    >
+                    Sair
+                    </Typography>
+                  </Button>
+                </Stack>
+                
             </>
         )
     }

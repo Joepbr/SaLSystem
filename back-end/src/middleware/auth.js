@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken'
 
 export default function(req, res, next) {
     const bypassRoutes = [
-        { url: '/users/login', method: 'POST' }
+        { url: '/users/login', method: 'POST' },
+        { url: '/users/send-email', method: 'POST'}
     ]
 
     for(let route of bypassRoutes) {

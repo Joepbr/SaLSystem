@@ -151,15 +151,15 @@ export default function Modulos() {
                 <DialogTitle>Delete modulo</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete the modulo "{moduloToDelete ? moduloToDelete.titulo : ''}"?
+                        Tem certeza que você deseja deletar o módulo "{moduloToDelete ? moduloToDelete.titulo : ''}"?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDeleteDialog} variant="contained" color="primary">
-                        Cancel
-                    </Button>
                     <Button onClick={handleDelete} variant="contained" color="secondary" autoFocus>
-                        Delete
+                        Deletar
+                    </Button>
+                    <Button onClick={handleCloseDeleteDialog} variant="contained" color="primary">
+                        Cancelar
                     </Button>
                 </DialogActions>
             </Dialog>

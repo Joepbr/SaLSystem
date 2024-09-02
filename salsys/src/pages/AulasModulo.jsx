@@ -310,7 +310,7 @@ export default function AulasModulo() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDeleteAula} variant="contained" color="secondary">
-                        Exclir
+                        Excluir
                     </Button>
                     <Button onClick={handleCloseDeleteAulaDialog} variant="contained" color="primary">
                         Cancelar

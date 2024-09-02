@@ -114,7 +114,7 @@ export default function Alunos() {
                         <DialogTitle>Remover Aluno</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Tem certeza que você deseja remover o aluno "{alunoToDelete ? alunoToDelete.user.nome : ''}"?
+                                Tem certeza que você deseja remover o(a) aluno(a) "{alunoToDelete ? alunoToDelete.user.nome : ''}"?
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>

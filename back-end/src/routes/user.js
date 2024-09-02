@@ -12,5 +12,6 @@ router.delete('/:id', controller.delete)
 router.post('/login', controller.login)
 router.post('/logout', controller.logout)
 router.post('/reset-password', controller.resetPassword)
+router.post('/send-email', controller.requestPasswordReset)
 
 export default router

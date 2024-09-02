@@ -59,7 +59,7 @@ export default function PermanentDrawerLeft() {
           </Box>
           <Box
             sx={{
-              width: '300px',
+              width: '350px',
               textAlign: 'center'
             }}
           >

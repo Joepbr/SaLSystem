@@ -60,8 +60,8 @@ export default function useConfirmDialog() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={fnOnConfirm} color="secondary" variant="outlined">OK</Button>
-            <Button onClick={fnOnCancel} color="secondary" autoFocus>Cancelar</Button>
+            <Button onClick={fnOnConfirm} color="secondary" variant="contained">OK</Button>
+            <Button onClick={fnOnCancel} variant="contained" color="primary" autoFocus>Cancelar</Button>
           </DialogActions>
         </Dialog>
       </div>

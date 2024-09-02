@@ -229,4 +229,28 @@ controller.resetPassword = async function (req, res) {
     }
 }
 
+controller.requestPasswordReset = async function (req, res) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: req.body.email }
+        });
+  
+        if (!user) return res.status(404).send({ error: 'Usuário não encontrado' });
+  
+        const resetToken = jwt.sign(
+            { userId: user.id },
+            process.env.TOKEN_SECRET,
+            { expiresIn: '1h' }
+        );
+  
+        // Send this reset token in an email to the user
+        await sendPasswordResetEmail(user.email, resetToken);
+  
+        res.status(200).send({ message: 'Password reset email sent' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).end();
+    }
+  };  
+
 export default controller

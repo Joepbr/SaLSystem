@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import myfetch from '../utils/myfetch';
-import { Paper, Button, TextField, Box, Typography, IconButton, InputAdornment } from '@mui/material';
+import { Paper, Button, TextField, Box, Typography, IconButton, InputAdornment, Link as MuiLink } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import logo from '../assets/Sallogo.png';
 import Notification from '../ui/Notification';
@@ -179,14 +179,18 @@ export default function LoginForm() {
                   }}
               />
               <Button 
-                  variant="contained" 
-                  type="submit"
-                  color="secondary"
-                  fullWidth
+                variant="contained" 
+                type="submit"
+                color="secondary"
+                fullWidth
+                sx={{mb: 2}}
               >
-                  Enviar
+                Entrar
               </Button>
             </form>
+            <Typography variant="body1" align='center'>
+              <MuiLink component={Link} underline="none" color="blue" to={'/login/forgot-password'}>Esqueci Minha Senha</MuiLink>
+            </Typography>
           </Paper>
         </Box>
     </>
