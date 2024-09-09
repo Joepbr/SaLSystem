@@ -37,6 +37,9 @@ class HttpError extends Error {
   
   function getErrorDescription(response) {
     switch(response.status) {
+      case 400:
+        return 'ERRO: token inválido ou expirado'
+
       case 401:   // Unauthorized
         return 'ERRO: usuário ou senha incorretos'
 

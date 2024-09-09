@@ -1,6 +1,8 @@
 import prisma from '../database/client.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { sendPasswordResetEmail } from '../utils/helpers.js'
+import base64url from 'base64url'
 
 const controller = {}
 
@@ -229,6 +231,45 @@ controller.resetPassword = async function (req, res) {
     }
 }
 
+controller.resetPasswordToken = async function (req, res) {
+    try {
+        const { token, password } = req.body
+
+        const decToken = base64url.decode(token)
+
+        const decoded = jwt.verify(decToken, process.env.TOKEN_SECRET)
+
+        const user = await prisma.user.findUnique({
+            where: { id: decoded.userId }
+        })
+
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 12)
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { password: hashedPassword }
+        })
+
+        res.status(200).send({ message: 'Senha modificada com sucesso' })
+    } 
+    catch (error) {
+        console.error(error)
+
+        if (error.name === 'TokenExpiredError') {
+            return res.status(400).send({ error: 'Token expired' })
+        }
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(400).send({ error: 'Invalid token' })
+        }
+
+        res.status(500).send({ error: 'Internal server error' })
+    }
+}
+
 controller.requestPasswordReset = async function (req, res) {
     try {
         const user = await prisma.user.findUnique({
@@ -237,20 +278,22 @@ controller.requestPasswordReset = async function (req, res) {
   
         if (!user) return res.status(404).send({ error: 'Usuário não encontrado' });
   
-        const resetToken = jwt.sign(
+        const token = jwt.sign(
             { userId: user.id },
             process.env.TOKEN_SECRET,
             { expiresIn: '1h' }
         );
+
+        const resetToken = base64url(token)
   
         // Send this reset token in an email to the user
-        await sendPasswordResetEmail(user.email, resetToken);
+        await sendPasswordResetEmail(user, resetToken);
   
         res.status(200).send({ message: 'Password reset email sent' });
     } catch (error) {
         console.log(error);
         res.status(500).end();
     }
-  };  
+};
 
 export default controller

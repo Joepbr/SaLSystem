@@ -39,6 +39,7 @@ import LoginForm from './pages/LoginForm'
 import Forbidden from './pages/Forbidden'
 import ResetPassword from './pages/ResetPassword'
 import ForgotPassword from './pages/ForgotPassword'
+import ResetPasswordToken from './pages/ResetPasswordToken'
 
 function App() {
 
@@ -69,6 +70,7 @@ function App() {
               <Route path="/login" element={<LoginPage/>} >
                 <Route index element={<LoginForm/>} />
                 <Route path="/login/reset-password" element={<AuthRoute level={1}><ResetPassword/></AuthRoute>} />
+                <Route path="/login/reset-password/:token" element={<ResetPasswordToken/>} />
                 <Route path="/login/forgot-password" element={<ForgotPassword/>}/>
               </Route>
 

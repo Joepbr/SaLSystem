@@ -89,11 +89,31 @@ app.use('/tips', tipsRoute)
 import eventoRoute from './routes/evento.js'
 app.use('/eventos', eventoRoute)
 
-/***************************/
+/****************************
+
+import path from 'path';
+import { fileURLToPath } from "url";
+// This is needed to use import.meta.url for getting directory paths
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'build')));
+
+***************************/
+// API routes
 import { router as uploadImageRouter } from "./index.js";
 app.use('/api', uploadImageRouter)
 
 import imageProxyRouter from './routes/image.js'
 app.use('/api', imageProxyRouter)
+/*****************************/
+
+/*
+// Catch-all handler: for any other route, send back index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
+});
+*/
 
 export default app;

@@ -30,6 +30,11 @@ npx create-react-app salsys
 # Estilos no front-end
 Modificação dos estilos para se adequar às telas projetadas em figma
 
+# build for production
+npm run build
+
+ -> mover pasta 'dist' para back-end
+
 # Projeto de back-end criado via comando:
 npx @aka-demy/create-express-app
 nome: back-end
@@ -56,6 +61,8 @@ Instalar os pacotes:
 
 npm install jsonwebtoken
 npm install dotenv
+npm install base64url
+npm install nodemailer
 
 Criar método controller.login
 Criar senha TOKEN_SECRET no arquivo .env e passar em controller.login
