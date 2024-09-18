@@ -5,7 +5,7 @@ import { resolve } from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  
+  /*
   build: {
     manifest: true,
     rollupOptions: {
@@ -32,4 +32,5 @@ export default defineConfig({
       '@': resolve(__dirname, 'src')
     }
   }
+  */
 })

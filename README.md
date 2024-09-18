@@ -70,3 +70,8 @@ Criar senha TOKEN_SECRET no arquivo .env e passar em controller.login
 # instalar bibliotecas para integração com Google Drive
 npm install googleapis@105 @google-cloud/local-auth@2.1.0 --save
 npm install multer
+
+# preparar projeto para produção
+npm run build (no front-end)
+npm install -g serve
+serve -s dist

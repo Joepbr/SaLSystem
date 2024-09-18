@@ -1,0 +1,21 @@
+{
+  "src/assets/Sallogo.png": {
+    "file": "assets/Sallogo-2f1e2525.png",
+    "src": "src/assets/Sallogo.png"
+  },
+  "src/main.css": {
+    "file": "assets/main-a7238f01.css",
+    "src": "src/main.css"
+  },
+  "src/main.jsx": {
+    "assets": [
+      "assets/Sallogo-2f1e2525.png"
+    ],
+    "css": [
+      "assets/main-a7238f01.css"
+    ],
+    "file": "assets/main-4e9f7548.js",
+    "isEntry": true,
+    "src": "src/main.jsx"
+  }
+}
