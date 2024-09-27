@@ -75,3 +75,6 @@ npm install multer
 npm run build (no front-end)
 npm install -g serve
 serve -s dist
+
+-> Desfazer build:
+Remove-Item -Recurse -Force dist

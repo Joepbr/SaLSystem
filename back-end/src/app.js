@@ -92,10 +92,10 @@ app.use('/eventos', eventoRoute)
 /***************************/
 // API routes
 import { router as uploadImageRouter } from "./index.js";
-app.use('/api', uploadImageRouter)
+app.use('/api/upload', uploadImageRouter)
 
 import imageProxyRouter from './routes/image.js'
-app.use('/api', imageProxyRouter)
+app.use('/api/image', imageProxyRouter)
 /*****************************/
 
 export default app;

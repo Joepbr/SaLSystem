@@ -1,14 +1,18 @@
 // Utility function to transform imageUrl
 const transformImageUrl = (imageUrl) => {
+  return imageUrl
+}
+/*
+const transformImageUrl = (imageUrl) => {
   if (!imageUrl) return null;
   const fileIdMatch = imageUrl.match(/id=([^&]+)/);
   if (fileIdMatch) {
     const fileId = fileIdMatch[1];
-    return `/api/image/${fileId}`;
+    return `/api/image/${fileId}?t=${new Date().getTime()}`;
   }
   return imageUrl;
 };
-  
+*/
 // Helper function to transform imageUrls in nested objects
 const transformImageUrlsInObject = (obj) => {
   if (Array.isArray(obj)) {

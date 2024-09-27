@@ -66,6 +66,11 @@ export default function CreateTeacherForm() {
 
                 const response = await myfetch.post('/api/upload', formData)
                 imageUrl = response.imageUrl
+
+                setTeacherData(prevState => ({
+                    ...prevState,
+                    imageUrl: imageUrl
+                }))
             }
 
             const response = await myfetch.post('/professores', {

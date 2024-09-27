@@ -30,7 +30,7 @@ const drive = google.drive({
   version: "v3",
   auth: auth,
 });
-
+/*
 async function uploadFileToDrive(fileBuffer, fileName) {
 
   const FolderQuery = "name='imagens' and mimeType='application/vnd.google-apps.folder'";
@@ -60,26 +60,57 @@ async function uploadFileToDrive(fileBuffer, fileName) {
     media: {
       mimeType: 'image/*',
       body: stream,
-    }
-  })
+    },
+    fields: 'id'
+  });
 
   await drive.permissions.create({
     fileId: response.data.id,
     requestBody: {
       role: 'reader',
-      type: 'anyone',
+      type: 'anyone'
     }
   })
+  
+  return `https://drive.google.com/uc?id=${response.data.id}`;
+}
+*/
+import fetch from 'node-fetch';
 
-  return `https://drive.google.com/uc?id=${response.data.id}`
+async function uploadFileToGitHub(fileBuffer, fileName) {
+  const owner = 'Joepbr'; 
+  const repo = 'salsys-images'; 
+  const path = `images/${fileName}`;
+  const token = process.env.GITHUB_TOKEN; 
+
+  const base64Content = fileBuffer.toString('base64'); 
+
+  const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: `Upload image ${fileName}`,
+      content: base64Content
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to upload image: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.content.download_url; // URL to access the image
 }
 
-router.post('/upload', upload.single('image'), async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
   try {
     const fileBuffer = req.file.buffer
     const fileName = req.file.originalname
 
-    const fileUrl = await uploadFileToDrive(fileBuffer, fileName)
+    const fileUrl = await uploadFileToGitHub(fileBuffer, fileName)
 
     res.status(200).json({ imageUrl: fileUrl })
   } catch (error) {
@@ -87,6 +118,5 @@ router.post('/upload', upload.single('image'), async (req, res) => {
     res.status(500).json({ message: 'Image upload failed' })
   }
 })
-
 
 export { drive, router }

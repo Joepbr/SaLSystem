@@ -78,6 +78,11 @@ export default function EditTeacherForm() {
 
                 const response = await myfetch.post('/api/upload', formData)
                 imageUrl = response.imageUrl
+
+                setTeacherData(prevState => ({
+                    ...prevState,
+                    imageUrl: imageUrl
+                }))
             }
 
             console.log('Teacher data before submission:', teacherData);
@@ -93,7 +98,7 @@ export default function EditTeacherForm() {
             const response1 = await myfetch.put(`/professores/${id}`, {
                 data_nasc: dataNascISO,
                 especialidade: teacherData.especialidade,
-                imageUrl: teacherData.imageUrl
+                imageUrl: imageUrl
             });
 
             const response2 = await myfetch.put(`/users/${teacherData.id}`, {
