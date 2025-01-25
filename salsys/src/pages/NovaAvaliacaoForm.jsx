@@ -39,7 +39,8 @@ export default function NovaAvaliacaoForm() {
             const initialNotas = sortedAlunos.map((aluno) => ({
                 alunoId: aluno.id,
                 avaliacaoId: null,
-                nota: 0
+                nota: 0,
+                coment: ''
             }))
             setNotas(initialNotas)
 
@@ -70,11 +71,22 @@ export default function NovaAvaliacaoForm() {
         }
     }
 
-    const handleNotaChange =(alunoId) => (event) => {
+    const handleNotaChange = (alunoId) => (event) => {
         const nota = parseFloat(event.target.value)
         const updatedNotas = notas.map((notaItem) => {
             if (notaItem.alunoId === alunoId) {
                 return { ...notaItem, nota: nota }
+            }
+            return notaItem
+        })
+        setNotas(updatedNotas)
+    }
+
+    const handleComentChange = (alunoId) => (event) => {
+        const coment = event.target.value
+        const updatedNotas = notas.map((notaItem) => {
+            if (notaItem.alunoId === alunoId) {
+                return { ...notaItem, coment: coment }
             }
             return notaItem
         })
@@ -98,8 +110,10 @@ export default function NovaAvaliacaoForm() {
 
             await Promise.all(alunos.map(async (aluno) => {
                 const nota = notas.find((nota) => nota.alunoId === aluno.id)?.nota || 0
+                const coment = notas.find((nota) => nota.alunoId === aluno.id)?.coment || ''
                 const response = await myfetch.post('/notas', {
                     nota,
+                    coment,
                     aluno: { connect: { id: aluno.id } },
                     avaliacao: { connect: { id: newAval.id } }
                 })
@@ -141,15 +155,15 @@ export default function NovaAvaliacaoForm() {
                         />
                         <Grid container spacing={2} sx={{ margin: 2 }}>
                             <Grid item xs={2}>
-                            <Typography>Peso:</Typography>
-                            <TextField
-                                type="number"
-                                variant="filled"
-                                sx={{backgroundColor: "white", color: "black"}}
-                                inputProps={{ min: 1, max: 5 }}
-                                value={avaliacao.peso}
-                                onChange={(e) => setAvaliacao(prevState => ({ ...prevState, peso: e.target.value }))}
-                            />
+                                <Typography>Peso:</Typography>
+                                <TextField
+                                    type="number"
+                                    variant="filled"
+                                    sx={{backgroundColor: "white", color: "black"}}
+                                    inputProps={{ min: 1, max: 5 }}
+                                    value={avaliacao.peso}
+                                    onChange={(e) => setAvaliacao(prevState => ({ ...prevState, peso: e.target.value }))}
+                                />
                             </Grid>
                             <Grid item xs={4}>
                                 <Typography>Data de Aplicação:</Typography>
@@ -169,19 +183,32 @@ export default function NovaAvaliacaoForm() {
                         <FormGroup>
                             {alunos.map(aluno => (
                                 <div key={aluno.id}>
-                                    <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                                    <Stack direction="column">
+                                        <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                                            <FormControl>
+                                                <TextField
+                                                    type="number"
+                                                    sx={{backgroundColor: "white", color: "black", width: 100}}
+                                                    size="small"
+                                                    inputProps={{ step: "0.05", min: 0, max: 10 }}
+                                                    value={notas.find(notas => notas.alunoId === aluno.id)?.nota || 0}
+                                                    onChange={handleNotaChange(aluno.id)}
+                                                />
+                                            </FormControl>
+                                            <Typography>{aluno.user.nome}</Typography>
+                                        </Stack>
+                                        <Typography>Comentário: </Typography>
                                         <FormControl>
                                             <TextField
-                                                type="number"
-                                                sx={{backgroundColor: "white", color: "black", width: 100}}
+                                                sx={{backgroundColor: "white", color: "black", width: 700, mb:2}}
                                                 size="small"
-                                                inputProps={{ step: "0.05", min: 0, max: 10 }}
-                                                value={notas.find(notas => notas.alunoId === aluno.id)?.nota || 0}
-                                                onChange={handleNotaChange(aluno.id)}
+                                                multiline
+                                                value={notas.find(notas => notas.alunoId === aluno.id)?.coment || ''}
+                                                onChange={handleComentChange(aluno.id)}
                                             />
                                         </FormControl>
-                                    <Typography>{aluno.user.nome}</Typography>
                                     </Stack>
+                                    <Divider/>
                                 </div>
                             ))}
                         </FormGroup>

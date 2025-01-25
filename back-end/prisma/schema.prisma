@@ -152,6 +152,7 @@ model notas {
   avaliacao        avaliacao         @relation(fields: [avaliacaoId], references: [id])
   avaliacaoId      Int
   nota             Float
+  coment           String?
   arquivo2         arquivo2?
 }
 

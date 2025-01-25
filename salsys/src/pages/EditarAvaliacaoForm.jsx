@@ -62,22 +62,33 @@ export default function EditarAvaliacaoForm() {
         setNotas(updatedNotas);
     };
 
+    const handleComentChange = (alunoId) => (event) => {
+        const coment = event.target.value;
+        const updatedNotas = notas.map((notaItem) => {
+            if (notaItem.aluno.id === alunoId) {
+                return { ...notaItem, coment: coment };
+            }
+            return notaItem;
+        });
+        setNotas(updatedNotas);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             setWaiting(true);
 
-            const notasData = notas.map(({ id, nota }) => ({ id, nota }))
+            const notasData = notas.map(({ id, nota, coment }) => ({ id, nota, coment }))
 
             await myfetch.put(`/avaliacoes/${id}`, {
                 titulo: avaliacao.titulo,
                 data: avaliacao.data,
                 peso: parseInt(avaliacao.peso),
                 notas: {
-                    updateMany: notasData.map(({ id, nota }) => ({
+                    updateMany: notasData.map(({ id, nota, coment }) => ({
                         where: { id },
-                        data: { nota }
+                        data: { nota, coment }
                     }))
                 },
             });
@@ -258,58 +269,71 @@ export default function EditarAvaliacaoForm() {
 
                                 return (
                                     <div key={aluno.id}>
-                                        <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                                        <Stack direction="column">
+                                            <Stack direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                                                <FormControl>
+                                                    <TextField
+                                                        type="number"
+                                                        sx={{ backgroundColor: "white", color: "black", width: 100 }}
+                                                        size="small"
+                                                        inputProps={{ step: "0.05", min: 0, max: 10 }}
+                                                        value={notas.find(nota => nota.aluno.id === aluno.id)?.nota || 0}
+                                                        onChange={handleNotaChange(aluno.id)}
+                                                    />
+                                                </FormControl>
+                                                <Typography>{aluno.user.nome}</Typography>
+                                                {uploadedFile ? (
+                                                    <>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', mr: 1, ml: 2 }}>
+                                                            <CloudCircleIcon />
+                                                            <Typography sx={{ ml: 1, fontSize: 'small'}}>{uploadedFile.nome}</Typography>
+                                                                <IconButton aria-label="Excluir" onClick={() => handleFileDelete(uploadedFile.id)}>
+                                                                    <DeleteIcon color="error" />
+                                                                </IconButton>
+                                                        </Box>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <input type="file" onChange={(event) => handleFileChange(event, aluno.id)} />
+                                                        {fileInputs[alunoId] && (
+                                                            <>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', margin: 2 }}>
+                                                                    <Typography sx={{ margin: 1 }}>{fileInputs[alunoId].name}</Typography>
+                                                                    {uploading ? (
+                                                                        <CircularProgress size={20} />
+                                                                    ) : fileUploaded ? (
+                                                                        <CheckCircleIcon color="success" />
+                                                                    ) : null}
+                                                                </Box>
+                                                            </>
+                                                        )}
+                                                        <IconButton 
+                                                            aria-label="upload" 
+                                                            onClick={() => handleFileUpload(aluno.id, notaId)} 
+                                                            disabled={!fileInputs[alunoId] || uploading}
+                                                            sx={{
+                                                                '&.Mui-disabled': {
+                                                                    opacity: 0.5
+                                                                }
+                                                            }}
+                                                        >
+                                                            <CloudUploadIcon color="primary" />
+                                                        </IconButton>
+                                                    </>
+                                                )}
+                                            </Stack>
+                                            <Typography>Comentário: </Typography>
                                             <FormControl>
                                                 <TextField
-                                                    type="number"
-                                                    sx={{ backgroundColor: "white", color: "black", width: 100 }}
+                                                    sx={{backgroundColor: "white", color: "black", width: 700, mb:2}}
                                                     size="small"
-                                                    inputProps={{ step: "0.05", min: 0, max: 10 }}
-                                                    value={notas.find(nota => nota.aluno.id === aluno.id)?.nota || 0}
-                                                    onChange={handleNotaChange(aluno.id)}
+                                                    multiline
+                                                    value={notas.find(notas => notas.alunoId === aluno.id)?.coment || ''}
+                                                    onChange={handleComentChange(aluno.id)}
                                                 />
                                             </FormControl>
-                                            <Typography>{aluno.user.nome}</Typography>
-                                            {uploadedFile ? (
-                                                <>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', mr: 1, ml: 2 }}>
-                                                        <CloudCircleIcon />
-                                                        <Typography sx={{ ml: 1, fontSize: 'small'}}>{uploadedFile.nome}</Typography>
-                                                            <IconButton aria-label="Excluir" onClick={() => handleFileDelete(uploadedFile.id)}>
-                                                                <DeleteIcon color="error" />
-                                                            </IconButton>
-                                                    </Box>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <input type="file" onChange={(event) => handleFileChange(event, aluno.id)} />
-                                                    {fileInputs[alunoId] && (
-                                                        <>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', margin: 2 }}>
-                                                                <Typography sx={{ margin: 1 }}>{fileInputs[alunoId].name}</Typography>
-                                                                {uploading ? (
-                                                                    <CircularProgress size={20} />
-                                                                ) : fileUploaded ? (
-                                                                    <CheckCircleIcon color="success" />
-                                                                ) : null}
-                                                            </Box>
-                                                        </>
-                                                    )}
-                                                    <IconButton 
-                                                        aria-label="upload" 
-                                                        onClick={() => handleFileUpload(aluno.id, notaId)} 
-                                                        disabled={!fileInputs[alunoId] || uploading}
-                                                        sx={{
-                                                            '&.Mui-disabled': {
-                                                                opacity: 0.5
-                                                            }
-                                                        }}
-                                                    >
-                                                        <CloudUploadIcon color="primary" />
-                                                    </IconButton>
-                                                </>
-                                            )}
                                         </Stack>
+                                        <Divider/>
                                     </div>
                                 )
                             })}

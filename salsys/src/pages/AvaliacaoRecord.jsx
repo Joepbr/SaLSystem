@@ -121,27 +121,36 @@ export default function AvaliacaoRecord() {
     const renderAluno = aluno => {
         const nota = avaliacao.notas.find(notas => notas?.aluno?.user?.nome === aluno);
         const alunoNota = nota?.nota || 0;
+        const coment = nota?.coment || '';
         const alunoId = nota?.aluno?.id;
         const arquivo = arquivos[alunoId]
 
         console.log(`arquivo pertencente a aluno ${alunoId}:`, arquivo);
 
         return (
-            <Stack key={aluno} direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
-                <Box sx={{ backgroundColor: 'white' }}>
-                    <Typography sx={{ ml: 2, mr: 2, fontWeight: 'bold', color: alunoNota < 6 ? 'red' : 'blue' }} >{parseFloat(alunoNota).toFixed(2)}</Typography>
-                </Box>
-                <MuiLink component={Link} to={`/aluno/${alunoId}`} underline="none" >{aluno}</MuiLink>
-                {arquivo && arquivo !== null ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', mr: 1, ml: 2 }}>
-                        <IconButton aria-label='Download arquivo' onClick={() => handleFileDownload(arquivo.id, arquivo.nome)}>
-                            <CloudDownloadIcon color="secondary"/>
-                        </IconButton>
-                        <Typography sx={{fontSize: 'small'}}>{arquivo.nome}</Typography>
+            <Stack direction="column">
+                <Stack key={aluno} direction="row" spacing={2} alignItems="center" sx={{ margin: 2 }}>
+                    <Box sx={{ backgroundColor: 'white' }}>
+                        <Typography sx={{ ml: 2, mr: 2, fontWeight: 'bold', color: alunoNota < 6 ? 'red' : 'blue' }} >{parseFloat(alunoNota).toFixed(2)}</Typography>
                     </Box>
-                ) : (
-                    <Typography sx={{fontSize: 'small'}}>Nenhum arquivo disponível</Typography>
-                )}
+                    <MuiLink component={Link} to={`/aluno/${alunoId}`} underline="none" >{aluno}</MuiLink>
+                    {arquivo && arquivo !== null ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', mr: 1, ml: 2 }}>
+                            <IconButton aria-label='Download arquivo' onClick={() => handleFileDownload(arquivo.id, arquivo.nome)}>
+                                <CloudDownloadIcon color="secondary"/>
+                            </IconButton>
+                            <Typography sx={{fontSize: 'small'}}>{arquivo.nome}</Typography>
+                        </Box>
+                    ) : (
+                        <Typography sx={{fontSize: 'small'}}>Nenhum arquivo disponível</Typography>
+                    )}
+                    
+                </Stack>
+                <Stack direction="row">
+                    <Typography>Comentário: </Typography>
+                    <Typography sx={{fontSize: 'small', ml: 2, mb: 2}}>{coment}</Typography>
+                </Stack>
+                <Divider/>
             </Stack>
         )
     }

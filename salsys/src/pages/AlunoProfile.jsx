@@ -189,6 +189,7 @@ export default function AlunoProfile() {
     }
 
     const showNotas = (presencas, notas, matricula) => {
+
         let totalAulas = matricula.modulo.aula.length
         let numPres = 0
         let percPres = 0
@@ -209,7 +210,7 @@ export default function AlunoProfile() {
             if (!notasByAvaliacao[titulo]) {
                 notasByAvaliacao[titulo] = {notas: [], peso: nota.avaliacao.peso, id: nota.id}
             }
-            notasByAvaliacao[titulo].notas.push(nota.nota)
+            notasByAvaliacao[titulo].notas.push(nota)
         })
 
         const calcularFinal = (notasModulo) => {
@@ -231,10 +232,10 @@ export default function AlunoProfile() {
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 2 }}>
                     <Stack direction="column" spacing={1} alignItems="Left" sx={{ ml: 2, paddingRight: 2 }}>
                         <Typography>Aulas: {totalAulas}</Typography>
-                        <Typography>Presenças: {numPres} ({percPres}%)</Typography>
+                        <Typography>Presenças: {numPres} ({parseFloat(percPres).toFixed(2)}%)</Typography>
                     </Stack>
                     <Divider orientation="vertical" variant="middle" flexItem />
-                    <table style={{ borderCollapse: 'collapse', width: '30%' }}>
+                    <table style={{ borderCollapse: 'collapse', width: 500 }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid #ccc' }}>
                                 <th style={{ textAlign: 'center', padding: '8px' }}>Avaliação</th>
@@ -245,30 +246,43 @@ export default function AlunoProfile() {
                         </thead>
                         <tbody>
                             {Object.entries(notasByAvaliacao).map(([titulo, { notas, peso, id }]) => (
-                                <tr key={titulo} style={{ borderBottom: '1px solid #ccc' }}>
-                                    {console.log('notas: ', notas)}
-                                    <td style={{ textAlign: 'center', padding: '8px' }}>{titulo}</td>
-                                    <td style={{ textAlign: 'center', padding: '8px' }}>{peso}</td>
-                                    <td style={{ textAlign: 'center', padding: '8px', fontWeight: 'bold', fontSize: 'larger'}}>
-                                        {notas.map((nota, index) => (
-                                            <React.Fragment key={index}>
-                                                <span style={{ color: nota < 6 ? 'red' : 'blue' }}>
-                                                    {nota}
-                                                </span>
-                                                {index !== notas.length -1 && ', '}
-                                            </React.Fragment>
-                                        ))}
-                                    </td>
-                                    <td style={{ textAlign: 'center', padding: '8px' }}>
-                                        {arquivos[id] ? (
-                                            <IconButton aria-label='Download arquivo' onClick={() => handleFileDownload(arquivos[id].id, arquivos[id].nome)}>
-                                                <CloudDownloadIcon color='secondary' />
-                                            </IconButton>
-                                        ) : (
-                                            <CloudOffIcon color='disabled'/>
-                                        )}
-                                    </td>
-                                </tr>
+                                <React.Fragment key={titulo}>
+                                    <tr>
+                                        <td style={{ textAlign: 'center', padding: '8px' }}>{titulo}</td>
+                                        <td style={{ textAlign: 'center', padding: '8px' }}>{peso}</td>
+                                        <td style={{ textAlign: 'center', padding: '8px', fontWeight: 'bold', fontSize: 'larger'}}>
+                                            {notas.map((nota, index) => (
+                                                <React.Fragment key={index}>
+                                                    <span style={{ color: nota.nota < 6 ? 'red' : 'blue' }}>
+                                                        {nota.nota}
+                                                    </span>
+                                                    {index !== notas.length -1 && ', '}
+                                                </React.Fragment>
+                                            ))}
+                                        </td>
+                                        <td style={{ textAlign: 'center', padding: '8px' }}>
+                                            {arquivos[id] ? (
+                                                <IconButton 
+                                                    aria-label='Download arquivo' 
+                                                    onClick={() => handleFileDownload(arquivos[id].id, arquivos[id].nome)}
+                                                >
+                                                    <CloudDownloadIcon color='secondary' />
+                                                </IconButton>
+                                            ) : (
+                                                <CloudOffIcon color='disabled'/>
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr style={{ borderBottom: '1px solid #ccc' }}>
+                                    {notas.some(nota => nota.coment) && (
+                                        <td colSpan={4} style={{padding: '8px'}}>
+                                            {notas.map((nota, index) => (
+                                                <Typography key={index} sx={{fontSize: 'x-small'}} align='justify'>{nota?.coment || ''}</Typography>
+                                            ))}
+                                        </td>
+                                    )}
+                                    </tr>
+                                </React.Fragment>
                             ))}
                         </tbody>
                     </table>

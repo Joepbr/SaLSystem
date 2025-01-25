@@ -236,6 +236,7 @@ controller.checkAccess = async function (req, res) {
 
         const ownProfile = user.aluno?.id === profileId
         
+        /*
         let isProfessor = false
         if (user.professor?.modulo?.matricula) {
             for (const matricula of user.professor.modulo.matricula) {
@@ -245,7 +246,8 @@ controller.checkAccess = async function (req, res) {
                 }
             }
         }
-        //const isProfessor = user.professor?.modulo.matricula.aluno.some(aluno => aluno.id === profileId)
+        */
+        let isProfessor = user.professor?.modulo?.some(modulo => modulo.matricula?.some(matricula => matricula.aluno?.id === profileId)) || false
 
         if (ownProfile || isProfessor || user.is_admin) {
             return res.send({ hasAccess: true })
